@@ -1,0 +1,50 @@
+@import './variables.less';
+// table样式覆盖
+.el-table {
+  color: #333333;
+
+  thead tr th {
+    background-color: #F2F8FF !important;
+  }
+
+  tr td {
+    border-bottom: none !important;
+  }
+
+  td {
+    padding: 11px 0;
+  }
+
+  .cell {
+    line-height: 30px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.el-table td.is-center .cell{
+    justify-content: center;
+}
+
+ /* 统一重置弹框的样式 */
+ .el-dialog {
+  margin-top: 80px;
+}
+.el-dialog__header {
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+// 提示的取消样式
+.btn-custom-cancel {
+  float: right;
+  margin-left: 10px !important;
+}
+
+
+.el-menu-item-group__title {
+  padding: 0;
+}
+
+.el-form-item__error{
+  display: none !important;
+}

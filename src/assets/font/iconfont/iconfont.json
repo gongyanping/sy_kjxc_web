@@ -1,0 +1,163 @@
+{
+  "id": "1709119",
+  "name": "gs_xzsp_web",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "甘肃行政审批管理系统",
+  "glyphs": [
+    {
+      "icon_id": "14089634",
+      "name": "启用icon",
+      "font_class": "qiyongicon",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "14089635",
+      "name": "停用icon",
+      "font_class": "tingyongicon",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "14089636",
+      "name": "删除icon",
+      "font_class": "shanchuicon",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "14089637",
+      "name": "新增icon",
+      "font_class": "xinzengicon",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "14089638",
+      "name": "筛选icon",
+      "font_class": "shaixuanicon",
+      "unicode": "e61e",
+      "unicode_decimal": 58910
+    },
+    {
+      "icon_id": "14089639",
+      "name": "密码初始化icon",
+      "font_class": "mimachushihuaicon",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "14089640",
+      "name": "导入icon",
+      "font_class": "daoruicon",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
+      "icon_id": "13412232",
+      "name": "文件类型 - excel",
+      "font_class": "yunpanlogo-",
+      "unicode": "e619",
+      "unicode_decimal": 58905
+    },
+    {
+      "icon_id": "13412233",
+      "name": "文件类型 - ppt",
+      "font_class": "yunpanlogo-1",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "13412234",
+      "name": "文件类型 - word",
+      "font_class": "yunpanlogo-2",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    },
+    {
+      "icon_id": "13412250",
+      "name": "文件类型 - 图片文件",
+      "font_class": "yunpanlogo-3",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    },
+    {
+      "icon_id": "13412731",
+      "name": "文件类型 - PDF",
+      "font_class": "yunpanlogo-4",
+      "unicode": "e61d",
+      "unicode_decimal": 58909
+    },
+    {
+      "icon_id": "13790537",
+      "name": "清单录入icon",
+      "font_class": "qingdanluruicon",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "13790538",
+      "name": "采集数据icon",
+      "font_class": "caijishujuicon",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "13790539",
+      "name": "批量导出icon",
+      "font_class": "piliangdaochuicon",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "13790540",
+      "name": "刷新icon",
+      "font_class": "shuaxinicon",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "13790541",
+      "name": "上传文件icon",
+      "font_class": "shangchuanwenjianicon",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "13790542",
+      "name": "新建数据源icon",
+      "font_class": "xinjianshujuyuanicon",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
+      "icon_id": "77403",
+      "name": "链接",
+      "font_class": "lianjie",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "1901669",
+      "name": "查看",
+      "font_class": "chakan",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "11697913",
+      "name": "下载",
+      "font_class": "xiazai1",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
+      "icon_id": "2546709",
+      "name": "预览",
+      "font_class": "yulan",
+      "unicode": "e6a2",
+      "unicode_decimal": 59042
+    }
+  ]
+}
