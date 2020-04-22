@@ -2,9 +2,9 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-04-17 11:58:23
+ * @LastEditTime: 2020-04-22 18:57:55
  * @Description: 巡逻点管理
- * @FilePath: \sy_kjxc_web0417\src\views\patrolManage\patrolPoint.vue
+ * @FilePath: \sy_kjxc_web\src\views\patrolManage\patrolPoint.vue
  -->
 
 <template>
@@ -46,6 +46,16 @@
             :label="item.label"
             :value="item.value"
           ></el-option>
+        </el-select>
+        <el-select
+          v-model="lineId"
+          placeholder="请选择任务名称"
+          size="small"
+          clearable
+          style="width: 2rem; margin-left: 0.1rem"
+        >
+          <el-option key="uniqued0000" label="全部" value />
+          <el-option v-for="item in lineOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
         <el-button type="primary" size="small" class="bt-search" @click="getList(1)">搜索</el-button>
         <el-button @click="reset" size="small" type="primary" plain>重置</el-button>
@@ -95,6 +105,8 @@
       :dialogVisible="dialogVisible"
       :curId="curId"
       :form="patrolForm"
+      :lineOptions="lineOptions"
+      :equOptions="equOptions"
       :typeOptions="typeOptions"
       :isFromTask="isFromTask"
       @closeDialog="closeDialog"
@@ -173,15 +185,21 @@ export default {
         time: ''
       },
       isFromTask: false, // 是否来自任务列表
-      lineId: '' // b0b61152d17f4ae7a5c52af5a7657d79
+      lineId: '', // b0b61152d17f4ae7a5c52af5a7657d79
+      taskId: '',
+      lineOptions: [], // 任务名称
+      equOptions: [] // 打卡机列表
     };
   },
   created () {
     let taskId = this.GetQueryString('lineId');
     if (taskId) {
       this.lineId = taskId;
+      this.taskId = taskId;
       this.isFromTask = true;
     }
+    this.findAll(); // 任务
+    this.getAllFingerprint(); // 打卡机
     this.getList();
   },
   methods: {
@@ -206,7 +224,7 @@ export default {
             ...this.form,
             name: this.inputName,
             type: this.typeName,
-            lineId: ''
+            lineId: this.lineId
           })
         )
         .then(res => {
@@ -239,9 +257,9 @@ export default {
       } else {
         this.curId = '';
         this.dialogVisible = true;
-        if (this.lineId) {
+        if (this.taskId) {
           this.isFromTask = true;
-          this.patrolForm.lineId = this.lineId;
+          this.patrolForm.lineId = this.taskId;
         }
       }
     },
@@ -337,6 +355,16 @@ export default {
       if (this.markers.length > this.markersLength) {
         this.markers.pop();
       }
+    },
+    findAll () {
+      this.$api.patrolPoint.findAll().then(res => {
+        this.lineOptions = res.data.data;
+      });
+    },
+    getAllFingerprint () {
+      this.$api.patrolPoint.getAllFingerprint().then(res => {
+        this.equOptions = res.data.data;
+      });
     },
     GetQueryString (name) {
       let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');

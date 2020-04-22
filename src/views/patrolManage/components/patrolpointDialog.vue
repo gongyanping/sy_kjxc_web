@@ -55,6 +55,16 @@
         <el-form-item label="时间" prop="time" v-if="patrolForm.type !== '1'">
           <el-time-picker format="HH:mm" value-format="HH:mm" v-model="patrolForm.time" placeholder="请选择时间点"></el-time-picker>
         </el-form-item>
+        <el-form-item label="绑定指纹机" prop="equID">
+          <el-select v-model="patrolForm.equID" placeholder="请选择点位类型" clearable style="width: 100%">
+            <el-option
+              v-for="item in equOptions"
+              :key="item.id"
+              :label="item.equName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="onCancelPoint">取 消</el-button>
@@ -67,7 +77,7 @@
 <script>
 export default {
   name: 'patrolpoint-dialog',
-  props: ['dialogVisible', 'curId', 'form', 'typeOptions', 'isFromTask'],
+  props: ['dialogVisible', 'curId', 'form', 'typeOptions', 'isFromTask', 'lineOptions', 'equOptions'],
   data () {
     return {
       visible: false,
@@ -75,8 +85,7 @@ export default {
       rules: {
         name: [{ required: true, message: '请输入点位名称', trigger: 'blur' }]
       },
-      patrolForm: {},
-      lineOptions: []
+      patrolForm: {}
     };
   },
   watch: {
@@ -91,15 +100,9 @@ export default {
     }
   },
   created () {
-    this.findAll();
     this.patrolForm = this.form;
   },
   methods: {
-    findAll () {
-      this.$api.patrolPoint.findAll().then(res => {
-        this.lineOptions = res.data.data;
-      });
-    },
     initData () {
       this.$api.patrolPoint
         .getOne(this.$qs.stringify({ id: this.pointId }))

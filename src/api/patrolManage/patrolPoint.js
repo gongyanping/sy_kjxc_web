@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-16 09:31:25
  * @LastEditors: gyp
- * @LastEditTime: 2020-04-16 17:33:25
+ * @LastEditTime: 2020-04-22 18:33:24
  * @Description:
  * @FilePath: \sy_kjxc_web\src\api\patrolManage\patrolPoint.js
  */
@@ -28,6 +28,10 @@ const patrolPoint = {
   },
   getOne (params) {
     return request.post('/lineSpot/getOne', params);
+  },
+  // 获取所有打卡机
+  getAllFingerprint (params) {
+    return request.get('/lineSpot/getAllFingerprint', { params });
   }
 }
 export default patrolPoint
