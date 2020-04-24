@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-04-22 18:57:55
+ * @LastEditTime: 2020-04-24 16:18:01
  * @Description: 巡逻点管理
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\patrolPoint.vue
  -->
@@ -297,6 +297,7 @@ export default {
         type: '1',
         time: ''
       };
+      this.handleCancelPoint();
     },
     onMapClick (e) {
       const { lng, lat } = e.point;
@@ -311,7 +312,7 @@ export default {
           lat
         });
         let BMap = this.BMap;
-        let geocoder = new BMap.Geocoder(); // 创建地址解析器的实
+        let geocoder = new BMap.Geocoder(); // 创建地址解析器的实例
         geocoder.getLocation(e.point, res => {
           this.patrolForm.address = res.address;
         });
@@ -341,10 +342,6 @@ export default {
             this.getList();
           }
         });
-    },
-    onCancelPoint () {
-      this.dialogVisible = false;
-      this.onProcessing = false;
     },
     reset () {
       this.inputName = '';

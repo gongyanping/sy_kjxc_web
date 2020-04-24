@@ -97,6 +97,9 @@ export default {
       if (this.visible && this.pointId) {
         this.initData();
       }
+    },
+    form: function (newValue) {
+      this.patrolForm = newValue;
     }
   },
   created () {
