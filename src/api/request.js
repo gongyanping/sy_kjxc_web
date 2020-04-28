@@ -8,6 +8,8 @@
 import axios from 'axios'
 import { getToken } from '@/utils/token';
 import { Message, Loading } from 'element-ui';
+// const href = window.location.href.origin + ':8020';
+// const serverUrl = 'http://localhost:8020' // 服务器地址
 const serverUrl = process.env.VUE_APP_BASE_API // 服务器地址
 const request = axios.create({
   timeout: 60 * 1000,

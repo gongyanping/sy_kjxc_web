@@ -2,12 +2,12 @@
  * @Author: gyp
  * @Date: 2020-03-24 16:38:14
  * @LastEditors: gyp
- * @LastEditTime: 2020-04-16 12:59:19
+ * @LastEditTime: 2020-04-23 21:02:45
  * @Description: 分页公用组件
  * @FilePath: \sy_kjxc_web\src\components\Pagination.vue
  -->
 <template>
-  <div class="comm-table-flooter" v-if="tabledatas && tabledatas.total">
+  <div class="comm-table-flooter" v-if="tabledatas && tabledatas.total > 0">
     <el-pagination
       @current-change="handleCurrentChange"
       layout="total, sizes, prev, pager, next"

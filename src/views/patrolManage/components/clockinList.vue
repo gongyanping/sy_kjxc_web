@@ -15,8 +15,9 @@
       <div class="center">
         <div class="center-left">
           <span class="one">打卡类型：{{typeOptions[parseInt(item.type)]}}</span>
-          <span :title="item.parentPlatformName" class="one">局：{{item.parentPlatformName}}</span>
-          <span :title="item.platformName" class="two">平台：{{item.platformName}}</span>
+          <span :title="item.state" class="one">打卡状态：<span :class="[item.state === '0' ? 'red' : 'green']">{{item.state === '0' ? '未打卡' : '已打卡' }}</span></span>
+          <span :title="item.spotName" class="two">打卡点名：{{item.spotName}}</span>
+          <span :title="item.address" class="two">具体地点：{{item.address}}</span>
         </div>
         <el-popover placement="left-start" :title="item.name" width="500">
           <el-carousel>
@@ -127,6 +128,12 @@ export default {
           width: 100%;
           display: inline-block;
           .ellipsis();
+        }
+        .red {
+          color: red;
+        }
+        .green {
+          color: green;
         }
       }
 
