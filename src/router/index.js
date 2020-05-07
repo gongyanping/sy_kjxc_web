@@ -15,6 +15,7 @@ const login = () => import('@/views/login.vue')
 const Layout = () => import('@/layout/index.vue')
 const patrolPoint = () => import('@/views/patrolManage/patrolPoint.vue');
 const clockinRecord = () => import('@/views/patrolManage/clockinRecord.vue');
+const screen = () => import('@/views/screen/index.vue');
 
 Vue.use(Router)
 
@@ -46,7 +47,7 @@ export const constantRoutes = [
     path: '/',
     name: 'index',
     component: Layout,
-    redirect: '/patrolPoint'
+    redirect: '/screen'
   },
   {
     path: '/patrolPoint',
@@ -59,6 +60,12 @@ export const constantRoutes = [
     name: 'clockinRecord',
     component: clockinRecord,
     meta: { title: '打卡记录' }
+  },
+  {
+    path: '/screen',
+    name: 'screen',
+    component: screen,
+    meta: { title: '外网大屏' }
   }
 ]
 

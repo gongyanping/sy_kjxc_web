@@ -7,7 +7,11 @@
  * @FilePath: \gs_xzsp_web\src\plugins\element.js
  */
 import Vue from 'vue'
-import { Carousel, CarouselItem, TimePicker, Button, Alert, Image, Tooltip, Tree, Row, Col, Radio, Input, InputNumber, RadioGroup, RadioButton, Popover, Table, TableColumn, Pagination, Icon, Form, FormItem, Select, Option, DatePicker, Menu, Submenu, MenuItem, MenuItemGroup, Progress, Scrollbar, Tabs, TabPane, Checkbox, CheckboxButton, CheckboxGroup, Tag, Autocomplete, Dialog, Upload, Dropdown, DropdownMenu, DropdownItem, Message, MessageBox } from 'element-ui'
+import { Container, Header, Aside, Main, Carousel, CarouselItem, TimePicker, Button, Alert, Image, Tooltip, Tree, Row, Col, Radio, Input, InputNumber, RadioGroup, RadioButton, Popover, Table, TableColumn, Pagination, Icon, Form, FormItem, Select, Option, DatePicker, Menu, Submenu, MenuItem, MenuItemGroup, Progress, Scrollbar, Tabs, TabPane, Checkbox, CheckboxButton, CheckboxGroup, Tag, Autocomplete, Dialog, Upload, Dropdown, DropdownMenu, DropdownItem, Message, MessageBox } from 'element-ui'
+Vue.use(Container);
+Vue.use(Header);
+Vue.use(Aside);
+Vue.use(Main);
 Vue.use(Carousel);
 Vue.use(CarouselItem);
 Vue.use(TimePicker);
