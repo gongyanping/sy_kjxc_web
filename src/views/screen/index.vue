@@ -36,16 +36,56 @@
         </div>
       </el-aside>
       <el-main>
-          <div class="mybox headStatistic" style="border:none;box-shadow: none">
+          <div class="mybox headStatistic">
             <div class="top-left"></div>
             <div class="top-right"></div>
             <div class="bottom-left"></div>
             <div class="bottom-right"></div>
-            <div class="flexParentClass">
-              <div class="flexChildClass-4 color939394 borderRadius flexParentClass menu">
+                <ul class="headstaWrap">
+                    <li class="staItem">
+                        <div class="staitem-icon">
+                            <svg-icon icon-class="component" />
+                        </div>
+                        <div class="staitem-content">
+                            <div class="staitem-name">当日警情数</div>
+                            <count-to class="staitem-num"
+                            :startVal="startVal" :endVal="23" :duration="2000"></count-to>
+                        </div>
+                    </li>
+                    <li class="staItem">
+                        <div class="staitem-icon">
+                            <svg-icon icon-class="component" />
+                        </div>
+                        <div class="staitem-content">
+                            <div class="staitem-name">平均处警时长</div>
+                            <count-to class="staitem-num"
+                            :startVal="startVal" :endVal="23" :duration="2000"></count-to>
+                        </div>
+                    </li>
+                    <li class="staItem">
+                        <div class="staitem-icon">
+                            <svg-icon icon-class="component" />
+                        </div>
+                        <div class="staitem-content">
+                            <div class="staitem-name">巡逻处警通报</div>
+                            <count-to class="staitem-num"
+                            :startVal="startVal" :endVal="23" :duration="2000"></count-to>
+                        </div>
+                    </li>
+                    <li class="staItem">
+                        <div class="staitem-icon">
+                            <svg-icon icon-class="component" />
+                        </div>
+                        <div class="staitem-content">
+                            <div class="staitem-name">考核评比</div>
+                            <count-to class="staitem-num"
+                            :startVal="startVal" :endVal="23" :duration="2000"></count-to>
+                        </div>
+                    </li>
+                </ul>
+              <!-- <div class="flexChildClass-4 color939394 borderRadius flexParentClass menu">
                 <div class="flexChildClass-3"
                      style="font-size: 0.7rem;color: #25f3e6;padding-top: 0.05rem;margin-right:0.1rem">
-                  <svg-icon icon-class="component" class-name="card-panel-icon"/>
                 </div>
                 <div class="flexChildClass-2">
                   <div class="card-panel-text" style="font-size: 0.1rem;color: #25f3e6;padding-top: 0.15rem">当日警情数</div>
@@ -90,10 +130,42 @@
                        >909
                   </div>
                 </div>
-              </div>
-            </div>
+              </div> -->
           </div>
       </el-main>
+      <el-aside class="leftWrap">
+        <div class="mybox lefttopBox">
+          <div class="top-left"></div>
+          <div class="top-right"></div>
+          <div class="bottom-left"></div>
+          <div class="bottom-right"></div>
+          <div>
+            快警平台信息
+            <!--({{platformList.length+4}}) <el-input prefix-icon="el-icon-search" icon="search" name="title" v-model="search" clearable
+                      size="mini" style="width:60%;background:transparent;color: #ffffff;margin-left: 0.1rem;"
+            placeholder="分局名/平台名"></el-input>-->
+          </div>
+          <el-scrollbar style="height: 92%;">
+            <!-- <div class="platformInfo" v-for="item in platformList"
+                 style='border-top:none;border-left:none;border-right:none' @click="platformNameClick(item)">
+              <div class="flexParentClass" style="justify-content:space-between;padding: 0.05rem 0.1rem 0.1rem;">
+                <div style="font-size: 0.1rem;">{{item.parentName}}</div>
+                <div style="font-size: 0.1rem;">{{item.deptName}}</div>
+              </div>
+              <div class="flexParentClass" style="justify-content:space-between;padding: 0rem 0.1rem 0.05rem;">
+                <div style="font-size: 0.1rem;">人数: {{item.deptCount}}</div>
+                <div style="font-size: 0.1rem;">平台长:{{item.leader}}</div>
+              </div>
+            </div>-->
+          </el-scrollbar>
+        </div>
+        <div class="mybox leftbotBox">
+          <div class="top-left"></div>
+          <div class="top-right"></div>
+          <div class="bottom-left"></div>
+          <div class="bottom-right"></div>
+        </div>
+      </el-aside>
     </el-container>
   </el-container>
 </template>

@@ -1,5 +1,10 @@
 @import '~@/styles/index.less';
 
+.commBorder {
+    border: 1px solid #2C58A6;
+    box-shadow: 0 0 1px #2C58A6;
+}
+
 .container {
     background: url('../../assets/image/sourceImg/bg-3.png') no-repeat;
     background-size: 100% 100%;
@@ -24,8 +29,7 @@
 }
 
 .mybox {
-    border: 1px solid #2C58A6;
-    box-shadow: 0 0 1px #2C58A6;
+    .commBorder();
     box-sizing: border-box;
     position: relative;
     .top-left {
@@ -70,7 +74,7 @@
 }
 
 .leftWrap {
-    width: 300px;
+    width: 350px !important;
     height: calc(100% - 10px);
     .lefttopBox {
         width: 100%;
@@ -84,8 +88,10 @@
 }
 
 .headStatistic {
-    height: 80px;
+    height: 100px;
     padding: 0 10px;
+    border:none;
+    box-shadow: none;
 }
 
 .flexParentClass {
@@ -117,22 +123,60 @@
     align-items: center;
     height: 100%;
     width: 100%;
-  }
+}
 
-  .flexChildClass-2 {
-    width: 49%;
-    height: 90%;
-    margin: 1% 1%;
-  }
+.flexChildClass-2 {
+width: 49%;
+height: 90%;
+margin: 1% 1%;
+}
 
-  .flexChildClass-3 {
-    width: 33%;
-    height: 90%;
-    margin: 1% 0.5%;
-  }
+.flexChildClass-3 {
+width: 33%;
+height: 90%;
+margin: 1% 0.5%;
+}
 
-  .flexChildClass-4 {
-    width: 24%;
-    height: 90%;
-    margin: 1% 0.5%;
-  }
+.flexChildClass-4 {
+width: 24%;
+height: 90%;
+margin: 1% 0.5%;
+}
+
+// 顶部综合统计
+.headstaWrap {
+    .flex-center();
+    justify-content: space-around;
+    .staItem {
+        display: flex;
+        width: 24%;
+        height: 85px;
+        margin-top: 7px;
+        .commBorder();
+        border-radius: 5px;
+        .staitem-icon {
+            font-size: 0.4rem;
+            color: rgb(37, 243, 230);
+            width: 33%;
+            height: 100%;
+            .flex-center();
+            justify-content: center;
+        }
+        .staitem-content {
+            color: #25f3e6;
+            width: 67%;
+            height: 100%;
+            .flex-center();
+            flex-direction: column;
+            justify-content: center;
+        }
+        .staitem-name{
+            font-size: 14px;
+            color: rgb(37, 243, 230);
+        }
+        .staitem-num {
+            font-size: 30px;
+            color: #ffffff;
+        }
+    }
+}
