@@ -13,6 +13,7 @@
     <div class="top-right"></div>
     <div class="bottom-left"></div>
     <div class="bottom-right"></div>
+    <div :class="[{'title': title}, titleStyle]">{{ title }}</div>
     <div class="content_wrap">
       <slot name="content" />
     </div>
@@ -22,7 +23,16 @@
 <script>
 export default {
   props: {
+    title: String, // 标题
+    titleStyle: {
+      // 标题样式
+      type: String,
+      default () {
+        return '';
+      }
+    },
     customStyle: {
+      // 容器样式
       type: String,
       default () {
         return '';
@@ -79,9 +89,25 @@ export default {
   }
 }
 
+// 公用的标题
+.title {
+  font-size: 18px;
+  color: #25f3e6;
+  text-shadow: 0 0 5px #25f3e6;
+  height: 40px;
+  .flex-center();
+  padding: 0 10px;
+}
+
 .content_wrap {
   padding: 0;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 40px);
+}
+
+// 颜色
+.orange {
+  color: #fda502;
+  text-shadow: 0 0 5px #fda502;
 }
 </style>

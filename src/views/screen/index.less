@@ -1,143 +1,129 @@
-@import '~@/styles/index.less';
+@import "~@/styles/index.less";
 
+// 主框架
 .container {
-    background: url('../../assets/image/sourceImg/bg-3.png') no-repeat;
+  background: url("../../assets/image/sourceImg/bg-3.png") no-repeat;
+  background-size: 100% 100%;
+  width: 100%;
+  height: 100%;
+
+  .headerWrap {
+    color: #d9edf7;
+    font-size: 28px;
+    background: url("../../assets/image/sourceImg/title.png") no-repeat;
+    -webkit-background-size: 100% 100%;
     background-size: 100% 100%;
-    width: 100%;
-    height: 100%;
-
-    .headerWrap {
-        color:#d9edf7;
-        font-size: 28px;
-        background: url('../../assets/image/sourceImg/title.png') no-repeat;
-        -webkit-background-size: 100% 100%;
-        background-size: 100% 100%;
-        height: 250px;
-        padding: 0 10px;
-        .flex-center();
-        justify-content: center;
-    }
-
-    .mainContainer {
-        padding: 0 10px;
-    }
-}
-
-.leftWrap {
-    width: 350px !important;
-    height: calc(100% - 10px);
-    .lefttopBox {
-        width: 100%;
-        height: 60%;
-    }
-    .leftbotBox {
-        margin-top: 10px;
-        width: 100%;
-        height: calc(40% - 10px);
-    }
-}
-
-.flexParentClass {
+    height: 250px;
+    padding: 0 10px;
     .flex-center();
-    height: 100%;
+    justify-content: center;
+  }
+
+  .mainContainer {
+    padding: 0 10px;
+  }
+}
+
+// 左侧容器
+.leftWrap {
+  width: 350px !important;
+  height: calc(100% - 10px);
+  .lefttopBox {
     width: 100%;
-}
-
-.flexChildClass-4 {
-    width: 24%;
-    height: 90%;
-    margin: 1% 0.5%;
-}
-
-.color939394 {
-    border: 0.01rem solid #1e6abc;
-    box-shadow: 0 0 0.05rem #1e6abc;
-    box-sizing: border-box;
-    position: relative;
-}
-
-.borderRadius {
-    border-radius: 5%;
-}
-
-.flexParentClass {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: 100%;
+    height: 55%;
+  }
+  .leftbotBox {
+    margin-top: 10px;
     width: 100%;
+    height: calc(45% - 10px);
+    // 巡检车辆
+    // 导航样式
+    .carNav{
+      height: 40px;
+      display: flex;
+      >li {
+        flex-grow: 1;
+        border-top: solid 1px @themeColor;
+        border-bottom: solid 1px @themeColor;
+        text-align: center;
+        line-height: 38px;
+        color: #ccc;
+        cursor: pointer;
+        &:nth-child(2){
+          border-left: solid 1px @themeColor;
+          border-right: solid 1px @themeColor;
+        }
+        &.active {
+          background: rgb(21, 46, 83);
+          color: #ffffff;
+        }
+      }
+    }
+  }
 }
 
-.flexChildClass-2 {
-width: 49%;
-height: 90%;
-margin: 1% 1%;
-}
-
-.flexChildClass-3 {
-width: 33%;
-height: 90%;
-margin: 1% 0.5%;
-}
-
-.flexChildClass-4 {
-width: 24%;
-height: 90%;
-margin: 1% 0.5%;
+// 右侧容器
+.rightWrap {
+  width: 350px !important;
+  height: calc(100% - 10px);
+  .righttopBox {
+    width: 100%;
+    height: 45%;
+  }
+  .rightbotBox {
+    margin-top: 10px;
+    width: 100%;
+    height: calc(55% - 10px);
+  }
 }
 
 // 中间模块样式
 .headStatistic {
-    height: 100px;
-    padding: 0 10px;
-    border:none;
-    box-shadow: none;
-    .mainWrap {
-        width: 100%;
-        height: 100%;
-    }
-}
-
-// 顶部综合统计
-.headstaWrap {
+  height: 100px;
+  padding: 0 10px;
+  border: none;
+  box-shadow: none;
+  // 顶部综合统计
+  .headstaWrap {
     .flex-center();
     justify-content: space-around;
     .staItem {
-        display: flex;
-        width: 24%;
-        height: 85px;
-        margin-top: 7px;
-        .commBorder();
-        border-radius: 5px;
-        .staitem-icon {
-            font-size: 45px;
-            color: rgb(37, 243, 230);
-            width: 33%;
-            height: 100%;
-            .flex-center();
-            justify-content: center;
-        }
-        .staitem-content {
-            color: #25f3e6;
-            width: 67%;
-            height: 100%;
-            .flex-center();
-            flex-direction: column;
-            justify-content: center;
-        }
-        .staitem-name{
-            font-size: 14px;
-            color: rgb(37, 243, 230);
-        }
-        .staitem-num {
-            font-size: 30px;
-            color: #ffffff;
-        }
+      display: flex;
+      width: 24%;
+      height: 85px;
+      margin-top: 7px;
+      .commBorder();
+      border-radius: 5px;
+      .staitem-icon {
+        font-size: 45px;
+        color: rgb(37, 243, 230);
+        width: 33%;
+        height: 100%;
+        .flex-center();
+        justify-content: center;
+      }
+      .staitem-content {
+        color: #25f3e6;
+        width: 67%;
+        height: 100%;
+        .flex-center();
+        flex-direction: column;
+        justify-content: center;
+      }
+      .staitem-name {
+        font-size: 14px;
+        color: rgb(37, 243, 230);
+      }
+      .staitem-num {
+        font-size: 30px;
+        color: #ffffff;
+      }
     }
+  }
 }
 
 // 地图样式
 .map {
-    width: 100%;
-    height: calc(100% - 100px);
+  width: 100%;
+  height: calc(100% - 100px);
 }
