@@ -1,10 +1,5 @@
 @import '~@/styles/index.less';
 
-.commBorder {
-    border: 1px solid #2C58A6;
-    box-shadow: 0 0 1px #2C58A6;
-}
-
 .container {
     background: url('../../assets/image/sourceImg/bg-3.png') no-repeat;
     background-size: 100% 100%;
@@ -28,51 +23,6 @@
     }
 }
 
-.mybox {
-    .commBorder();
-    box-sizing: border-box;
-    position: relative;
-    .top-left {
-        width: 10px;
-        height: 10px;
-        border-left: 2px solid #5ab1ef;
-        border-top: 2px solid #5ab1ef;
-        position: absolute;
-        left: -1px;
-        top: -1px;
-    }
-
-    .top-right {
-        width: 0.1rem;
-        height: 0.1rem;
-        border-right: 0.02rem solid #5ab1ef;
-        border-top: 0.02rem solid #5ab1ef;
-        position: absolute;
-        right: -0.01rem;
-        top: -0.01rem;
-    }
-
-    .bottom-left {
-        width: 0.1rem;
-        height: 0.1rem;
-        border-left: 0.02rem solid #5ab1ef;
-        border-bottom: 0.02rem solid #5ab1ef;
-        position: absolute;
-        left: -0.01rem;
-        bottom: -0.01rem;
-    }
-
-    .bottom-right {
-        width: 0.1rem;
-        height: 0.1rem;
-        border-right: 0.02rem solid #5ab1ef;
-        border-bottom: 0.02rem solid #5ab1ef;
-        position: absolute;
-        right: -0.01rem;
-        bottom: -0.01rem;
-    }
-}
-
 .leftWrap {
     width: 350px !important;
     height: calc(100% - 10px);
@@ -85,13 +35,6 @@
         width: 100%;
         height: calc(40% - 10px);
     }
-}
-
-.headStatistic {
-    height: 100px;
-    padding: 0 10px;
-    border:none;
-    box-shadow: none;
 }
 
 .flexParentClass {
@@ -143,6 +86,18 @@ height: 90%;
 margin: 1% 0.5%;
 }
 
+// 中间模块样式
+.headStatistic {
+    height: 100px;
+    padding: 0 10px;
+    border:none;
+    box-shadow: none;
+    .mainWrap {
+        width: 100%;
+        height: 100%;
+    }
+}
+
 // 顶部综合统计
 .headstaWrap {
     .flex-center();
@@ -155,7 +110,7 @@ margin: 1% 0.5%;
         .commBorder();
         border-radius: 5px;
         .staitem-icon {
-            font-size: 0.4rem;
+            font-size: 45px;
             color: rgb(37, 243, 230);
             width: 33%;
             height: 100%;
@@ -179,4 +134,10 @@ margin: 1% 0.5%;
             color: #ffffff;
         }
     }
+}
+
+// 地图样式
+.map {
+    width: 100%;
+    height: calc(100% - 100px);
 }
