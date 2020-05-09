@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-04-24 16:18:01
+ * @LastEditTime: 2020-05-09 18:28:05
  * @Description: 巡逻点管理
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\patrolPoint.vue
  -->
@@ -121,6 +121,7 @@ import noData from '@/components/noData';
 import patrolpointList from './components/patrolpointList';
 import patrolpointDialog from './components/patrolpointDialog';
 import { BmlMarkerClusterer, BmMarker } from 'vue-baidu-map';
+import { GetQueryString } from '@/utils/common.js';
 export default {
   name: 'patrol-point',
   components: {
@@ -192,7 +193,8 @@ export default {
     };
   },
   created () {
-    let taskId = this.GetQueryString('lineId');
+    // 获取任务id
+    let taskId = GetQueryString('lineId');
     if (taskId) {
       this.lineId = taskId;
       this.taskId = taskId;
@@ -362,12 +364,6 @@ export default {
       this.$api.patrolPoint.getAllFingerprint().then(res => {
         this.equOptions = res.data.data;
       });
-    },
-    GetQueryString (name) {
-      let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');
-      let r = window.location.search.substr(1).match(reg);
-      if (r !== null) return unescape(r[2]);
-      return null;
     }
   }
 };

@@ -2,9 +2,9 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-04-17 11:56:46
+ * @LastEditTime: 2020-05-09 18:44:49
  * @Description: 打卡记录
- * @FilePath: \sy_kjxc_web0417\src\views\patrolManage\clockinRecord.vue
+ * @FilePath: \sy_kjxc_web\src\views\patrolManage\clockinRecord.vue
  -->
 
 <template>
@@ -152,6 +152,7 @@ import { BmlMarkerClusterer, BmMarker } from 'vue-baidu-map';
 import noData from '@/components/noData';
 import userList from './components/userList';
 import clockinList from './components/clockinList';
+import { GetQueryString } from '@/utils/common.js';
 export default {
   name: 'clockin-record',
   components: {
@@ -193,6 +194,10 @@ export default {
     };
   },
   created () {
+    let userName = GetQueryString('userName'); // 从其他入口传进来
+    if (userName) {
+      this.searchForm.userName = userName;
+    }
     this.initPlatList(); // 下拉数据获取
   },
   beforeDestroy () {
@@ -272,6 +277,7 @@ export default {
         }
       });
     },
+    // 获取打卡记录
     getList () {
       this.markers = [];
       this.userList = [];
