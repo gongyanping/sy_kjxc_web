@@ -15,17 +15,30 @@
       <div class="center">
         <div class="center-left">
           <span class="one">打卡类型：{{typeOptions[parseInt(item.type)]}}</span>
-          <span :title="item.state" class="one">打卡状态：<span :class="[item.state === '0' ? 'red' : 'green']">{{item.state === '0' ? '未打卡' : '已打卡' }}</span></span>
+          <span class="one">
+            打卡状态：
+            <span
+              :class="{'red':['0','3','4'].includes(item.state), 'green': ['1','2','5'].includes(item.state)}"
+            >
+              <span v-if="['0','3','4'].includes(item.state)">未打卡</span>
+              <span v-if="['1','2','5'].includes(item.state)">已打卡</span>
+              <span v-if="!['0', '1'].includes(item.state)" :title="punchclockName[item.state]">
+                <span>-</span>{{punchclockName[item.state]}}
+              </span>
+            </span>
+          </span>
           <span :title="item.spotName" class="two">打卡点名：{{item.spotName}}</span>
           <span :title="item.address" class="two">具体地点：{{item.address}}</span>
         </div>
-        <el-popover placement="left-start" :title="item.name" width="500">
+        <el-popover
+          placement="left-start"
+          :title="item.name"
+          width="500"
+          v-if="item.picUrl && item.picUrl.length"
+        >
           <el-carousel>
-            <el-carousel-item v-for="item in 2" :key="item">
-              <img
-                src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-                style="width:100%;height:auto"
-              />
+            <el-carousel-item v-for="(picOne, index) in item.picUrl" :key="index">
+              <img :src="picOne" style="width:100%;height:auto" />
             </el-carousel-item>
           </el-carousel>
           <el-button
@@ -33,9 +46,15 @@
             plain
             size="small"
             slot="reference"
-            @click="viewPic(item.userId)"
           >查看图片</el-button>
         </el-popover>
+        <el-button
+          v-else
+          type="primary"
+          plain
+          size="small"
+          @click="viewNopic"
+        >查看图片</el-button>
       </div>
     </li>
   </ul>
@@ -44,25 +63,22 @@
 <script>
 export default {
   name: 'clockin-list',
-  props: ['recordList'],
+  props: ['recordList', 'punchclockList'],
   data () {
     return {
       typeOptions: ['', '手机', '指纹']
     };
+  },
+  created () {
+    this.punchclockName = this.punchclockList.map(item => item.name);
   },
   methods: {
     handleLocate (row) {
       const { lon, lat } = row;
       this.$emit('handleLocate', lon, lat);
     },
-    viewPic () {
-      this.$api.clockinRecord
-        .selectPicByDetailsId({
-          patrolClockDetailsId: '44287282999045208df0ec444510dbf0'
-        })
-        .then(res => {
-          console.log(res);
-        });
+    viewNopic () {
+      this.$message.error('暂无图片');
     },
     goBack () {
       this.$emit('setTabIndex', 1);
@@ -133,7 +149,7 @@ export default {
           color: red;
         }
         .green {
-          color: green;
+          color: #01a401;
         }
       }
 

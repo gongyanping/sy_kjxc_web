@@ -13,7 +13,7 @@
     <div class="top-right"></div>
     <div class="bottom-left"></div>
     <div class="bottom-right"></div>
-    <div :class="[{'title': title}, titleStyle]">{{ title }}</div>
+    <div :class="[{'title': title}, titleStyle]" @click="onClick(title)">{{ title }}</div>
     <div class="content_wrap">
       <slot name="content" />
     </div>
@@ -37,6 +37,11 @@ export default {
       default () {
         return '';
       }
+    }
+  },
+  methods: {
+    onClick (name) {
+      this.$emit('onTitleClick', name)
     }
   }
 };
@@ -97,6 +102,7 @@ export default {
   height: 40px;
   .flex-center();
   padding: 0 10px;
+  cursor: pointer;
 }
 
 .content_wrap {

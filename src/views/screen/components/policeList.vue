@@ -24,6 +24,8 @@ export default {
   .policeItem {
     padding: 8px 15px;
     border-bottom: solid 1px #2c58a6;
+    color: #eee;
+    font-size: 14px;
     &:first-of-type {
       padding: 2px 15px 8px;
     }
@@ -31,8 +33,6 @@ export default {
     .bot {
       display: flex;
       justify-content: space-between;
-      color: #eee;
-      font-size: 14px;
     }
     .bot {
       margin-top: 5px;

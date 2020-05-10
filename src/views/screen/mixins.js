@@ -125,7 +125,7 @@ const basicScreen = {
       }], // 大队值班领导
       realtimeAlertList: [{
         palt: '北塔汽车北站2号平台',
-        descri: '其朋友在邵阳大饭店被人殴打',
+        descri: '其朋友在邵阳大饭店被人殴打其朋友在邵阳大饭店被人殴打其朋友在邵阳大饭店被人殴打其朋友在邵阳大饭店被人殴打其朋友在邵阳大饭店被人殴打',
         time: '08:13:04',
         level: '其它警情'
       }, {
@@ -163,7 +163,33 @@ const basicScreen = {
         descri: '报警人称老人在城南公园走失',
         time: '07:11:12',
         level: '群众求助'
-      }] // 实时警情
+      }], // 实时警情
+      patrolcarList: [{
+        car: '湘E33124',
+        status: '行驶中'
+      }], // 巡检车辆
+      dutyleaderVisible: false // 大队值班领导-弹出框可见性
+    }
+  },
+  methods: {
+    /**
+     * 点击各个板块的标题，查看更多
+     * @param {String} name 标题
+     */
+    onTitleClick (name) {
+      switch (name) {
+        case '大队值班领导':
+          this.dutyleaderVisible = true;
+          break;
+        default:
+          break;
+      }
+    },
+    /**
+     * 关闭大队值班领导的弹出框
+     */
+    onDutyleaderClose () {
+      this.dutyleaderVisible = false;
     }
   }
 }

@@ -6,7 +6,7 @@
  * @Desc: 封装axios，统一配置拦截器级错误处理的，可根据具体的需求进行修改
  */
 import axios from 'axios'
-import { getToken } from '@/utils/token';
+// import { getToken } from '@/utils/token';
 import { Message, Loading } from 'element-ui';
 // const href = window.location.href.origin + ':8020';
 // const serverUrl = 'http://localhost:8020' // 服务器地址
@@ -52,11 +52,11 @@ export function tryHideFullScreenLoading () {
 
 // 请求发出拦截器
 request.interceptors.request.use(config => {
-  if (getToken()) {
-    showFullScreenLoading();
-    // 让每个请求携带自定义token 请根据实际情况自行修改
-    config.headers['Authorization'] = 'Bearer-' + getToken();
-  }
+  // if (getToken()) {
+  showFullScreenLoading();
+  // 让每个请求携带自定义token 请根据实际情况自行修改
+  // config.headers['Authorization'] = 'Bearer-' + getToken();
+  // }
   return config;
 }, error => {
   return Promise.reject(error)

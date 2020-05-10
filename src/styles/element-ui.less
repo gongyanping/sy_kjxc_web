@@ -1,10 +1,10 @@
-@import './variables.less';
+@import "./variables.less";
 // table样式覆盖
 .el-table {
   color: #333333;
 
   thead tr th {
-    background-color: #F2F8FF !important;
+    background-color: #f2f8ff !important;
   }
 
   tr td {
@@ -22,16 +22,36 @@
   }
 }
 
-.el-table td.is-center .cell{
-    justify-content: center;
+.el-table td.is-center .cell {
+  justify-content: center;
 }
 
- /* 统一重置弹框的样式 */
- .el-dialog {
-  margin-top: 80px;
+/* 统一重置弹框的样式 */
+//  浅色白色系列
+.light {
+  &.el-dialog {
+    margin-top: 80px;
+  }
+  .el-dialog__header {
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  }
 }
-.el-dialog__header {
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+//  深色蓝色系列
+.blue {
+  &.el-dialog {
+    margin-top: 80px;
+    background: #142334;
+    color: #ffffff;
+  }
+  .el-dialog__header {
+    box-shadow: 0 2px 3px -3px #25f3e6;
+    .el-dialog__title{
+      color: #fff;
+    }
+    .el-dialog__headerbtn .el-dialog__close {
+      color: #ddd;
+    }
+  }
 }
 
 // 提示的取消样式
@@ -40,11 +60,10 @@
   margin-left: 10px !important;
 }
 
-
 .el-menu-item-group__title {
   padding: 0;
 }
 
-.el-form-item__error{
+.el-form-item__error {
   display: none !important;
 }
