@@ -24,8 +24,9 @@ export default {
   .realtimeItem {
     padding: 8px 15px;
     border-bottom: solid 1px #2c58a6;
-    color: #c5af8b;
+    color: #f2c684;
     font-size: 14px;
+    cursor: pointer;
     &:first-of-type {
       padding: 2px 15px 8px;
     }
@@ -49,6 +50,9 @@ export default {
       .descri {
         width:calc(70% - 10px);
       }
+    }
+    &:hover {
+      color: #25f3e6;
     }
   }
 }

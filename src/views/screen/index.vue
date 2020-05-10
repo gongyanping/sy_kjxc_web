@@ -40,7 +40,7 @@
                 <svg-icon :icon-class="item.icon" />
               </div>
               <div class="staitem-content">
-                <div class="staitem-name">{{ item.title }}</div>
+                <div :class="['staitem-name', 'staitem' + index]">{{ item.title }}</div>
                 <count-to class="staitem-num" :startVal="0" :endVal="item.value" :duration="2000" />
               </div>
             </li>
@@ -48,10 +48,12 @@
         </comm-box>
         <baidu-map
           class="map"
-          :center="center"
+          :center="cityName"
           :zoom="zoom"
           :scroll-wheel-zoom="true"
+          :continuous-zoom="true"
           :mapStyle="mapStyle"
+          @ready="handler"
         ></baidu-map>
       </el-main>
       <el-aside class="rightWrap">

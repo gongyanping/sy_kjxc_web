@@ -26,6 +26,7 @@ export default {
     border-bottom: solid 1px #2c58a6;
     color: #eee;
     font-size: 14px;
+    cursor: pointer;
     &:first-of-type {
       padding: 2px 15px 8px;
     }
@@ -36,6 +37,9 @@ export default {
     }
     .bot {
       margin-top: 5px;
+    }
+    &:hover {
+      color: #25f3e6;
     }
   }
 }

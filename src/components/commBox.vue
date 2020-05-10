@@ -103,6 +103,9 @@ export default {
   .flex-center();
   padding: 0 10px;
   cursor: pointer;
+  &:hover {
+    color: #fff;
+  }
 }
 
 .content_wrap {
@@ -113,7 +116,7 @@ export default {
 
 // 颜色
 .orange {
-  color: #fda502;
-  text-shadow: 0 0 5px #fda502;
+  color: #ffa500;
+  text-shadow: 0 0 5px #fda500;
 }
 </style>

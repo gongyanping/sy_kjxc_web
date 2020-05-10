@@ -18,15 +18,18 @@ export default {
 .dutyleaderList {
   .dutyItem {
     padding: 8px 15px;
-    color: #25f3e6;
     border-bottom: solid 1px #2c58a6;
     color: #eee;
     font-size: 14px;
+    cursor: pointer;
     &:first-of-type {
       padding: 2px 15px 8px;
     }
     .person{
         margin: 0 8px;
+    }
+    &:hover {
+      color: #25f3e6;
     }
   }
 }
