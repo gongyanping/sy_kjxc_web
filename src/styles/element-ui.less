@@ -1,6 +1,6 @@
 @import "./variables.less";
-// table样式覆盖
-.el-table {
+/* table样式覆盖 */
+.light.el-table {
   color: #333333;
 
   thead tr th {
@@ -26,6 +26,38 @@
   justify-content: center;
 }
 
+// 深色蓝色系列
+.blueTable.el-table {
+  color: #ffffff;
+  th {
+    color: #b6b7ba;
+    background: #081a33;
+    text-align: center;
+  }
+  td {
+    background: #0e2039;
+  }
+  tr:hover > td {
+    background: #0a2447;
+  }
+  td, th.is-leaf {
+    border-bottom: 0.01rem solid #909399;
+  }
+  &.el-table--border td, &.el-table--border th{
+    border-right: 0.01rem solid #909399;
+  }
+  &.el-table--border, &.el-table--group {
+    border: 0.01rem solid #909399;
+    border-bottom: none;
+  }
+  &.el-table--border::after, &.el-table--group::after {
+    width: 0;
+  }
+  &::before {
+    height: 0;
+  }
+}
+
 /* 统一重置弹框的样式 */
 //  浅色白色系列
 .light {
@@ -40,17 +72,21 @@
 .blue {
   &.el-dialog {
     margin-top: 80px;
-    background: #142334;
+    background: #0e2039;
     color: #ffffff;
+    min-height: 400px;
   }
   .el-dialog__header {
-    box-shadow: 0 2px 3px -3px #25f3e6;
-    .el-dialog__title{
+    box-shadow: 0 2px 3px -3px #ccc;
+    .el-dialog__title {
       color: #fff;
     }
     .el-dialog__headerbtn .el-dialog__close {
       color: #ddd;
     }
+  }
+  .el-dialog__body {
+    padding: 20px 20px 40px;
   }
 }
 

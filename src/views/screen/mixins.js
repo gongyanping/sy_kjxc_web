@@ -13,22 +13,22 @@ const basicScreen = {
     const headStaData = [{
       icon: 'component', // 图标
       title: '当日警情数', // 名称
-      value: 1000 // 数值
+      value: 100 // 数值
     },
     {
       icon: 'dashboard',
       title: '平均处警时长',
-      value: 1980
+      value: 198
     },
     {
       icon: 'chart',
-      title: '巡逻处警通报',
-      value: 2833
+      title: '未打卡数据',
+      value: 283
     },
     {
       icon: 'example',
-      title: '考核评比',
-      value: 2345
+      title: '数据考核',
+      value: 234
     }]
     return {
       headStaData: headStaData, // 中间顶部的统计数据
@@ -40,7 +40,7 @@ const basicScreen = {
       mapStyle: { // 地图自定义样式
         styleJson: customMapConfig
       },
-      PolygonList: [], // 多边形覆盖物数组
+      PolygonList: {}, // 多边形覆盖物对象
       platformList: [{
         parentName: '北塔分局',
         deptName: '龙山路1号平台',

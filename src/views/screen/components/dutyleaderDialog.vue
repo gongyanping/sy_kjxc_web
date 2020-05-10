@@ -1,9 +1,19 @@
 <template>
-  <el-dialog title="大队值班领导" :visible.sync="visible" @closed="onClosed" custom-class="blue">
-    <el-table :data="gridData">
-      <el-table-column property="date" label="日期" width="150"></el-table-column>
-      <el-table-column property="name" label="姓名" width="200"></el-table-column>
-      <el-table-column property="address" label="地址"></el-table-column>
+  <el-dialog title="大队值班领导" :visible.sync="visible" @closed="onClosed" width="60%" custom-class="blue">
+    <el-table :data="gridData" border class="blueTable" style="100%">
+      <el-table-column prop="name" label="姓名"  min-width="60"/>
+      <el-table-column prop="tel" label="电话" min-width="60" />
+      <el-table-column prop="platformparent" label="照片" min-width="60" />
+      <el-table-column prop="num1" label="本月未打卡数" align="center" min-width="60" />
+      <el-table-column prop="num2" label="上月未打卡数" align="center" min-width="60" />
+      <el-table-column label="操作" align="center" min-width="120">
+      <template slot-scope="scope">
+        <el-button @click="handleClick(scope.row)" type="text" size="small">打卡记录</el-button>
+        <el-button type="text" size="small">巡逻任务</el-button>
+        <el-button type="text" size="small">地图轨迹</el-button>
+        <el-button type="text" size="small">视频</el-button>
+      </template>
+    </el-table-column>
     </el-table>
   </el-dialog>
 </template>
@@ -22,24 +32,36 @@ export default {
       visible: false, // 弹出框可见性
       gridData: [
         {
-          date: '2016-05-02',
           name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
+          tel: '13551070745',
+          platformparent: '上海市普陀',
+          num1: '213',
+          num2: 213
         },
         {
-          date: '2016-05-04',
           name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-01',
+          tel: '13551070745',
+          platformparent: '上海市普陀',
+          num1: '213',
+          num2: 213
+        }, {
           name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-03',
+          tel: '13551070745',
+          platformparent: '上海市普陀',
+          num1: '213',
+          num2: 213
+        }, {
           name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
+          tel: '13551070745',
+          platformparent: '上海市普陀',
+          num1: '213',
+          num2: 213
+        }, {
+          name: '王小虎',
+          tel: '13551070745',
+          platformparent: '上海市普陀',
+          num1: '213',
+          num2: 213
         }
       ]
     };
@@ -48,6 +70,9 @@ export default {
     onClosed () {
       this.visible = false;
       this.$emit('onDutyleaderClose')
+    },
+    handleClick () {
+
     }
   }
 };
