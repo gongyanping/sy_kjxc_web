@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 18:20:13
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-08 18:26:45
+ * @LastEditTime: 2020-05-11 21:49:42
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
@@ -41,57 +41,7 @@ const basicScreen = {
         styleJson: customMapConfig
       },
       PolygonList: {}, // 多边形覆盖物对象
-      platformList: [{
-        parentName: '北塔分局',
-        deptName: '龙山路1号平台',
-        deptCount: 29,
-        leader: '郭小慧'
-      }, {
-        parentName: '北塔分局',
-        deptName: '龙山路1号平台',
-        deptCount: 29,
-        leader: '郭小慧'
-      }, {
-        parentName: '北塔分局',
-        deptName: '龙山路1号平台',
-        deptCount: 29,
-        leader: '郭小慧'
-      }, {
-        parentName: '北塔分局',
-        deptName: '龙山路1号平台',
-        deptCount: 29,
-        leader: '郭小慧'
-      }, {
-        parentName: '北塔分局',
-        deptName: '龙山路1号平台',
-        deptCount: 29,
-        leader: '郭小慧'
-      }, {
-        parentName: '北塔分局',
-        deptName: '龙山路1号平台',
-        deptCount: 29,
-        leader: '郭小慧'
-      }, {
-        parentName: '北塔分局',
-        deptName: '龙山路1号平台',
-        deptCount: 29,
-        leader: '郭小慧'
-      }, {
-        parentName: '北塔分局',
-        deptName: '龙山路1号平台',
-        deptCount: 29,
-        leader: '郭小慧'
-      }, {
-        parentName: '北塔分局',
-        deptName: '龙山路1号平台',
-        deptCount: 29,
-        leader: '郭小慧'
-      }, {
-        parentName: '北塔分局',
-        deptName: '龙山路1号平台',
-        deptCount: 29,
-        leader: '郭小慧'
-      }], // 快警平台信息
+      platformList: [], // 快警平台信息
       carnavData: [{ name: '全部', value: 0 },
         { name: '汽车', value: 1 },
         { name: '摩托', value: 2 }], // 巡检车辆的导航
@@ -170,6 +120,9 @@ const basicScreen = {
         car: '湘E33124',
         status: '行驶中'
       }], // 巡检车辆
+      platformId: '', // 当前平台id
+      platformTitle: '', // 当前平台名称
+      policeVisible: false, // 快警-弹出框可见性
       dutyleaderVisible: false // 大队值班领导-弹出框可见性
     }
   },
@@ -227,6 +180,36 @@ const basicScreen = {
      */
     onDutyleaderClose () {
       this.dutyleaderVisible = false;
+    },
+    /**
+     * 获取快警平台信息
+     */
+    findPlatform () {
+      this.$api.screen
+        .findPlatform()
+        .then(res => {
+          if (res.data.code === 0) {
+            this.platformList = res.data.data;
+          }
+        })
+    },
+    /**
+     * 打开快警平台弹出框
+     * @param {String} row 平台数据
+     */
+    onPoliceOpen (row) {
+      const { id, parentName, name } = row;
+      this.policeVisible = true;
+      this.flatformId = id;
+      this.platformTitle = parentName + '-' + name;
+    },
+    /**
+     * 关闭快警平台弹出框
+     */
+    onPoliceClose () {
+      this.policeVisible = false;
+      this.flatformId = '';
+      this.platformTitle = '';
     }
   }
 }

@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 12:44:26
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-08 19:05:40
+ * @LastEditTime: 2020-05-11 21:48:56
  * @Description: 大屏
  * @FilePath: \sy_kjxc_web\src\views\screen\index.vue
  -->
@@ -11,9 +11,9 @@
     <el-header class="headerWrap">邵阳快警监控大屏</el-header>
     <el-container class="mainContainer">
       <el-aside class="leftWrap">
-        <comm-box :title="'快警平台信息'" :customStyle="'lefttopBox'" @onTitleClick="onTitleClick">
+        <comm-box :title="'快警平台信息(' + this.platformList.length + ')'" :customStyle="'lefttopBox'" @onTitleClick="onTitleClick">
           <el-scrollbar slot="content" class="scrollBar">
-            <police-list :data="platformList" />
+            <police-list :data="platformList" @onPoliceOpen="onPoliceOpen" />
           </el-scrollbar>
         </comm-box>
         <comm-box :title="'巡检车辆'" :customStyle="'leftbotBox'" @onTitleClick="onTitleClick">
@@ -69,7 +69,8 @@
         </comm-box>
       </el-aside>
     </el-container>
-    <dutyleaderDialog :dutyleaderVisible="dutyleaderVisible" @onDutyleaderClose="onDutyleaderClose" />
+    <police-dialog :platformId="platformId" :title="platformTitle" :policeVisible="policeVisible" @onPoliceClose="onPoliceClose" />
+    <dutyleader-dialog :dutyleaderVisible="dutyleaderVisible" @onDutyleaderClose="onDutyleaderClose" />
   </el-container>
 </template>
 
@@ -80,6 +81,7 @@ import policeList from './components/policeList'; // 快警平台信息
 import patrolcarList from './components/patrolcarList'; // 巡检车辆
 import dutyleaderList from './components/dutyleaderList'; // 大队值班领导--列表
 import realtimealertList from './components/realtimealertList'; // 实时警情
+import policeDialog from './components/policeDialog'; // 快警平台信息--弹出框
 import dutyleaderDialog from './components/dutyleaderDialog'; // 大队值班领导--弹出框
 import basicScreen from './mixins.js';
 export default {
@@ -91,9 +93,13 @@ export default {
     patrolcarList,
     dutyleaderList,
     realtimealertList,
+    policeDialog,
     dutyleaderDialog
   },
-  mixins: [basicScreen]
+  mixins: [basicScreen],
+  created () {
+    this.findPlatform(); // 获取快警平台信息
+  }
 };
 </script>
 

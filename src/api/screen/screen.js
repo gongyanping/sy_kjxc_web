@@ -9,9 +9,9 @@
 
 import request from '../request.js'
 const screen = {
-  // 获取
-  getPoliceCarInit (params) {
-    return request.get('/api/getPoliceCarInit', { params })
+  // 获取快警平台信息
+  findPlatform () {
+    return request.get('/platformUser/findPlatform')
   }
 }
 export default screen
