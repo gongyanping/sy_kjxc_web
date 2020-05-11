@@ -1,13 +1,21 @@
+<!--
+ * @Author: gyp
+ * @Date: 2020-05-11 09:13:28
+ * @LastEditors: gyp
+ * @LastEditTime: 2020-05-11 10:01:02
+ * @Description: 实时警情列表
+ * @FilePath: \sy_kjxc_web\src\views\screen\components\realtimealertList.vue
+ -->
 <template>
   <ul class="realtimealertList">
     <li class="realtimeItem" v-for="(item, index) in data" :key="index">
       <div class="top">
-        <div class="palt">{{item.palt}}</div>
-        <div class="time">{{item.time}}</div>
+        <div class="palt">{{ item.palt }}</div>
+        <div class="time">{{ item.time }}</div>
       </div>
       <div class="bot">
-        <div class="level">{{item.level}}</div>
-        <div class="descri">{{item.descri}}</div>
+        <div class="level">{{ item.level }}</div>
+        <div class="descri">{{ item.descri }}</div>
       </div>
     </li>
   </ul>
@@ -48,7 +56,7 @@ export default {
         margin-right: 10px;
       }
       .descri {
-        width:calc(70% - 10px);
+        width: calc(70% - 10px);
       }
     }
     &:hover {

@@ -1,13 +1,21 @@
+<!--
+ * @Author: gyp
+ * @Date: 2020-05-09 08:56:33
+ * @LastEditors: gyp
+ * @LastEditTime: 2020-05-11 10:01:51
+ * @Description: 快警平台信息列表
+ * @FilePath: \sy_kjxc_web\src\views\screen\components\policeList.vue
+ -->
 <template>
   <ul class="policeList">
     <li class="policeItem" v-for="(item, index) in data" :key="index">
       <div class="top">
-        <div>{{item.parentName}}</div>
-        <div>{{item.deptName}}</div>
+        <div>{{ item.parentName }}</div>
+        <div>{{ item.deptName }}</div>
       </div>
       <div class="bot">
-        <div>人数: {{item.deptCount}}</div>
-        <div>平台长:{{item.leader}}</div>
+        <div>人数: {{ item.deptCount }}</div>
+        <div>平台长:{{ item.leader }}</div>
       </div>
     </li>
   </ul>

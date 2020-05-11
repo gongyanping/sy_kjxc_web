@@ -1,6 +1,15 @@
+<!--
+ * @Author: gyp
+ * @Date: 2020-05-11 09:13:28
+ * @LastEditors: gyp
+ * @LastEditTime: 2020-05-11 10:09:37
+ * @Description: 大队值班领导列表弹出框
+ * @FilePath: \sy_kjxc_web\src\views\screen\components\dutyleaderDialog.vue
+ -->
 <template>
   <el-dialog title="大队值班领导" :visible.sync="visible" @closed="onClosed" width="60%" custom-class="blue">
-    <el-table :data="gridData" border class="blueTable" style="100%">
+    <el-table :data="tableData" border class="blueTable" style="100%">
+      <el-table-column type="index" label="序号" width="50" />
       <el-table-column prop="name" label="姓名"  min-width="60"/>
       <el-table-column prop="tel" label="电话" min-width="60" />
       <el-table-column prop="platformparent" label="照片" min-width="60" />
@@ -30,7 +39,7 @@ export default {
   data () {
     return {
       visible: false, // 弹出框可见性
-      gridData: [
+      tableData: [
         {
           name: '王小虎',
           tel: '13551070745',
@@ -63,14 +72,16 @@ export default {
           num1: '213',
           num2: 213
         }
-      ]
+      ] // 表格数据
     };
   },
   methods: {
+    // 关闭弹出框
     onClosed () {
       this.visible = false;
       this.$emit('onDutyleaderClose')
     },
+    // 每行点击操作
     handleClick () {
 
     }
