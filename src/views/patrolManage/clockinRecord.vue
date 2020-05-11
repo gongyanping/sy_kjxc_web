@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-09 18:44:49
+ * @LastEditTime: 2020-05-11 09:28:32
  * @Description: 打卡记录
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\clockinRecord.vue
  -->
@@ -10,14 +10,14 @@
 <template>
   <div class="patrolmainWrap">
     <div class="patrolHeader">
-      <el-form :inline="true" ref="searchForm" :model="searchForm" label-width="140px">
+      <el-form :inline="true" ref="searchForm" :model="searchForm" label-width="100px">
         <el-form-item label="关键字" prop="userName">
           <el-input
             v-model="searchForm.userName"
             size="small"
             placeholder="请输入用户名"
             clearable
-            style="width: 2rem"
+            style="width: 1.8rem"
           ></el-input>
         </el-form-item>
         <!-- <el-form-item label="所属局">
@@ -37,7 +37,7 @@
           </el-select>
         </el-form-item>-->
         <el-form-item label="所属平台">
-          <el-select v-model="searchForm.platformId" placeholder="请选择所属平台" size="small" clearable>
+          <el-select v-model="searchForm.platformId" placeholder="请选择所属平台" size="small" clearable style="width: 1.8rem">
             <el-option
               v-for="item in platformOptions3"
               :key="item.id"
@@ -47,7 +47,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="打卡状态">
-          <el-select v-model="searchForm.state" placeholder="请选择打卡状态" size="small" clearable>
+          <el-select v-model="searchForm.state" placeholder="请选择打卡状态" size="small" clearable style="width: 1.8rem">
             <el-option
               v-for="item in punchclockList"
               :key="item.id"
@@ -57,7 +57,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="时间">
-          <el-col :span="11">
+          <el-col :span="10">
             <el-date-picker
               type="datetime"
               placeholder="开始时间"
@@ -68,8 +68,8 @@
               clearable
             ></el-date-picker>
           </el-col>
-          <el-col class="line" :span="2" style="text-align: center;">-</el-col>
-          <el-col :span="11">
+          <el-col class="line" :span="1" style="text-align: center;">-</el-col>
+          <el-col :span="10">
             <el-date-picker
               type="datetime"
               placeholder="结束时间"
@@ -230,7 +230,7 @@ export default {
   created () {
     let userName = GetQueryString('userName'); // 从其他入口传进来
     if (userName) {
-      this.searchForm.userName = decodeURI(userName);
+      this.searchForm.userName = decodeURI(decodeURI(userName));
     }
     this.initPlatList(); // 下拉数据获取
   },
