@@ -10,12 +10,7 @@
 <template>
   <div class="patrolmainWrap">
     <div class="patrolHeader">
-      <el-form
-        :inline="true"
-        ref="searchForm"
-        :model="searchForm"
-        label-width="140px"
-      >
+      <el-form :inline="true" ref="searchForm" :model="searchForm" label-width="140px">
         <el-form-item label="关键字" prop="userName">
           <el-input
             v-model="searchForm.userName"
@@ -48,7 +43,17 @@
               :key="item.id"
               :label="item.name"
               :value="item.id"
-            ></el-option>
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="打卡状态">
+          <el-select v-model="searchForm.state" placeholder="请选择打卡状态" size="small" clearable>
+            <el-option
+              v-for="item in punchclockList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="时间">
@@ -103,11 +108,11 @@
             @click="onMarkerClick(marker)"
             :icon="{url: marker.icon, size: {width: 32, height:32}}"
           >
-            <bm-label
+            <!-- <bm-label
               :content="marker.content"
               :labelStyle="{backgroundColor: 'white', color: '#333', fontSize : '12px', zIndex: '5'}"
               :offset="{width: -20, height: -48}"
-            />
+            />-->
           </bm-marker>
         </bml-marker-clusterer>
         <!-- 轨迹线和轨迹运动 -->
@@ -119,13 +124,13 @@
         />
         <bm-info-window
           :position="markerCoord"
-          :title="infoWindow.name"
+          :title="'打&ensp;卡&ensp;人：' + infoWindow.name"
           :show="infoWindow.show"
           @close="infoWindowClose"
           @open="infoWindowOpen"
         >
-          <p v-text="infoWindow.addr"></p>
-          <p v-text="infoWindow.time"></p>
+          <p>所属平台：{{infoWindow.addr}}</p>
+          <p>打卡时间：{{infoWindow.time}}</p>
         </bm-info-window>
       </baidu-map>
       <div class="listWrap">
@@ -138,6 +143,7 @@
         <clockin-list
           v-if="tabIndex === 2"
           :recordList="recordList"
+          :punchclockList="punchclockList"
           @handleLocate="handleLocate"
           @setTabIndex="setTabIndex"
         />
@@ -170,6 +176,7 @@ export default {
       searchForm: {
         userName: '',
         platformId: '',
+        state: '',
         startTime: '',
         endTime: ''
       },
@@ -178,7 +185,8 @@ export default {
       markers: [],
       BMap: null,
       markerCoord: null, // 弹出框坐标
-      infoWindow: { // 弹出框信息
+      infoWindow: {
+        // 弹出框信息
         show: false,
         name: '',
         addr: '',
@@ -190,18 +198,43 @@ export default {
       trackMarker: null, // 轨迹点
       polylinePaths: [], // 轨迹线
       isTracking: false,
-      recordList: [] // 某个用户的打卡记录
+      recordList: [], // 某个用户的打卡记录
+      punchclockList: [
+        {
+          id: '0',
+          name: '未打卡'
+        },
+        {
+          id: '1',
+          name: '已打卡'
+        },
+        {
+          id: '2',
+          name: '出警中'
+        },
+        {
+          id: '3',
+          name: '请假'
+        },
+        {
+          id: '4',
+          name: '打卡申诉处理中'
+        },
+        {
+          id: '5',
+          name: '打卡申诉通过'
+        }
+      ]
     };
   },
   created () {
     let userName = GetQueryString('userName'); // 从其他入口传进来
     if (userName) {
-      this.searchForm.userName = userName;
+      this.searchForm.userName = decodeURI(userName);
     }
     this.initPlatList(); // 下拉数据获取
   },
-  beforeDestroy () {
-  },
+  beforeDestroy () {},
   methods: {
     handler ({ BMap }) {
       this.BMap = BMap;
@@ -237,21 +270,16 @@ export default {
     },
     gpsList () {
       // 真实数据
-      let pp = {
-        userId: 'b2014ba2d42348dcbe106943ceaf76f3',
-        date: '2020-04-19'
-      }
-      // 多数据
-      // let mm = {
-      //   userId: "asdfsdfasdf",
-      //   date: "2020-04-19"
-      // };
-      this.isTracking = true;
-      this.$api.clockinRecord
-        .gpsList(
-          this.$qs.stringify(pp)
-        )
-        .then(res => {
+      const { userName, startTime, endTime } = this.searchForm;
+      if (userName && startTime && endTime) {
+        let userId = this.userList.find(item => item.userName === userName).userId;
+        let pp = {
+          userId: userId,
+          startTime,
+          endTime
+        };
+        this.isTracking = true;
+        this.$api.clockinRecord.gpsList(this.$qs.stringify(pp)).then(res => {
           if (res.data.data.list && res.data.data.list.length) {
             this.polylinePaths = res.data.data.list.map(item => {
               return {
@@ -264,6 +292,9 @@ export default {
             this.run();
           }
         });
+      } else {
+        this.$message.error('必须输入用户和起始时间');
+      }
     },
     initPlatList () {
       this.$api.clockinRecord.platList({ level: 2 }).then(res => {
@@ -326,10 +357,9 @@ export default {
                   '.png'),
                 content:
                   '<div class="markerLabel"><p><b>打卡人：</b>' +
-                  item.userName +
-                  '</p><p><b>时间：</b>' +
-                  item.clocktime +
-                  '</p></div>'
+                    item.userName +
+                    '</p><p><b>时间：</b>' +
+                    item.clocktime || '' + '</p></div>'
               };
               return obj2;
             });
@@ -364,7 +394,7 @@ export default {
     handleLocate (lng, lat) {
       if (lng && lat) {
         this.center = { lng, lat };
-        this.zoom = 18;
+        this.zoom = 19;
       } else {
         this.$message.info('该坐标位置不存在');
       }
@@ -380,9 +410,13 @@ export default {
       this.searchForm = {
         userName: '',
         platformId: '',
+        state: '',
         startTime: '',
         endTime: ''
       };
+      this.isTracking = false;
+      this.polylinePaths = [];
+      this.trackMarker = null;
       this.getList();
     },
     // 查看某个用户的打卡记录

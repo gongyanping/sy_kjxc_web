@@ -362,7 +362,7 @@ export default {
     },
     getAllFingerprint () {
       this.$api.patrolPoint.getAllFingerprint().then(res => {
-        this.equOptions = res.data.data;
+        this.equOptions = res.data.data.filter(item => item.equName);
       });
     }
   }

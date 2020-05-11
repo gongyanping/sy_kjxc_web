@@ -6,37 +6,41 @@
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
-import customMapConfig from '@/assets/json/custom_map_config1.json';
+import customMapConfig from '@/assets/json/custom_map_config.json';
 const basicScreen = {
   data () {
     // 中间顶部的统计数据
     const headStaData = [{
       icon: 'component', // 图标
       title: '当日警情数', // 名称
-      value: 1000 // 数值
+      value: 100 // 数值
     },
     {
       icon: 'dashboard',
       title: '平均处警时长',
-      value: 1980
+      value: 198
     },
     {
       icon: 'chart',
-      title: '巡逻处警通报',
-      value: 2833
+      title: '未打卡数据',
+      value: 283
     },
     {
       icon: 'example',
-      title: '考核评比',
-      value: 2345
+      title: '数据考核',
+      value: 234
     }]
     return {
       headStaData: headStaData, // 中间顶部的统计数据
+      BMap: null, // 百度地图类
+      map: null, // 百度地图实例
+      cityName: '邵阳', // 地图城市
       center: { lng: 111.28, lat: 27.14 }, // 地图中心点
-      zoom: 12, // 地图初始化缩放级别
+      zoom: 14, // 地图初始化缩放级别
       mapStyle: { // 地图自定义样式
         styleJson: customMapConfig
       },
+      PolygonList: {}, // 多边形覆盖物对象
       platformList: [{
         parentName: '北塔分局',
         deptName: '龙山路1号平台',
@@ -88,11 +92,9 @@ const basicScreen = {
         deptCount: 29,
         leader: '郭小慧'
       }], // 快警平台信息
-      carnavData: [{
-        name: '全部', value: 0
-      },
-      { name: '汽车', value: 1 },
-      { name: '摩托', value: 2 }], // 巡检车辆的导航
+      carnavData: [{ name: '全部', value: 0 },
+        { name: '汽车', value: 1 },
+        { name: '摩托', value: 2 }], // 巡检车辆的导航
       curnavIndex: 0, // 当前选中的巡检车辆的索引,
       dutyLeaderList: [{
         name: '汽车北站2号平台',
@@ -125,7 +127,7 @@ const basicScreen = {
       }], // 大队值班领导
       realtimeAlertList: [{
         palt: '北塔汽车北站2号平台',
-        descri: '其朋友在邵阳大饭店被人殴打',
+        descri: '其朋友在邵阳大饭店被人殴打其朋友在邵阳大饭店被人殴打其朋友在邵阳大饭店被人殴打其朋友在邵阳大饭店被人殴打其朋友在邵阳大饭店被人殴打',
         time: '08:13:04',
         level: '其它警情'
       }, {
@@ -163,7 +165,68 @@ const basicScreen = {
         descri: '报警人称老人在城南公园走失',
         time: '07:11:12',
         level: '群众求助'
-      }] // 实时警情
+      }], // 实时警情
+      patrolcarList: [{
+        car: '湘E33124',
+        status: '行驶中'
+      }], // 巡检车辆
+      dutyleaderVisible: false // 大队值班领导-弹出框可见性
+    }
+  },
+  methods: {
+    // 地图组件渲染完毕时触发
+    handler ({ BMap, map }) {
+      this.BMap = BMap;
+      this.map = map;
+      this.mapInit();
+    },
+    /**
+     * 地图初始化
+     */
+    mapInit () {
+      const map = this.map;
+      console.log(map)
+      // 设置地图的边界
+      let bdary = new BMap.Boundary()
+      console.log(bdary);
+      bdary.get(this.cityName, function (rs) {
+        map.clearOverlays()
+        let EN_JW = '180, 90;' // 东北角
+        let NW_JW = '-180,  90;' // 西北角
+        let WS_JW = '-180, -90;' // 西南角
+        let SE_JW = '180, -90;'; // 东南角
+        let plyOut = new BMap.Polygon(rs.boundaries[0] + SE_JW + SE_JW + WS_JW + NW_JW + EN_JW + SE_JW, {
+          strokeColor: 'none', fillOpacity: 1, strokeOpacity: 0.5, fillColor: '#0C1C31'
+        }) // 目标地区外
+        let plyInner = new BMap.Polygon(rs.boundaries[0], {
+          strokeWeight: 2, strokeColor: '#5ab1ef', fillColor: ''
+        }) // 目标地区
+        map.addOverlay(plyOut) // 添加覆盖物
+        map.addOverlay(plyInner) // 添加覆盖物
+        plyOut.disableMassClear(); // 禁止移除
+        plyInner.disableMassClear(); // 禁止移除
+        this.PolygonList['mapOut'] = plyOut; // 添加到覆盖物数组
+        this.PolygonList['plyInner'] = plyInner; // 添加到覆盖物数组
+      })
+    },
+    /**
+     * 点击各个板块的标题，查看更多
+     * @param {String} name 标题
+     */
+    onTitleClick (name) {
+      switch (name) {
+        case '大队值班领导':
+          this.dutyleaderVisible = true;
+          break;
+        default:
+          break;
+      }
+    },
+    /**
+     * 关闭大队值班领导的弹出框
+     */
+    onDutyleaderClose () {
+      this.dutyleaderVisible = false;
     }
   }
 }

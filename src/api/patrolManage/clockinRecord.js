@@ -24,7 +24,7 @@ const clockinRecord = {
     return request.get('/patrol/record/selectPicByDetailsId', { params })
   },
   gpsList (params) {
-    return request.post('/gpsDetails/list', params);
+    return request.post('/gpsDetails/list2', params);
   }
 }
 export default clockinRecord

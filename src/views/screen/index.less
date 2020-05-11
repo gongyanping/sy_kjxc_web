@@ -21,13 +21,14 @@
 
   .mainContainer {
     padding: 0 10px;
+    height: 100%;
   }
 }
 
 // 左侧容器
 .leftWrap {
   width: 350px !important;
-  height: calc(100% - 10px);
+  height: calc(100% - 70px);
   .lefttopBox {
     width: 100%;
     height: 55%;
@@ -65,7 +66,7 @@
 // 右侧容器
 .rightWrap {
   width: 350px !important;
-  height: calc(100% - 10px);
+  height: calc(100% - 70px);
   .righttopBox {
     width: 100%;
     height: 45%;
@@ -94,6 +95,11 @@
       margin-top: 7px;
       .commBorder();
       border-radius: 5px;
+      cursor: pointer;
+      &:hover{
+        box-shadow: 0 0 3px #25f3e6;
+        text-shadow: 0 0 3px #fff;
+      }
       .staitem-icon {
         font-size: 45px;
         color: rgb(37, 243, 230);
@@ -111,8 +117,19 @@
         justify-content: center;
       }
       .staitem-name {
-        font-size: 14px;
-        color: rgb(37, 243, 230);
+        font-size: 16px;
+        &.staitem0{
+          color: #F56C6C;
+        }
+        &.staitem1{
+          color: #67C23A;
+        }
+        &.staitem2{
+          color: #E6A23C;
+        }
+        &.staitem3{
+          color: #409EFF;
+        }
       }
       .staitem-num {
         font-size: 30px;

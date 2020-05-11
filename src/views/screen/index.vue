@@ -11,30 +11,36 @@
     <el-header class="headerWrap">邵阳快警监控大屏</el-header>
     <el-container class="mainContainer">
       <el-aside class="leftWrap">
-        <comm-box :title="'快警平台信息'" :customStyle="'lefttopBox'">
-            <el-scrollbar slot="content" class="scrollBar">
-              <police-list :data="platformList" />
-            </el-scrollbar>
+        <comm-box :title="'快警平台信息'" :customStyle="'lefttopBox'" @onTitleClick="onTitleClick">
+          <el-scrollbar slot="content" class="scrollBar">
+            <police-list :data="platformList" />
+          </el-scrollbar>
         </comm-box>
-        <comm-box :title="'巡检车辆'" :customStyle="'leftbotBox'">
+        <comm-box :title="'巡检车辆'" :customStyle="'leftbotBox'" @onTitleClick="onTitleClick">
           <div slot="content" class="whAuto">
-            <ul class="carNav">
-              <li :class="{'active': index === curnavIndex}" v-for="(item, index) in carnavData" :key="index" @click="curnavIndex = item.value">
-                {{ item.name }}
-              </li>
-            </ul>
+            <el-scrollbar class="scrollBar">
+              <ul class="carNav">
+                <li
+                  :class="{'active': index === curnavIndex}"
+                  v-for="(item, index) in carnavData"
+                  :key="index"
+                  @click="curnavIndex = item.value"
+                >{{ item.name }}</li>
+              </ul>
+              <patrolcar-list :data="patrolcarList" />
+            </el-scrollbar>
           </div>
         </comm-box>
       </el-aside>
       <el-main>
-        <comm-box :customStyle="'headStatistic'">
+        <comm-box :customStyle="'headStatistic'" @onTitleClick="onTitleClick">
           <ul slot="content" class="headstaWrap">
             <li class="staItem" v-for="(item, index) in headStaData" :key="index">
               <div class="staitem-icon">
                 <svg-icon :icon-class="item.icon" />
               </div>
               <div class="staitem-content">
-                <div class="staitem-name">{{ item.title }}</div>
+                <div :class="['staitem-name', 'staitem' + index]">{{ item.title }}</div>
                 <count-to class="staitem-num" :startVal="0" :endVal="item.value" :duration="2000" />
               </div>
             </li>
@@ -42,21 +48,28 @@
         </comm-box>
         <baidu-map
           class="map"
-          :center="center"
+          :center="cityName"
           :zoom="zoom"
           :scroll-wheel-zoom="true"
+          :continuous-zoom="true"
           :mapStyle="mapStyle"
+          @ready="handler"
         ></baidu-map>
       </el-main>
       <el-aside class="rightWrap">
-        <comm-box :title="'大队值班领导'" :customStyle="'righttopBox'">
-          <div slot="content"></div>
+        <comm-box :title="'大队值班领导'" :customStyle="'righttopBox'" @onTitleClick="onTitleClick">
+          <el-scrollbar slot="content" class="scrollBar">
+            <dutyleader-list :data="dutyLeaderList" />
+          </el-scrollbar>
         </comm-box>
         <comm-box :title="'实时警情'" :titleStyle="'orange'" :customStyle="'rightbotBox'">
-          <div slot="content"></div>
+          <el-scrollbar slot="content" class="scrollBar">
+            <realtimealert-list :data="realtimeAlertList" />
+          </el-scrollbar>
         </comm-box>
       </el-aside>
     </el-container>
+    <dutyleaderDialog :dutyleaderVisible="dutyleaderVisible" @onDutyleaderClose="onDutyleaderClose" />
   </el-container>
 </template>
 
@@ -64,13 +77,21 @@
 import CountTo from 'vue-count-to'; // 数字滚动
 import commBox from '@/components/commBox'; // 公用容器
 import policeList from './components/policeList'; // 快警平台信息
+import patrolcarList from './components/patrolcarList'; // 巡检车辆
+import dutyleaderList from './components/dutyleaderList'; // 大队值班领导--列表
+import realtimealertList from './components/realtimealertList'; // 实时警情
+import dutyleaderDialog from './components/dutyleaderDialog'; // 大队值班领导--弹出框
 import basicScreen from './mixins.js';
 export default {
   name: 'screen',
   components: {
     CountTo,
     commBox,
-    policeList
+    policeList,
+    patrolcarList,
+    dutyleaderList,
+    realtimealertList,
+    dutyleaderDialog
   },
   mixins: [basicScreen]
 };
@@ -86,7 +107,7 @@ export default {
 .el-scrollbar__wrap {
   overflow-x: hidden;
 }
-.scrollBar{
+.scrollBar {
   height: 100%;
 }
 </style>

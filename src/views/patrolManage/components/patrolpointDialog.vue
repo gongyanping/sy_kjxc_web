@@ -1,6 +1,6 @@
  <template>
   <div class="patrolpointDialog">
-    <el-dialog title="请选择点位类型" :visible.sync="visible" width="35%" @close="onCancelPoint">
+    <el-dialog title="请选择点位类型" :visible.sync="visible" width="35%" @close="onCancelPoint" custom-class="light">
       <el-form ref="patrolForm" :model="patrolForm" label-width="120px" :rules="rules">
         <el-form-item label="任务名称" prop="lineId">
           <el-select
