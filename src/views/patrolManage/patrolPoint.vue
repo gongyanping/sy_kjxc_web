@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-09 18:28:05
+ * @LastEditTime: 2020-05-12 20:18:45
  * @Description: 巡逻点管理
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\patrolPoint.vue
  -->
@@ -21,8 +21,12 @@
           <span v-else>确定巡逻点</span>
         </el-button>
         <el-button v-if="onProcessing" @click="handleCancelPoint" size="small">取消新增巡逻点</el-button>
-        <span class="elAlert">
-          <el-alert v-if="onProcessing" title="请先在地图上选择点位信息，再点击确定巡逻点按钮去进行巡逻点的新增" type="success" />
+        <span class="elAlert" v-if="onProcessing" v-show="alertShow">
+          <el-alert title="先在地图上选择点位，再点击确定去进行新增" type="success" @close="alertShow = false" />
+        </span>
+        <span v-if="onProcessing">
+          <el-input placeholder="可输入地址名查询地点" size="small" v-model="addrSearch" clearable style="width: 2rem;margin: 0 0.1rem" />
+          <el-button type="primary" size="small" class="bt-search" @click="searchAddr">查询</el-button>
         </span>
       </div>
       <div class="searchWrap">
@@ -45,7 +49,7 @@
             :key="item.value"
             :label="item.label"
             :value="item.value"
-          ></el-option>
+          />
         </el-select>
         <el-select
           v-model="lineId"
@@ -55,7 +59,7 @@
           style="width: 2rem; margin-left: 0.1rem"
         >
           <el-option key="uniqued0000" label="全部" value />
-          <el-option v-for="item in lineOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          <el-option v-for="item in lineOptions" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <el-button type="primary" size="small" class="bt-search" @click="getList(1)">搜索</el-button>
         <el-button @click="reset" size="small" type="primary" plain>重置</el-button>
@@ -174,7 +178,9 @@ export default {
         contents: ''
       },
       markerCoord: null,
-      BMap: null,
+      BMap: null, // 地图累
+      map: null, // 地图实例
+      local: null, // 服务类
       patrolForm: {
         id: '',
         name: '',
@@ -189,7 +195,9 @@ export default {
       lineId: '', // b0b61152d17f4ae7a5c52af5a7657d79
       taskId: '',
       lineOptions: [], // 任务名称
-      equOptions: [] // 打卡机列表
+      equOptions: [], // 打卡机列表
+      addrSearch: '', // 地图关键字搜索位置
+      alertShow: false // 新增点时提示框
     };
   },
   created () {
@@ -205,13 +213,16 @@ export default {
     this.getList();
   },
   methods: {
-    handler ({ BMap }) {
+    handler ({ BMap, map }) {
       this.BMap = BMap;
+      this.map = map;
     },
+    // 初始化地图
     mapInit () {
       this.zoom = 12;
       this.center = { lng: 111.28, lat: 27.14 };
     },
+    // 获取巡逻点列表
     getList (val1 = 1, val2) {
       if (val2) {
         this.form.pageNumber = 1;
@@ -253,10 +264,14 @@ export default {
           console.error(err);
         });
     },
+    // 新增巡逻点
     handleNew () {
       if (!this.onProcessing) {
+      // 如果没有在新增巡逻点过程中，则设为是
         this.onProcessing = true;
+        this.alertShow = true;
       } else {
+        // 在巡逻过程中
         this.curId = '';
         this.dialogVisible = true;
         if (this.taskId) {
@@ -265,10 +280,12 @@ export default {
         }
       }
     },
+    // 编辑巡逻点
     handleEdit (row) {
       this.dialogVisible = true;
       this.curId = row ? row.id : '';
     },
+    // 定位巡逻点
     handleLocate (id, lng, lat) {
       if (lng && lat) {
         this.center = { lng, lat };
@@ -285,6 +302,7 @@ export default {
         this.$message.info('该坐标位置不存在');
       }
     },
+    // 关闭巡逻点弹出框
     closeDialog () {
       this.curId = '';
       this.dialogVisible = false;
@@ -301,6 +319,7 @@ export default {
       };
       this.handleCancelPoint();
     },
+    // 地图点击事件，新增巡逻点用
     onMapClick (e) {
       const { lng, lat } = e.point;
       if (this.onProcessing) {
@@ -320,6 +339,7 @@ export default {
         });
       }
     },
+    // marker点击事件
     onMarkerClick (e) {
       const { name, lng, lat } = e;
       this.markerCoord = { lng, lat };
@@ -329,12 +349,15 @@ export default {
         contents: '坐标:' + lng + ',' + lat
       };
     },
+    // infoWindow关闭
     infoWindowClose () {
       this.infoWindow.show = false;
     },
+    // infoWindwo打开
     infoWindowOpen () {
       this.infoWindow.show = true;
     },
+    // 保存巡逻点函数
     onSavePoint (params) {
       this.$api.patrolPoint
         .saveOrUpdate(this.$qs.stringify(params))
@@ -345,25 +368,42 @@ export default {
           }
         });
     },
+    // 重置搜索的关键字
     reset () {
       this.inputName = '';
       this.typeName = '';
     },
+    // 取消新增巡逻点
     handleCancelPoint () {
       this.onProcessing = false;
       if (this.markers.length > this.markersLength) {
         this.markers.pop();
       }
+      // 清除最近一次检索的结果
+      if (this.local) {
+        if (this.local.clearResults) {
+          this.local.clearResults();
+        }
+      }
     },
+    // 获取所有的任务
     findAll () {
       this.$api.patrolPoint.findAll().then(res => {
         this.lineOptions = res.data.data;
       });
     },
+    // 获取所有的打卡机
     getAllFingerprint () {
       this.$api.patrolPoint.getAllFingerprint().then(res => {
         this.equOptions = res.data.data.filter(item => item.equName);
       });
+    },
+    // 地图上关键字搜索
+    searchAddr () {
+      this.local = new BMap.LocalSearch('邵阳市', {
+        renderOptions: { map: this.map }
+      });
+      this.local.search(this.addrSearch);
     }
   }
 };
@@ -381,9 +421,9 @@ export default {
     background: #ffffff;
     border-bottom: solid 1px #ccc;
     .elAlert {
-      width: 500px;
+      width: 324px;
       display: inline-block;
-      margin-left: 15px;
+      margin-left: 10px;
     }
     .searchWrap {
       display: flex;
@@ -412,5 +452,10 @@ export default {
 <style lang="less">
 .anchorBL {
   display: none;
+}
+.elAlert {
+  .el-alert__closebtn {
+    top: 15px;
+  }
 }
 </style>

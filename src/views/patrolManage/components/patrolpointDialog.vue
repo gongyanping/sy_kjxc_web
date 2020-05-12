@@ -56,7 +56,7 @@
           <el-time-picker format="HH:mm" value-format="HH:mm" v-model="patrolForm.time" placeholder="请选择时间点"></el-time-picker>
         </el-form-item>
         <el-form-item label="绑定指纹机" prop="equID">
-          <el-select v-model="patrolForm.equID" placeholder="请选择点位类型" clearable style="width: 100%">
+          <el-select v-model="patrolForm.equID" placeholder="请选择点位类型" clearable style="width: 100%" filterable>
             <el-option
               v-for="item in equOptions"
               :key="item.id"
