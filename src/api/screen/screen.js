@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-09 09:52:32
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-12 15:46:54
+ * @LastEditTime: 2020-05-13 11:48:40
  * @Description: 大屏接口
  * @FilePath: \sy_kjxc_web\src\api\screen\screen.js
  */
@@ -24,6 +24,14 @@ const screen = {
   // 根据分组id查询设备信息
   findEquipmentForGroupId (params) {
     return request.get('/platformUser/findEquipmentForGroupId', { params })
+  },
+  // 大队值班领导信息
+  findUserByIdentity (params) {
+    return request.get('/platformUser/findUserByIdentity', { params })
+  },
+  // 查询用户详细信息
+  findUserDetails (params) {
+    return request.get('/platformUser/findUserDetails', { params })
   }
 }
 export default screen

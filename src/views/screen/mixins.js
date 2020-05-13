@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 18:20:13
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-11 21:49:42
+ * @LastEditTime: 2020-05-13 14:07:13
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
@@ -210,6 +210,17 @@ const basicScreen = {
       this.policeVisible = false;
       this.flatformId = '';
       this.platformTitle = '';
+    },
+    /**
+     * 大队值班领导
+     */
+    findUserByIdentity () {
+      this.$api.screen.findUserByIdentity()
+        .then(res => {
+          if (res.data.code === 0) {
+            this.dutyLeaderList = res.data.data;
+          }
+        })
     }
   }
 }
