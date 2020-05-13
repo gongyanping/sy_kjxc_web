@@ -180,8 +180,8 @@ export default {
         startTime: '',
         endTime: ''
       },
-      platformOptions2: [],
-      platformOptions3: [],
+      // platformOptions2: [],
+      platformOptions3: [], // 平台
       markers: [],
       BMap: null,
       markerCoord: null, // 弹出框坐标
@@ -297,11 +297,11 @@ export default {
       }
     },
     initPlatList () {
-      this.$api.clockinRecord.platList({ level: 2 }).then(res => {
-        if (res.data.code === 0) {
-          this.platformOptions2 = res.data.data;
-        }
-      });
+      // this.$api.clockinRecord.platList({ level: 2 }).then(res => {
+      //   if (res.data.code === 0) {
+      //     this.platformOptions2 = res.data.data;
+      //   }
+      // });
       this.$api.clockinRecord.platList({ level: 3 }).then(res => {
         if (res.data.code === 0) {
           this.platformOptions3 = res.data.data;
@@ -321,8 +321,8 @@ export default {
           })
         )
         .then(res => {
-          if (res.data && res.data.rows.length) {
-            let resRows = res.data.rows;
+          if (res.data.data && res.data.data.userRecordList.length) {
+            let resRows = res.data.data.userRecordList;
             let userArr = []; // 获取用户名数组
             let userlistArr = []; // 获取用户数据数组
             resRows.map(item => {
