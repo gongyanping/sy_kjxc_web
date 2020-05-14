@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-12 20:18:45
+ * @LastEditTime: 2020-05-14 15:15:16
  * @Description: 巡逻点管理
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\patrolPoint.vue
  -->
@@ -395,7 +395,7 @@ export default {
     // 获取所有的打卡机
     getAllFingerprint () {
       this.$api.patrolPoint.getAllFingerprint().then(res => {
-        this.equOptions = res.data.data.filter(item => item.equName);
+        this.equOptions = res.data.data.filter(item => item.equCode);
       });
     },
     // 地图上关键字搜索

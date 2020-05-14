@@ -60,7 +60,7 @@
             <el-option
               v-for="item in equOptions"
               :key="item.id"
-              :label="item.equName"
+              :label="item.equCode + ' ' + item.equName"
               :value="item.id"
             ></el-option>
           </el-select>
