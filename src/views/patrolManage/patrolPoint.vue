@@ -25,7 +25,13 @@
           <el-alert title="先在地图上选择点位，再点击确定去进行新增" type="success" @close="alertShow = false" />
         </span>
         <span v-if="onProcessing">
-          <el-input placeholder="可输入地址名查询地点" size="small" v-model="addrSearch" clearable style="width: 2rem;margin: 0 0.1rem" />
+          <el-input
+            placeholder="可输入地址名查询地点"
+            size="small"
+            v-model="addrSearch"
+            clearable
+            style="width: 2rem;margin: 0 0.1rem"
+          />
           <el-button type="primary" size="small" class="bt-search" @click="searchAddr">查询</el-button>
         </span>
       </div>
@@ -56,10 +62,16 @@
           placeholder="请选择任务名称"
           size="small"
           clearable
+          filterable
           style="width: 2rem; margin-left: 0.1rem"
         >
           <el-option key="uniqued0000" label="全部" value />
-          <el-option v-for="item in lineOptions" :key="item.id" :label="item.name" :value="item.id" />
+          <el-option
+            v-for="item in lineOptions"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
         </el-select>
         <el-button type="primary" size="small" class="bt-search" @click="getList(1)">搜索</el-button>
         <el-button @click="reset" size="small" type="primary" plain>重置</el-button>
@@ -80,7 +92,8 @@
             :position="{lng: marker.lng, lat: marker.lat}"
             :key="marker.id"
             @click="onMarkerClick(marker)"
-            :icon="marker.isLocate ? {url: require('../../assets/icon/loca.png'), size: {width: 32, height:32}} : {url: require('../../assets/icon/loc.png'), size: {width: 32, height:32}} "
+            :icon="marker.isLocate ? {url: require('../../assets/icon/loca.png'), size: {width: 32, height:32}} : {url: marker.icon, size: {width: 32, height:32}}"
+            :offset="{width: 0, height: -14}"
           />
         </bml-marker-clusterer>
         <bm-info-window
@@ -92,6 +105,15 @@
         >
           <p v-text="infoWindow.contents"></p>
         </bm-info-window>
+        <!-- 每条线路下所有点位，用线串起来闭环，相同号码的线路颜色一样 -->
+        <bm-polyline
+          v-for="(polyline, index) of showPolylines"
+          :key="index"
+          :path="polyline.coordList"
+          :stroke-color="polyline.strokeColor"
+          :stroke-weight="2"
+          :stroke-opacity="0.8"
+        />
       </baidu-map>
       <div class="listWrap">
         <patrolpoint-list
@@ -126,6 +148,7 @@ import patrolpointList from './components/patrolpointList';
 import patrolpointDialog from './components/patrolpointDialog';
 import { BmlMarkerClusterer, BmMarker } from 'vue-baidu-map';
 import { GetQueryString } from '@/utils/common.js';
+import _ from 'lodash';
 export default {
   name: 'patrol-point',
   components: {
@@ -197,7 +220,23 @@ export default {
       lineOptions: [], // 任务名称
       equOptions: [], // 打卡机列表
       addrSearch: '', // 地图关键字搜索位置
-      alertShow: false // 新增点时提示框
+      alertShow: false, // 新增点时提示框
+      polylines: [], // 全部线路
+      showPolylines: [], // 显示的线路
+      strokeColors: [
+        '#D81E06',
+        '#E96309',
+        '#D4237A',
+        '#F91C03',
+        '#1296DB',
+        '#13227A',
+        '#03A8A4',
+        '#594D9C',
+        '#14A849',
+        '#8CBB19',
+        '#3F0412',
+        '#EB8099'
+      ]
     };
   },
   created () {
@@ -210,7 +249,8 @@ export default {
     }
     this.findAll(); // 任务
     this.getAllFingerprint(); // 打卡机
-    this.getList();
+    this.getList(); // 巡逻点
+    this.getPolylineData(); // 线路
   },
   methods: {
     handler ({ BMap, map }) {
@@ -230,7 +270,25 @@ export default {
       } else {
         this.form.pageNumber = val1;
       }
-      this.mapInit();
+      if (this.lineId) {
+        this.showPolylines = this.polylines.filter(
+          item => item.lineId === this.lineId
+        );
+        if (this.showPolylines.length) {
+          // 先定位到线路
+          this.zoom = 14;
+          this.center = {
+            lng: this.showPolylines[0].coordList[0].lng,
+            lat: this.showPolylines[0].coordList[0].lat
+          };
+        } else {
+          this.mapInit();
+        }
+      } else {
+        // 全部线路
+        this.showPolygons = _.cloneDeep(this.polygons);
+        this.mapInit();
+      }
       this.$api.patrolPoint
         .list(
           this.$qs.stringify({
@@ -248,12 +306,23 @@ export default {
               pageSize: this.form.pageSize
             };
             this.markers = res.data.data.rows.map(item => {
+              const { id, lineId, name, lon, lat } = item;
+              let wholeName = this.lineOptions.find(item => item.id === lineId)
+                ? this.lineOptions.find(item => item.id === lineId).name
+                : ''; // 名称
+              let numName = wholeName
+                ? wholeName.slice(
+                  wholeName.indexOf('号') - 1,
+                  wholeName.indexOf('号')
+                )
+                : 0; // 几号线路
               let obj = {
-                id: item.id,
-                name: item.name,
-                lng: item.lon,
-                lat: item.lat,
-                isLocate: false
+                id: id,
+                name: name,
+                lng: lon,
+                lat: lat,
+                isLocate: false,
+                icon: require('../../assets/icon/loca' + numName + '.png')
               };
               return obj;
             });
@@ -264,10 +333,64 @@ export default {
           console.error(err);
         });
     },
+    // 获取全部线路
+    getPolylineData () {
+      this.$api.patrolPoint
+        .list(
+          this.$qs.stringify({
+            name: '',
+            type: '',
+            lineId: '',
+            pageNumber: 1,
+            pageSize: 1000000
+          })
+        )
+        .then(res => {
+          if (res.data.code === 0) {
+            let data = res.data.data.rows;
+            let lineArr = []; // 线路id
+            let polyArr = []; // 线路数组
+            data.forEach(item => {
+              const { lineId } = item;
+              if (!lineArr.includes(lineId)) {
+                lineArr.push(lineId);
+              }
+            });
+            for (let i = 0; i < lineArr.length; i++) {
+              let curLine = lineArr[i];
+              let wholeName = this.lineOptions.find(item => item.id === curLine)
+                ? this.lineOptions.find(item => item.id === curLine).name
+                : ''; // 名称
+              let numName = wholeName
+                ? wholeName.slice(
+                  wholeName.indexOf('号') - 1,
+                  wholeName.indexOf('号')
+                )
+                : 0; // 几号线路
+              let obj = {
+                lineId: curLine,
+                wholeName,
+                strokeColor: this.strokeColors[parseInt(numName)]
+              };
+              let coordArr = [];
+              data.forEach(item => {
+                const { lineId, lon, lat } = item;
+                if (curLine === lineId) {
+                  coordArr.push({ lng: lon, lat });
+                }
+              });
+              obj.coordList = [...coordArr, coordArr[0]];
+              polyArr.push(obj);
+            }
+            this.polylines = polyArr;
+            this.showPolylines = polyArr;
+          }
+        });
+    },
     // 新增巡逻点
     handleNew () {
       if (!this.onProcessing) {
-      // 如果没有在新增巡逻点过程中，则设为是
+        // 如果没有在新增巡逻点过程中，则设为是
         this.onProcessing = true;
         this.alertShow = true;
       } else {
@@ -289,7 +412,7 @@ export default {
     handleLocate (id, lng, lat) {
       if (lng && lat) {
         this.center = { lng, lat };
-        this.zoom = 18;
+        this.zoom = 19;
         this.markers = this.markers.map(item => {
           if (item.id === id) {
             item.isLocate = true;
@@ -373,6 +496,7 @@ export default {
       this.inputName = ''; // 关键字
       this.typeName = ''; // 点位类型
       this.lineId = ''; // 线路
+      this.getList();
     },
     // 取消新增巡逻点
     handleCancelPoint () {

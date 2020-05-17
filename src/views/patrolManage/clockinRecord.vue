@@ -119,6 +119,7 @@
             :position="{lng: marker.lng, lat: marker.lat}"
             @click="onMarkerClick(marker)"
             :icon="marker.isLocate ? {url: require('../../assets/icon/loca.png'), size: {width: 32, height:32}} : {url: marker.icon, size: {width: 32, height:32}}"
+            :offset= "{width: 0, height: -16}"
           >
             <!-- <bm-label
               :content="marker.content"
