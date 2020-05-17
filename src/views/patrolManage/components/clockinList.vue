@@ -74,8 +74,8 @@ export default {
   },
   methods: {
     handleLocate (row) {
-      const { lon, lat } = row;
-      this.$emit('handleLocate', lon, lat);
+      const { userId, lon, lat } = row;
+      this.$emit('handleLocate', userId, lon, lat);
     },
     viewNopic () {
       this.$message.error('暂无图片');

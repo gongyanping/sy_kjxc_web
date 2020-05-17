@@ -37,7 +37,13 @@
           </el-select>
         </el-form-item>-->
         <el-form-item label="所属平台">
-          <el-select v-model="searchForm.platformId" placeholder="请选择所属平台" size="small" clearable style="width: 1.8rem">
+          <el-select
+            v-model="searchForm.platformId"
+            placeholder="请选择所属平台"
+            size="small"
+            clearable
+            style="width: 1.8rem"
+          >
             <el-option
               v-for="item in platformOptions3"
               :key="item.id"
@@ -47,7 +53,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="打卡状态">
-          <el-select v-model="searchForm.state" placeholder="请选择打卡状态" size="small" clearable style="width: 1.8rem">
+          <el-select
+            v-model="searchForm.state"
+            placeholder="请选择打卡状态"
+            size="small"
+            clearable
+            style="width: 1.8rem"
+          >
             <el-option
               v-for="item in punchclockList"
               :key="item.id"
@@ -103,10 +115,10 @@
         <bml-marker-clusterer :averageCenter="true">
           <bm-marker
             v-for="marker of markers"
-            :position="{lng: marker.lng, lat: marker.lat}"
             :key="marker.userId + '_' + marker.index"
+            :position="{lng: marker.lng, lat: marker.lat}"
             @click="onMarkerClick(marker)"
-            :icon="{url: marker.icon, size: {width: 32, height:32}}"
+            :icon="marker.isLocate ? {url: require('../../assets/icon/loca.png'), size: {width: 32, height:32}} : {url: marker.icon, size: {width: 32, height:32}}"
           >
             <!-- <bm-label
               :content="marker.content"
@@ -116,7 +128,19 @@
           </bm-marker>
         </bml-marker-clusterer>
         <!-- 轨迹线和轨迹运动 -->
-        <bm-polyline :path="polylinePaths"></bm-polyline>
+        <bm-polyline :path="polylinePaths" />
+        <!-- 网格图 -->
+        <bm-polygon
+          v-for="(polygon, index) of showPolygons"
+          :key="index"
+          :path="polygon.coordList"
+          :stroke-color="'#f00'"
+          :stroke-weight="2"
+          :stroke-opacity="0.6"
+          :stroke-style="'dashed'"
+          :fill-color="polygon.fillColor"
+          :fill-opacity="0.5"
+        />
         <bm-marker
           v-if="trackMarker"
           :position="trackMarker"
@@ -159,6 +183,8 @@ import noData from '@/components/noData';
 import userList from './components/userList';
 import clockinList from './components/clockinList';
 import { GetQueryString } from '@/utils/common.js';
+import axios from 'axios';
+import _ from 'lodash';
 export default {
   name: 'clockin-record',
   components: {
@@ -224,7 +250,48 @@ export default {
           id: '5',
           name: '打卡申诉通过'
         }
+      ],
+      polygons: [], // 全部网格数组
+      showPolygons: [], // 显示的网格数组
+      fillColors: [
+        '#B5D6C1',
+        '#e9f1a8',
+        '#e6eee3',
+        '#E3E2A0',
+        '#E7C4CD',
+        '#C5E1EE',
+        '#F2CFCD',
+        '#FAD6CA',
+        '#D7E8D6',
+        '#B7CFD3',
+        '#F6BAB9',
+        '#A6FE81',
+        '#FDF6A7',
+        '#DEEAB8',
+        '#FBC5AD',
+        '#EEE4B2',
+        '#D4CBE8',
+        '#F6C9DD',
+        '#FDF6A8',
+        '#DFF1FB',
+        '#F8C17B',
+        '#D1C8EC',
+        '#DFE2F1',
+        '#CEDCE5',
+        '#E9CD3E',
+        '#FAE5F1',
+        '#E0E2BA',
+        '#BDD2EF',
+        '#FFF8B5',
+        '#E2DFF2',
+        '#BACD7E',
+        '#FFB283',
+        '#86C04F',
+        '#E2EDF3',
+        '#E2EDF3',
+        '#F1CD91'
       ]
+      // 网格颜色集合
     };
   },
   created () {
@@ -233,6 +300,7 @@ export default {
       this.searchForm.userName = decodeURI(decodeURI(userName));
     }
     this.initPlatList(); // 下拉数据获取
+    this.getGridData(); // 获取网格数据
   },
   beforeDestroy () {},
   methods: {
@@ -272,7 +340,8 @@ export default {
       // 真实数据
       const { userName, startTime, endTime } = this.searchForm;
       if (userName && startTime && endTime) {
-        let userId = this.userList.find(item => item.userName === userName).userId;
+        let userId = this.userList.find(item => item.userName === userName)
+          .userId;
         let pp = {
           userId: userId,
           startTime,
@@ -310,6 +379,34 @@ export default {
     },
     // 获取打卡记录
     getList () {
+      if (this.searchForm.platformId) {
+        // 只展示某个局的信息
+        const searchPlatform = this.platformOptions3.find(
+          item => item.id === this.searchForm.platformId
+        );
+        let searchArr = searchPlatform.name.split(' ');
+        let searchPlat = searchArr[0].substr(0, 2);
+        let searchNum = searchArr[1];
+        this.showPolygons = this.polygons.filter(item => {
+          let name = item.name;
+          return name.includes(searchPlat) && name.includes(searchNum);
+        });
+        if (this.showPolygons.length) {
+          // 先定位到区域
+          this.zoom = 14;
+          this.center = {
+            lng: this.showPolygons[0].coordList[0].lng,
+            lat: this.showPolygons[0].coordList[0].lat
+          };
+        } else {
+          this.$message.info('此区域暂无网格数据');
+          this.mapInit();
+        }
+      } else {
+        // 全部网格
+        this.showPolygons = _.cloneDeep(this.polygons);
+        this.mapInit();
+      }
       this.markers = [];
       this.userList = [];
       this.recordList = [];
@@ -359,7 +456,8 @@ export default {
                   '<div class="markerLabel"><p><b>打卡人：</b>' +
                     item.userName +
                     '</p><p><b>时间：</b>' +
-                    item.clocktime || '' + '</p></div>'
+                    item.clocktime || '' + '</p></div>',
+                isLocate: false
               };
               return obj2;
             });
@@ -367,7 +465,7 @@ export default {
               lng: this.markers[0].lng,
               lat: this.markers[0].lat
             }; // 定位到查询的点去
-            this.zoom = 15;
+            this.zoom = 13;
             this.userList = userlistArr.map(item => {
               item.icon = require('../../assets/icon/loca' +
                 iconObj[item.userName] +
@@ -391,12 +489,20 @@ export default {
       this.markerCoord = { lng, lat };
     },
     onMapClick () {},
-    handleLocate (lng, lat) {
+    handleLocate (id, lng, lat) {
       if (lng && lat) {
         this.center = { lng, lat };
         this.zoom = 19;
+        this.markers = this.markers.map(item => {
+          if (item.userId === id) {
+            item.isLocate = true;
+          } else {
+            item.isLocate = false;
+          }
+          return item;
+        });
       } else {
-        this.$message.info('该坐标位置不存在');
+        this.$message.error('该坐标位置不存在');
       }
     },
     infoWindowClose () {
@@ -426,6 +532,51 @@ export default {
     },
     setTabIndex (type) {
       this.tabIndex = type;
+    },
+    // 获取网格数据
+    getGridData () {
+      let url = 'http://218.76.207.66:8181/api/getPoliceCarInit';
+      axios.get(url).then(res => {
+        let gridArray = []; // 格式化后的网格数据
+        let coordArray = res.data.deptList.map(item => {
+          return {
+            name: item.parentName + item.deptName,
+            coordList: item.coordList
+          };
+        }); // 未格式化的网格数据
+        coordArray.map((each, index) => {
+          const { name, coordList } = each;
+          let tempArray = []; // 一个区域网格
+          if (coordList.length) {
+            // 数组有坐标点才进行计算
+            for (let i = 0; i < coordList.length; i++) {
+              // 一个分局可能包含多个分区
+              let arr = coordList[i][0].split(';');
+              if (arr.length) {
+                // 有坐标点才进行计算
+                arr.forEach(element => {
+                  let eleCoord = element.split(',');
+                  let obj = {
+                    lng: eleCoord[0],
+                    lat: eleCoord[1]
+                  };
+                  tempArray.push(obj);
+                });
+              }
+            }
+          }
+          if (tempArray.length) {
+            // 有数据才加入网格数据组
+            gridArray.push({
+              name,
+              fillColor: this.fillColors[index],
+              coordList: tempArray
+            });
+          }
+        });
+        this.polygons = gridArray;
+        this.showPolygons = _.cloneDeep(this.polygons);
+      });
     }
   }
 };

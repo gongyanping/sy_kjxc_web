@@ -81,7 +81,7 @@
             :key="marker.id"
             @click="onMarkerClick(marker)"
             :icon="marker.isLocate ? {url: require('../../assets/icon/loca.png'), size: {width: 32, height:32}} : {url: require('../../assets/icon/loc.png'), size: {width: 32, height:32}} "
-          ></bm-marker>
+          />
         </bml-marker-clusterer>
         <bm-info-window
           :position="markerCoord"
@@ -299,7 +299,7 @@ export default {
           return item;
         });
       } else {
-        this.$message.info('该坐标位置不存在');
+        this.$message.error('该坐标位置不存在');
       }
     },
     // 关闭巡逻点弹出框
@@ -370,8 +370,9 @@ export default {
     },
     // 重置搜索的关键字
     reset () {
-      this.inputName = '';
-      this.typeName = '';
+      this.inputName = ''; // 关键字
+      this.typeName = ''; // 点位类型
+      this.lineId = ''; // 线路
     },
     // 取消新增巡逻点
     handleCancelPoint () {
