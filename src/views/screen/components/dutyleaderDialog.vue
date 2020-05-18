@@ -2,13 +2,13 @@
  * @Author: gyp
  * @Date: 2020-05-11 09:13:28
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-13 14:17:07
+ * @LastEditTime: 2020-05-18 15:32:50
  * @Description: 大队值班领导列表弹出框
  * @FilePath: \sy_kjxc_web\src\views\screen\components\dutyleaderDialog.vue
  -->
 <template>
   <el-dialog title="大队值班领导" :visible.sync="visible" @closed="onClosed" width="60%" custom-class="blue">
-    <el-table :data="dutyLeaderList" border class="blueTable" style="100%">
+    <el-table :data="data" border class="blueTable" style="100%">
       <el-table-column type="index" label="序号" width="50" align="center" />
       <el-table-column prop="userName" label="姓名"  min-width="60"/>
       <el-table-column prop="telephone" label="电话" min-width="60" />
@@ -30,10 +30,13 @@
 <script>
 export default {
   name: 'dutyleader-dialog',
-  props: ['dutyleaderVisible', 'dutyLeaderList'],
+  props: ['dutyleaderVisible', 'data'],
   watch: {
     dutyleaderVisible (newVal) {
       this.visible = newVal;
+    },
+    data (newVal) {
+      console.log(newVal)
     }
   },
   data () {

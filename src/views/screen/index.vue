@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 12:44:26
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-11 21:48:56
+ * @LastEditTime: 2020-05-18 15:34:59
  * @Description: 大屏
  * @FilePath: \sy_kjxc_web\src\views\screen\index.vue
  -->
@@ -70,7 +70,7 @@
       </el-aside>
     </el-container>
     <police-dialog :platformId="platformId" :title="platformTitle" :policeVisible="policeVisible" @onPoliceClose="onPoliceClose" />
-    <dutyleader-dialog :dutyleaderVisible="dutyleaderVisible" @onDutyleaderClose="onDutyleaderClose" />
+    <dutyleader-dialog :data="dutyLeaderList" :dutyleaderVisible="dutyleaderVisible" @onDutyleaderClose="onDutyleaderClose" />
   </el-container>
 </template>
 
@@ -99,6 +99,7 @@ export default {
   mixins: [basicScreen],
   created () {
     this.findPlatform(); // 获取快警平台信息
+    this.findUserByIdentity(); // 获取大队值班领导
   }
 };
 </script>

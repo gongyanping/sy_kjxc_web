@@ -2,16 +2,16 @@
  * @Author: gyp
  * @Date: 2020-05-11 09:13:28
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-11 10:02:50
+ * @LastEditTime: 2020-05-18 15:28:07
  * @Description: 大队值班领导列表
  * @FilePath: \sy_kjxc_web\src\views\screen\components\dutyleaderList.vue
  -->
 <template>
   <ul class="dutyleaderList">
     <li class="dutyItem" v-for="(item, index) in data" :key="index">
-      <span class="addr"> {{ item.name }} </span>
-      <span class="person">{{ item.human }}</span>
-      <span class="phone">{{ item.phone }}</span>
+      <span class="addr"> {{ item.id }} </span>
+      <span class="person">{{ item.userName }}</span>
+      <span class="phone">{{ item.telephone }}</span>
     </li>
   </ul>
 </template>
@@ -30,8 +30,15 @@ export default {
     color: #eee;
     font-size: 14px;
     cursor: pointer;
+    display: flex;
     &:first-of-type {
       padding: 2px 15px 8px;
+    }
+    .addr {
+      max-width: 40%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .person {
       margin: 0 8px;

@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-18 10:53:06
+ * @LastEditTime: 2020-05-18 14:25:33
  * @Description: 巡逻点管理
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\patrolPoint.vue
  -->
@@ -282,11 +282,13 @@ export default {
             lat: this.showPolylines[0].coordList[0].lat
           };
         } else {
+          // 全部线路
+          this.showPolygons = _.cloneDeep(this.polylines);
           this.mapInit();
         }
       } else {
         // 全部线路
-        this.showPolygons = _.cloneDeep(this.polygons);
+        this.showPolygons = _.cloneDeep(this.polylines);
         this.mapInit();
       }
       this.$api.patrolPoint
