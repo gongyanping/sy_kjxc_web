@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-11 09:28:32
+ * @LastEditTime: 2020-05-18 14:06:35
  * @Description: 打卡记录
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\clockinRecord.vue
  -->
@@ -446,12 +446,16 @@ export default {
             });
             this.iconObj = iconObj; // 存用户颜色的对象
             this.markers = resRows.map((item, index) => {
+              let iconIndex = iconObj[item.userName];
+              if (iconIndex / 50 > 1) {
+                iconIndex = iconIndex - 50 * parseInt(iconIndex / 50);
+              }
               let obj2 = {
                 ...item,
                 lng: item.lon,
                 index: index + 1,
                 icon: require('../../assets/icon/loca' +
-                  iconObj[item.userName] +
+                  iconIndex +
                   '.png'),
                 content:
                   '<div class="markerLabel"><p><b>打卡人：</b>' +
@@ -468,8 +472,12 @@ export default {
             }; // 定位到查询的点去
             this.zoom = 13;
             this.userList = userlistArr.map(item => {
+              let iconIndex = iconObj[item.userName];
+              if (iconIndex / 50 > 1) {
+                iconIndex = iconIndex - 50 * parseInt(iconIndex / 50);
+              }
               item.icon = require('../../assets/icon/loca' +
-                iconObj[item.userName] +
+                iconIndex +
                 '.png');
               return item;
             });

@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-03-17 09:42:11
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-12 20:22:14
+ * @LastEditTime: 2020-05-14 16:00:03
  * @Description:
  * @FilePath: \sy_kjxc_web\src\router\index.js
  */

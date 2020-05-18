@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-14 15:15:16
+ * @LastEditTime: 2020-05-18 10:53:06
  * @Description: 巡逻点管理
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\patrolPoint.vue
  -->
@@ -370,7 +370,7 @@ export default {
               let obj = {
                 lineId: curLine,
                 wholeName,
-                strokeColor: this.strokeColors[parseInt(numName)]
+                strokeColor: parseInt(numName) > 12 ? this.strokeColors[parseInt(numName) - 12] : this.strokeColors[parseInt(numName)]
               };
               let coordArr = [];
               data.forEach(item => {
