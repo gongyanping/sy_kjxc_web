@@ -10,12 +10,7 @@
 <template>
   <div class="patrolmainWrap">
     <div class="patrolHeader">
-      <el-form
-        :inline="true"
-        ref="searchForm"
-        :model="searchForm"
-        label-width="100px"
-      >
+      <el-form :inline="true" ref="searchForm" :model="searchForm" label-width="100px">
         <el-form-item label="关键字" prop="userName">
           <el-input
             v-model="searchForm.userName"
@@ -99,16 +94,8 @@
           </el-col>
         </el-form-item>
         <el-form-item>
-          <el-button
-            type="primary"
-            size="small"
-            class="bt-search"
-            @click="getList"
-            >搜索</el-button
-          >
-          <el-button @click="reset" size="small" type="primary" plain
-            >重置</el-button
-          >
+          <el-button type="primary" size="small" class="bt-search" @click="getList">搜索</el-button>
+          <el-button @click="reset" size="small" type="primary" plain>重置</el-button>
           <el-button @click="handleTrack" size="small" type="success" plain>
             <span v-if="!isTracking">查看轨迹</span>
             <span v-else>关闭轨迹</span>
@@ -125,10 +112,7 @@
         @ready="handler"
         @click="onMapClick"
       >
-        <bml-marker-clusterer
-          :averageCenter="true"
-          v-if="markers.length <= 2000"
-        >
+        <bml-marker-clusterer :averageCenter="true" v-if="markers.length <= 2000">
           <bm-marker
             v-for="marker of markers"
             :key="marker.userId + '_' + marker.index"
@@ -148,14 +132,14 @@
               :content="marker.content"
               :labelStyle="{backgroundColor: 'white', color: '#333', fontSize : '12px', zIndex: '5'}"
               :offset="{width: -20, height: -48}"
-            />-->
+          />-->
         </bml-marker-clusterer>
         <bm-point-collection
           v-else
           :points="markers"
           shape="BMAP_POINT_SHAPE_STAR"
           color="#d340c3"
-          size="BMAP_POINT_SIZE_SMALL"
+          size="BMAP_POINT_SIZE_NORMAL"
           @click="onPointClick"
         />
         <!-- 海量点的定位 -->
@@ -467,8 +451,6 @@ export default {
           })
         )
         .then(res => {
-          alert(3);
-          console.log(res);
           if (res.data.data && res.data.data.userRecordList.length) {
             let resRows = res.data.data.userRecordList; // 打卡记录数据
             let userArr = []; // 获取用户名数组
@@ -518,7 +500,6 @@ export default {
               return obj2;
             }); // 打卡点
             this.markers = markers;
-            console.log(this.markers);
             this.center = {
               lng: this.markers[0].lng,
               lat: this.markers[0].lat
@@ -572,14 +553,20 @@ export default {
       if (lng && lat) {
         this.center = { lng, lat };
         this.zoom = 19;
-        this.markers = this.markers.map(item => {
-          if (item.userId === id) {
-            item.isLocate = true;
-          } else {
-            item.isLocate = false;
-          }
-          return item;
-        });
+        if (this.markers.length <= 2000) {
+          this.markers = this.markers.map(item => {
+            if (item.userId === id) {
+              item.isLocate = true;
+            } else {
+              item.isLocate = false;
+            }
+            return item;
+          });
+        } else {
+          this.locateMarker = this.markers.find(
+            item => item.lng === lng && item.lat === lat
+          );
+        }
       } else {
         this.$message.error('该坐标位置不存在');
       }
