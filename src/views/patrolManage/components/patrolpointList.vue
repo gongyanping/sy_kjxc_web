@@ -2,9 +2,9 @@
  * @Author: gyp
  * @Date: 2020-04-16 09:31:26
  * @LastEditors: gyp
- * @LastEditTime: 2020-04-17 11:52:03
+ * @LastEditTime: 2020-05-19 15:07:21
  * @Description:
- * @FilePath: \sy_kjxc_web0417\src\views\patrolManage\components\patrolpointList.vue
+ * @FilePath: \sy_kjxc_web\src\views\patrolManage\components\patrolpointList.vue
  -->
 <template>
   <ul class="patrolpointList">
@@ -79,6 +79,8 @@ export default {
 @import "~@/styles/index.less";
 .patrolpointList {
   width: 100%;
+  height: calc( 100% - 100px);
+  overflow-y: auto;
   > li {
     .flex-center();
     justify-content: space-between;

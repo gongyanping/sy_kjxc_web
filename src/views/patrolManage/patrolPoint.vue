@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-18 14:25:33
+ * @LastEditTime: 2020-05-19 15:05:11
  * @Description: 巡逻点管理
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\patrolPoint.vue
  -->
@@ -20,9 +20,15 @@
           <span v-if="!onProcessing">新增巡逻点</span>
           <span v-else>确定巡逻点</span>
         </el-button>
-        <el-button v-if="onProcessing" @click="handleCancelPoint" size="small">取消新增巡逻点</el-button>
+        <el-button v-if="onProcessing" @click="handleCancelPoint" size="small"
+          >取消新增巡逻点</el-button
+        >
         <span class="elAlert" v-if="onProcessing" v-show="alertShow">
-          <el-alert title="先在地图上选择点位，再点击确定去进行新增" type="success" @close="alertShow = false" />
+          <el-alert
+            title="先在地图上选择点位，再点击确定去进行新增"
+            type="success"
+            @close="alertShow = false"
+          />
         </span>
         <span v-if="onProcessing">
           <el-input
@@ -32,7 +38,13 @@
             clearable
             style="width: 2rem;margin: 0 0.1rem"
           />
-          <el-button type="primary" size="small" class="bt-search" @click="searchAddr">查询</el-button>
+          <el-button
+            type="primary"
+            size="small"
+            class="bt-search"
+            @click="searchAddr"
+            >查询</el-button
+          >
         </span>
       </div>
       <div class="searchWrap">
@@ -73,8 +85,16 @@
             :value="item.id"
           />
         </el-select>
-        <el-button type="primary" size="small" class="bt-search" @click="getList(1)">搜索</el-button>
-        <el-button @click="reset" size="small" type="primary" plain>重置</el-button>
+        <el-button
+          type="primary"
+          size="small"
+          class="bt-search"
+          @click="getList(1)"
+          >搜索</el-button
+        >
+        <el-button @click="reset" size="small" type="primary" plain
+          >重置</el-button
+        >
       </div>
     </div>
     <div class="mainWrap">
@@ -89,11 +109,18 @@
         <bml-marker-clusterer :averageCenter="true">
           <bm-marker
             v-for="marker of markers"
-            :position="{lng: marker.lng, lat: marker.lat}"
+            :position="{ lng: marker.lng, lat: marker.lat }"
             :key="marker.id"
             @click="onMarkerClick(marker)"
-            :icon="marker.isLocate ? {url: require('../../assets/icon/loca.png'), size: {width: 32, height:32}} : {url: marker.icon, size: {width: 32, height:32}}"
-            :offset="{width: 0, height: -14}"
+            :icon="
+              marker.isLocate
+                ? {
+                    url: require('../../assets/icon/loca.png'),
+                    size: { width: 32, height: 32 }
+                  }
+                : { url: marker.icon, size: { width: 32, height: 32 } }
+            "
+            :offset="{ width: 0, height: -14 }"
           />
         </bml-marker-clusterer>
         <bm-info-window
@@ -106,14 +133,15 @@
           <p v-text="infoWindow.contents"></p>
         </bm-info-window>
         <!-- 每条线路下所有点位，用线串起来闭环，相同号码的线路颜色一样 -->
-        <bm-polyline
+        <!-- 先注释掉 -->
+        <!-- <bm-polyline
           v-for="(polyline, index) of showPolylines"
           :key="index"
           :path="polyline.coordList"
           :stroke-color="polyline.strokeColor"
           :stroke-weight="2"
           :stroke-opacity="0.8"
-        />
+        /> -->
       </baidu-map>
       <div class="listWrap">
         <patrolpoint-list
@@ -372,7 +400,10 @@ export default {
               let obj = {
                 lineId: curLine,
                 wholeName,
-                strokeColor: parseInt(numName) > 12 ? this.strokeColors[parseInt(numName) - 12] : this.strokeColors[parseInt(numName)]
+                strokeColor:
+                  parseInt(numName) > 12
+                    ? this.strokeColors[parseInt(numName) - 12]
+                    : this.strokeColors[parseInt(numName)]
               };
               let coordArr = [];
               data.forEach(item => {
@@ -455,7 +486,8 @@ export default {
         }
         this.markers.push({
           lng,
-          lat
+          lat,
+          isLocate: true
         });
         let BMap = this.BMap;
         let geocoder = new BMap.Geocoder(); // 创建地址解析器的实例
@@ -570,7 +602,6 @@ export default {
       width: 400px;
       height: calc(100vh - 110px);
       background: #ffffff;
-      overflow-y: auto;
     }
   }
 }

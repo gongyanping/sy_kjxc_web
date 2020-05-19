@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-03-24 16:38:14
  * @LastEditors: gyp
- * @LastEditTime: 2020-04-23 21:02:45
+ * @LastEditTime: 2020-05-19 15:04:13
  * @Description: 分页公用组件
  * @FilePath: \sy_kjxc_web\src\components\Pagination.vue
  -->
@@ -17,6 +17,7 @@
       :current-page.sync="tabledatas.pageNum"
       :page-size="tabledatas.pageSize"
       :total="tabledatas.total"
+      :pager-count="5"
       :hide-on-single-page="false">
     </el-pagination>
   </div>

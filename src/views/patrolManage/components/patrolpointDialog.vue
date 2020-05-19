@@ -8,6 +8,7 @@
             placeholder="请选择任务列表"
             clearable
             style="width: 100%"
+            filterable
           >
             <!-- :disabled="isFromTask" 之前从任务过来不可编辑，现在要放开-->
             <el-option key="uniqued0000" label="未知" value />

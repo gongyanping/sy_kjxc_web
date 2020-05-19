@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-18 14:06:35
+ * @LastEditTime: 2020-05-19 18:48:23
  * @Description: 打卡记录
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\clockinRecord.vue
  -->
@@ -10,7 +10,12 @@
 <template>
   <div class="patrolmainWrap">
     <div class="patrolHeader">
-      <el-form :inline="true" ref="searchForm" :model="searchForm" label-width="100px">
+      <el-form
+        :inline="true"
+        ref="searchForm"
+        :model="searchForm"
+        label-width="100px"
+      >
         <el-form-item label="关键字" prop="userName">
           <el-input
             v-model="searchForm.userName"
@@ -94,8 +99,16 @@
           </el-col>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" size="small" class="bt-search" @click="getList">搜索</el-button>
-          <el-button @click="reset" size="small" type="primary" plain>重置</el-button>
+          <el-button
+            type="primary"
+            size="small"
+            class="bt-search"
+            @click="getList"
+            >搜索</el-button
+          >
+          <el-button @click="reset" size="small" type="primary" plain
+            >重置</el-button
+          >
           <el-button @click="handleTrack" size="small" type="success" plain>
             <span v-if="!isTracking">查看轨迹</span>
             <span v-else>关闭轨迹</span>
@@ -112,22 +125,50 @@
         @ready="handler"
         @click="onMapClick"
       >
-        <bml-marker-clusterer :averageCenter="true">
+        <bml-marker-clusterer
+          :averageCenter="true"
+          v-if="markers.length <= 2000"
+        >
           <bm-marker
             v-for="marker of markers"
             :key="marker.userId + '_' + marker.index"
-            :position="{lng: marker.lng, lat: marker.lat}"
+            :position="{ lng: marker.lng, lat: marker.lat }"
             @click="onMarkerClick(marker)"
-            :icon="marker.isLocate ? {url: require('../../assets/icon/loca.png'), size: {width: 32, height:32}} : {url: marker.icon, size: {width: 32, height:32}}"
-            :offset= "{width: 0, height: -16}"
-          >
-            <!-- <bm-label
+            :icon="
+              marker.isLocate
+                ? {
+                    url: require('../../assets/icon/loca.png'),
+                    size: { width: 32, height: 32 }
+                  }
+                : { url: marker.icon, size: { width: 32, height: 32 } }
+            "
+            :offset="{ width: 0, height: -16 }"
+          />
+          <!-- <bm-label
               :content="marker.content"
               :labelStyle="{backgroundColor: 'white', color: '#333', fontSize : '12px', zIndex: '5'}"
               :offset="{width: -20, height: -48}"
             />-->
-          </bm-marker>
         </bml-marker-clusterer>
+        <bm-point-collection
+          v-else
+          :points="markers"
+          shape="BMAP_POINT_SHAPE_STAR"
+          color="#d340c3"
+          size="BMAP_POINT_SIZE_SMALL"
+          @click="onPointClick"
+        />
+        <!-- 海量点的定位 -->
+        <bm-marker
+          v-if="locateMarker"
+          :position="{ lng: locateMarker.lng, lat: locateMarker.lat }"
+          @click="onMarkerClick(locateMarker)"
+          :icon="{
+            url: require('../../assets/icon/loca.png'),
+            size: { width: 32, height: 32 }
+          }"
+          :offset="{ width: 0, height: -16 }"
+        />
         <!-- 轨迹线和轨迹运动 -->
         <bm-polyline :path="polylinePaths" />
         <!-- 网格图 -->
@@ -145,7 +186,10 @@
         <bm-marker
           v-if="trackMarker"
           :position="trackMarker"
-          :icon="{url: require('../../assets/icon/Mario.png'), size: {width: 32, height:32}}"
+          :icon="{
+            url: require('../../assets/icon/Mario.png'),
+            size: { width: 32, height: 32 }
+          }"
         />
         <bm-info-window
           :position="markerCoord"
@@ -154,8 +198,8 @@
           @close="infoWindowClose"
           @open="infoWindowOpen"
         >
-          <p>所属平台：{{infoWindow.addr}}</p>
-          <p>打卡时间：{{infoWindow.time}}</p>
+          <p>所属平台：{{ infoWindow.addr }}</p>
+          <p>打卡时间：{{ infoWindow.time }}</p>
         </bm-info-window>
       </baidu-map>
       <div class="listWrap">
@@ -291,8 +335,8 @@ export default {
         '#E2EDF3',
         '#E2EDF3',
         '#F1CD91'
-      ]
-      // 网格颜色集合
+      ], // 网格颜色集合
+      locateMarker: null // 海量点定位
     };
   },
   created () {
@@ -303,7 +347,10 @@ export default {
     this.initPlatList(); // 下拉数据获取
     this.getGridData(); // 获取网格数据
   },
-  beforeDestroy () {},
+  beforeDestroy () {
+    clearTimeout(this.timeOut);
+    this.timeOut = null;
+  },
   methods: {
     handler ({ BMap }) {
       this.BMap = BMap;
@@ -319,6 +366,7 @@ export default {
         this.trackMarker = this.polylinePaths[i];
         if (i < paths) {
           this.timeOut = setTimeout(function () {
+            console.log(i);
             i++;
             resetMkPoint(i);
           }, 500);
@@ -419,8 +467,10 @@ export default {
           })
         )
         .then(res => {
+          alert(3);
+          console.log(res);
           if (res.data.data && res.data.data.userRecordList.length) {
-            let resRows = res.data.data.userRecordList;
+            let resRows = res.data.data.userRecordList; // 打卡记录数据
             let userArr = []; // 获取用户名数组
             let userlistArr = []; // 获取用户数据数组
             resRows.map(item => {
@@ -440,12 +490,15 @@ export default {
                 });
               }
             });
-            let iconObj = {};
+            console.log(userArr);
+            console.log(userlistArr);
+
+            let iconObj = {}; // 图标对象
             userArr.map((item, index) => {
               iconObj[item] = index;
             });
             this.iconObj = iconObj; // 存用户颜色的对象
-            this.markers = resRows.map((item, index) => {
+            let markers = resRows.map((item, index) => {
               let iconIndex = iconObj[item.userName];
               if (iconIndex / 50 > 1) {
                 iconIndex = iconIndex - 50 * parseInt(iconIndex / 50);
@@ -454,9 +507,7 @@ export default {
                 ...item,
                 lng: item.lon,
                 index: index + 1,
-                icon: require('../../assets/icon/loca' +
-                  iconIndex +
-                  '.png'),
+                icon: require('../../assets/icon/loca' + iconIndex + '.png'),
                 content:
                   '<div class="markerLabel"><p><b>打卡人：</b>' +
                     item.userName +
@@ -465,7 +516,9 @@ export default {
                 isLocate: false
               };
               return obj2;
-            });
+            }); // 打卡点
+            this.markers = markers;
+            console.log(this.markers);
             this.center = {
               lng: this.markers[0].lng,
               lat: this.markers[0].lat
@@ -487,7 +540,24 @@ export default {
           console.error(err);
         });
     },
+    /**
+     * 海量点点击
+     */
+    onPointClick (e) {
+      console.log(e.point);
+      const { lng, lat } = e.point;
+      this.locateMarker = this.markers.find(
+        item => item.lng === lng && item.lat === lat
+      );
+      if (this.locateMarker) {
+        this.onMarkerClick(this.locateMarker);
+      }
+    },
+    /**
+     * marker点击
+     */
     onMarkerClick (marker) {
+      console.log(marker);
       const { lng, lat, userName, platformName, clocktime } = marker;
       this.infoWindow = {
         show: true,
@@ -515,6 +585,7 @@ export default {
       }
     },
     infoWindowClose () {
+      this.locateMarker = null;
       this.infoWindow.show = false;
     },
     infoWindowOpen () {
