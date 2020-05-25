@@ -95,6 +95,9 @@
         <el-button @click="reset" size="small" type="primary" plain
           >重置</el-button
         >
+        <el-button @click="showPolylines = []" size="small" type="success" plain>
+           关闭线路
+        </el-button>
       </div>
     </div>
     <div class="mainWrap">
@@ -134,14 +137,14 @@
         </bm-info-window>
         <!-- 每条线路下所有点位，用线串起来闭环，相同号码的线路颜色一样 -->
         <!-- 先注释掉 -->
-        <!-- <bm-polyline
+        <bm-polyline
           v-for="(polyline, index) of showPolylines"
           :key="index"
           :path="polyline.coordList"
           :stroke-color="polyline.strokeColor"
           :stroke-weight="2"
           :stroke-opacity="0.8"
-        /> -->
+        />
       </baidu-map>
       <div class="listWrap">
         <patrolpoint-list
@@ -298,7 +301,10 @@ export default {
       } else {
         this.form.pageNumber = val1;
       }
-      if (this.lineId) {
+      if (this.inputName || this.typeName) {
+        this.showPolylines = [];
+      } else if (this.lineId) {
+        // 某个线路
         this.showPolylines = this.polylines.filter(
           item => item.lineId === this.lineId
         );
@@ -311,12 +317,12 @@ export default {
           };
         } else {
           // 全部线路
-          this.showPolygons = _.cloneDeep(this.polylines);
+          this.showPolylines = _.cloneDeep(this.polylines);
           this.mapInit();
         }
       } else {
         // 全部线路
-        this.showPolygons = _.cloneDeep(this.polylines);
+        this.showPolylines = _.cloneDeep(this.polylines);
         this.mapInit();
       }
       this.$api.patrolPoint
@@ -346,6 +352,9 @@ export default {
                   wholeName.indexOf('号')
                 )
                 : 0; // 几号线路
+              if (numName === '三') {
+                numName = 3;
+              }
               let obj = {
                 id: id,
                 name: name,

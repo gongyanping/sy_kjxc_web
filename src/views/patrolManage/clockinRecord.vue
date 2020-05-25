@@ -330,6 +330,7 @@ export default {
     }
     this.initPlatList(); // 下拉数据获取
     this.getGridData(); // 获取网格数据
+    this.getList(); // 获取打卡记录
   },
   beforeDestroy () {
     clearTimeout(this.timeOut);
@@ -338,7 +339,6 @@ export default {
   methods: {
     handler ({ BMap }) {
       this.BMap = BMap;
-      this.getList(); // 获取打卡记录
     },
     mapInit () {
       this.zoom = 12;
@@ -350,7 +350,6 @@ export default {
         this.trackMarker = this.polylinePaths[i];
         if (i < paths) {
           this.timeOut = setTimeout(function () {
-            console.log(i);
             i++;
             resetMkPoint(i);
           }, 500);
@@ -373,27 +372,31 @@ export default {
       // 真实数据
       const { userName, startTime, endTime } = this.searchForm;
       if (userName && startTime && endTime) {
-        let userId = this.userList.find(item => item.userName === userName)
-          .userId;
-        let pp = {
-          userId: userId,
-          startTime,
-          endTime
-        };
-        this.isTracking = true;
-        this.$api.clockinRecord.gpsList(this.$qs.stringify(pp)).then(res => {
-          if (res.data.data.list && res.data.data.list.length) {
-            this.polylinePaths = res.data.data.list.map(item => {
-              return {
-                lng: item.lon,
-                lat: item.lat
-              };
-            });
-            this.center = this.polylinePaths[0];
-            this.zoom = 19;
-            this.run();
-          }
-        });
+        if (this.userList.length) {
+          let userId = this.userList.find(item => item.userName === userName)
+            .userId;
+          let pp = {
+            userId: userId,
+            startTime,
+            endTime
+          };
+          this.isTracking = true;
+          this.$api.clockinRecord.gpsList(this.$qs.stringify(pp)).then(res => {
+            if (res.data.data.list && res.data.data.list.length) {
+              this.polylinePaths = res.data.data.list.map(item => {
+                return {
+                  lng: item.lon,
+                  lat: item.lat
+                };
+              });
+              this.center = this.polylinePaths[0];
+              this.zoom = 19;
+              this.run();
+            }
+          });
+        } else {
+          this.$message.info('暂无轨迹数据');
+        }
       } else {
         this.$message.error('必须输入用户和起始时间');
       }
@@ -472,8 +475,6 @@ export default {
                 });
               }
             });
-            console.log(userArr);
-            console.log(userlistArr);
 
             let iconObj = {}; // 图标对象
             userArr.map((item, index) => {
@@ -525,7 +526,6 @@ export default {
      * 海量点点击
      */
     onPointClick (e) {
-      console.log(e.point);
       const { lng, lat } = e.point;
       this.locateMarker = this.markers.find(
         item => item.lng === lng && item.lat === lat
@@ -538,7 +538,6 @@ export default {
      * marker点击
      */
     onMarkerClick (marker) {
-      console.log(marker);
       const { lng, lat, userName, platformName, clocktime } = marker;
       this.infoWindow = {
         show: true,
