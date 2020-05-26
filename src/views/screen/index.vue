@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 12:44:26
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-18 15:34:59
+ * @LastEditTime: 2020-05-26 17:33:27
  * @Description: 大屏
  * @FilePath: \sy_kjxc_web\src\views\screen\index.vue
  -->
@@ -54,7 +54,25 @@
           :continuous-zoom="true"
           :mapStyle="mapStyle"
           @ready="handler"
-        ></baidu-map>
+        >
+        <!-- 网格图 -->
+        <!-- <bm-polygon
+          v-for="(polygon, index) of showPolygons"
+          :key="index"
+          :path="polygon.coordList"
+          :stroke-color="'#f00'"
+          :stroke-weight="2"
+          :stroke-opacity="0.6"
+          :stroke-style="'dashed'"
+          :fill-color="polygon.fillColor"
+          :fill-opacity="0.5"
+        /> -->
+        </baidu-map>
+        <comm-box :customStyle="'vedioBox'">
+          <div slot="content" class="videoWrap">
+            <KedaVideo ref="Keda" :videoStyle='videoStyle' :videoTitle="'测试'" />
+          </div>
+        </comm-box>
       </el-main>
       <el-aside class="rightWrap">
         <comm-box :title="'大队值班领导'" :customStyle="'righttopBox'" @onTitleClick="onTitleClick">
@@ -83,6 +101,7 @@ import dutyleaderList from './components/dutyleaderList'; // 大队值班领导-
 import realtimealertList from './components/realtimealertList'; // 实时警情
 import policeDialog from './components/policeDialog'; // 快警平台信息--弹出框
 import dutyleaderDialog from './components/dutyleaderDialog'; // 大队值班领导--弹出框
+import KedaVideo from '@/components/video/KedaVideo'; // 监控视频
 import basicScreen from './mixins.js';
 export default {
   name: 'screen',
@@ -94,12 +113,31 @@ export default {
     dutyleaderList,
     realtimealertList,
     policeDialog,
-    dutyleaderDialog
+    dutyleaderDialog,
+    KedaVideo
   },
   mixins: [basicScreen],
   created () {
     this.findPlatform(); // 获取快警平台信息
     this.findUserByIdentity(); // 获取大队值班领导
+  },
+  mounted () {
+    setTimeout(() => {
+      let fakeChannels = [{
+        'puid': '889a6842cddc469a80e6317cac526f63',
+        'channelId': '5',
+        'domainId': 'a6dd9e0b801a4dddbb8dd928c610ea67',
+        'domainName': 'kedacom',
+        'channelName': '车内'
+      }, {
+        'puid': '889a6842cddc469a80e6317cac526f63',
+        'channelId': '4',
+        'domainId': 'a6dd9e0b801a4dddbb8dd928c610ea67',
+        'domainName': 'kedacom',
+        'channelName': '车前'
+      }]
+      this.$refs.Keda.play(fakeChannels)
+    }, 3000)
   }
 };
 </script>

@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-16 09:30:32
  * @LastEditors: gyp
- * @LastEditTime: 2020-04-16 10:29:03
+ * @LastEditTime: 2020-05-26 16:17:32
  * @Description: eslint配置
  * @FilePath: \sy_kjxc_web\.eslintrc.js
  */
@@ -36,7 +36,8 @@ module.exports = {
     'no-const-assign': 2, // 禁止修改 const 声明的变量
     'no-extra-semi': 0,
     'eqeqeq': 2,
-    'semi': 0
+    'semi': 0,
+    'no-debugger': 'off'
   },
   parserOptions: {
     parser: 'babel-eslint'

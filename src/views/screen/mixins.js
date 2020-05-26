@@ -2,11 +2,12 @@
  * @Author: gyp
  * @Date: 2020-05-08 18:20:13
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-13 14:07:13
+ * @LastEditTime: 2020-05-26 16:19:32
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
 import customMapConfig from '@/assets/json/custom_map_config.json';
+import axios from 'axios';
 const basicScreen = {
   data () {
     // 中间顶部的统计数据
@@ -40,7 +41,7 @@ const basicScreen = {
       mapStyle: { // 地图自定义样式
         styleJson: customMapConfig
       },
-      PolygonList: {}, // 多边形覆盖物对象
+      // PolygonList: {}, // 多边形覆盖物对象
       platformList: [], // 快警平台信息
       carnavData: [{ name: '全部', value: 0 },
         { name: '汽车', value: 1 },
@@ -123,7 +124,11 @@ const basicScreen = {
       platformId: '', // 当前平台id
       platformTitle: '', // 当前平台名称
       policeVisible: false, // 快警-弹出框可见性
-      dutyleaderVisible: false // 大队值班领导-弹出框可见性
+      dutyleaderVisible: false, // 大队值班领导-弹出框可见性
+      videoStyle: {
+        height: '100%',
+        width: '100%'
+      }
     }
   },
   methods: {
@@ -158,9 +163,25 @@ const basicScreen = {
         map.addOverlay(plyInner) // 添加覆盖物
         plyOut.disableMassClear(); // 禁止移除
         plyInner.disableMassClear(); // 禁止移除
-        this.PolygonList['mapOut'] = plyOut; // 添加到覆盖物数组
-        this.PolygonList['plyInner'] = plyInner; // 添加到覆盖物数组
+        // this.PolygonList['mapOut'] = plyOut; // 添加到覆盖物数组
+        // this.PolygonList['plyInner'] = plyInner; // 添加到覆盖物数组
       })
+    },
+    /**
+     * 老接口-获取全部数据
+     */
+    getAlldataReq () {
+      let url = 'http://218.76.207.66:8181/api/getPoliceCarInit'
+      axios.get(url).then((result) => {
+        this.getAllPoint(result.data.deptList)
+      })
+    },
+    /**
+     * 设置地图上车辆的点位和平台网格
+     * @param {Array} data 车辆和网格数据
+     */
+    getAllPoint () {
+
     },
     /**
      * 点击各个板块的标题，查看更多
