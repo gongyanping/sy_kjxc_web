@@ -1,8 +1,8 @@
 <template>
   <ul class="clockinList">
-    <li>
+    <!-- <li>
       <el-button type="primary" plain size="small" @click="goBack">返回</el-button>
-    </li>
+    </li> -->
     <li v-for="(item, index) in recordList" :key="index">
       <div class="locate" @click="handleLocate(item)">
         <img :src="item.icon" />

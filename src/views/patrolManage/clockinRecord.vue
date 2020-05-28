@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-19 18:48:23
+ * @LastEditTime: 2020-05-28 10:45:22
  * @Description: 打卡记录
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\clockinRecord.vue
  -->
@@ -10,7 +10,12 @@
 <template>
   <div class="patrolmainWrap">
     <div class="patrolHeader">
-      <el-form :inline="true" ref="searchForm" :model="searchForm" label-width="100px">
+      <el-form
+        :inline="true"
+        ref="searchForm"
+        :model="searchForm"
+        label-width="100px"
+      >
         <el-form-item label="关键字" prop="userName">
           <el-input
             v-model="searchForm.userName"
@@ -20,22 +25,6 @@
             style="width: 1.8rem"
           ></el-input>
         </el-form-item>
-        <!-- <el-form-item label="所属局">
-          <el-select
-            v-model="searchForm.region1"
-            placeholder="请选择所属局"
-            size="small"
-            clearable
-            style="width: 2rem"
-          >
-            <el-option
-              v-for="item in platformOptions2"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>-->
         <el-form-item label="所属平台">
           <el-select
             v-model="searchForm.platformId"
@@ -94,8 +83,16 @@
           </el-col>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" size="small" class="bt-search" @click="getList">搜索</el-button>
-          <el-button @click="reset" size="small" type="primary" plain>重置</el-button>
+          <el-button
+            type="primary"
+            size="small"
+            class="bt-search"
+            @click="getList"
+            >搜索</el-button
+          >
+          <el-button @click="reset" size="small" type="primary" plain
+            >重置</el-button
+          >
           <el-button @click="handleTrack" size="small" type="success" plain>
             <span v-if="!isTracking">查看轨迹</span>
             <span v-else>关闭轨迹</span>
@@ -112,7 +109,7 @@
         @ready="handler"
         @click="onMapClick"
       >
-        <bml-marker-clusterer :averageCenter="true" v-if="markers.length <= 2000">
+        <bml-marker-clusterer :averageCenter="true">
           <bm-marker
             v-for="marker of markers"
             :key="marker.userId + '_' + marker.index"
@@ -134,26 +131,7 @@
               :offset="{width: -20, height: -48}"
           />-->
         </bml-marker-clusterer>
-        <bm-point-collection
-          v-else
-          :points="markers"
-          shape="BMAP_POINT_SHAPE_STAR"
-          color="#d340c3"
-          size="BMAP_POINT_SIZE_NORMAL"
-          @click="onPointClick"
-        />
-        <!-- 海量点的定位 -->
-        <bm-marker
-          v-if="locateMarker"
-          :position="{ lng: locateMarker.lng, lat: locateMarker.lat }"
-          @click="onMarkerClick(locateMarker)"
-          :icon="{
-            url: require('../../assets/icon/loca.png'),
-            size: { width: 32, height: 32 }
-          }"
-          :offset="{ width: 0, height: -16 }"
-        />
-        <!-- 轨迹线和轨迹运动 -->
+        <!-- 轨迹线 -->
         <bm-polyline :path="polylinePaths" />
         <!-- 网格图 -->
         <bm-polygon
@@ -167,11 +145,12 @@
           :fill-color="polygon.fillColor"
           :fill-opacity="0.5"
         />
+        <!-- 轨迹运动 -->
         <bm-marker
           v-if="trackMarker"
           :position="trackMarker"
           :icon="{
-            url: require('../../assets/icon/Mario.png'),
+            url: require('../../assets/icon/p1.png'),
             size: { width: 32, height: 32 }
           }"
         />
@@ -186,21 +165,15 @@
           <p>打卡时间：{{ infoWindow.time }}</p>
         </bm-info-window>
       </baidu-map>
+      <!-- 打卡列表 -->
       <div class="listWrap">
-        <user-list
-          v-if="tabIndex === 1"
-          :userList="userList"
-          :markers="markers"
-          @handleViewRecord="handleViewRecord"
-        />
         <clockin-list
-          v-if="tabIndex === 2"
-          :recordList="recordList"
+          :recordList="tableDatas && tableDatas.rows"
           :punchclockList="punchclockList"
           @handleLocate="handleLocate"
-          @setTabIndex="setTabIndex"
         />
-        <no-data v-if="userList.length <= 0" />
+        <Pagination :tabledatas="tableDatas" @comgetData="getList" />
+        <no-data v-if="tableDatas.rows.length <= 0" />
       </div>
     </div>
   </div>
@@ -208,8 +181,8 @@
 
 <script>
 import { BmlMarkerClusterer, BmMarker } from 'vue-baidu-map';
+import Pagination from '@/components/Pagination';
 import noData from '@/components/noData';
-import userList from './components/userList';
 import clockinList from './components/clockinList';
 import { GetQueryString } from '@/utils/common.js';
 import axios from 'axios';
@@ -217,8 +190,8 @@ import _ from 'lodash';
 export default {
   name: 'clockin-record',
   components: {
+    Pagination,
     noData,
-    userList,
     clockinList,
     BmlMarkerClusterer,
     BmMarker
@@ -228,6 +201,16 @@ export default {
       center: { lng: 111.28, lat: 27.14 },
       // center: { lng: 104.05, lat: 30.65 },
       zoom: 12,
+      tableDatas: {
+        pageNum: 1,
+        pageSize: 10,
+        total: 0,
+        rows: []
+      },
+      form: {
+        pageNumber: 1,
+        pageSize: 6
+      },
       searchForm: {
         userName: '',
         platformId: '',
@@ -235,7 +218,6 @@ export default {
         startTime: '',
         endTime: ''
       },
-      // platformOptions2: [],
       platformOptions3: [], // 平台
       markers: [],
       BMap: null,
@@ -253,7 +235,7 @@ export default {
       trackMarker: null, // 轨迹点
       polylinePaths: [], // 轨迹线
       isTracking: false,
-      recordList: [], // 某个用户的打卡记录
+      recordList: [], // 打卡记录
       punchclockList: [
         {
           id: '0',
@@ -319,8 +301,7 @@ export default {
         '#E2EDF3',
         '#E2EDF3',
         '#F1CD91'
-      ], // 网格颜色集合
-      locateMarker: null // 海量点定位
+      ] // 网格颜色集合
     };
   },
   created () {
@@ -402,11 +383,6 @@ export default {
       }
     },
     initPlatList () {
-      // this.$api.clockinRecord.platList({ level: 2 }).then(res => {
-      //   if (res.data.code === 0) {
-      //     this.platformOptions2 = res.data.data;
-      //   }
-      // });
       this.$api.clockinRecord.platList({ level: 3 }).then(res => {
         if (res.data.code === 0) {
           this.platformOptions3 = res.data.data;
@@ -443,54 +419,25 @@ export default {
         this.showPolygons = _.cloneDeep(this.polygons);
         this.mapInit();
       }
-      this.markers = [];
-      this.userList = [];
-      this.recordList = [];
-      this.tabIndex = 1;
       this.$api.clockinRecord
         .selectList(
           this.$qs.stringify({
+            ...this.form,
             ...this.searchForm
           })
         )
         .then(res => {
-          if (res.data.data && res.data.data.userRecordList.length) {
-            let resRows = res.data.data.userRecordList; // 打卡记录数据
-            let userArr = []; // 获取用户名数组
-            let userlistArr = []; // 获取用户数据数组
-            resRows.map(item => {
-              const {
-                userId,
-                userName,
-                platformName,
-                parentPlatformName
-              } = item;
-              if (!userArr.includes(item.userName)) {
-                userArr.push(userName);
-                userlistArr.push({
-                  userId,
-                  userName,
-                  platformName,
-                  parentPlatformName
-                });
-              }
-            });
-
-            let iconObj = {}; // 图标对象
-            userArr.map((item, index) => {
-              iconObj[item] = index;
-            });
-            this.iconObj = iconObj; // 存用户颜色的对象
-            let markers = resRows.map((item, index) => {
-              let iconIndex = iconObj[item.userName];
-              if (iconIndex / 50 > 1) {
-                iconIndex = iconIndex - 50 * parseInt(iconIndex / 50);
-              }
+          if (res.data.code === 0 && res.data.data.length) {
+            this.tableDatas = {
+              ...res.data.data,
+              pageNum: this.form.pageNumber,
+              pageSize: this.form.pageSize
+            };
+            this.markers = res.data.data.map((item, index) => {
               let obj2 = {
                 ...item,
                 lng: item.lon,
                 index: index + 1,
-                icon: require('../../assets/icon/loca' + iconIndex + '.png'),
                 content:
                   '<div class="markerLabel"><p><b>打卡人：</b>' +
                     item.userName +
@@ -500,39 +447,16 @@ export default {
               };
               return obj2;
             }); // 打卡点
-            this.markers = markers;
             this.center = {
               lng: this.markers[0].lng,
               lat: this.markers[0].lat
             }; // 定位到查询的点去
             this.zoom = 13;
-            this.userList = userlistArr.map(item => {
-              let iconIndex = iconObj[item.userName];
-              if (iconIndex / 50 > 1) {
-                iconIndex = iconIndex - 50 * parseInt(iconIndex / 50);
-              }
-              item.icon = require('../../assets/icon/loca' +
-                iconIndex +
-                '.png');
-              return item;
-            });
           }
         })
         .catch(err => {
           console.error(err);
         });
-    },
-    /**
-     * 海量点点击
-     */
-    onPointClick (e) {
-      const { lng, lat } = e.point;
-      this.locateMarker = this.markers.find(
-        item => item.lng === lng && item.lat === lat
-      );
-      if (this.locateMarker) {
-        this.onMarkerClick(this.locateMarker);
-      }
     },
     /**
      * marker点击
@@ -552,20 +476,14 @@ export default {
       if (lng && lat) {
         this.center = { lng, lat };
         this.zoom = 19;
-        if (this.markers.length <= 2000) {
-          this.markers = this.markers.map(item => {
-            if (item.userId === id) {
-              item.isLocate = true;
-            } else {
-              item.isLocate = false;
-            }
-            return item;
-          });
-        } else {
-          this.locateMarker = this.markers.find(
-            item => item.lng === lng && item.lat === lat
-          );
-        }
+        this.markers = this.markers.map(item => {
+          if (item.userId === id) {
+            item.isLocate = true;
+          } else {
+            item.isLocate = false;
+          }
+          return item;
+        });
       } else {
         this.$message.error('该坐标位置不存在');
       }
@@ -590,14 +508,6 @@ export default {
       this.polylinePaths = [];
       this.trackMarker = null;
       this.getList();
-    },
-    // 查看某个用户的打卡记录
-    handleViewRecord (recordList) {
-      this.tabIndex = 2;
-      this.recordList = recordList;
-    },
-    setTabIndex (type) {
-      this.tabIndex = type;
     },
     // 获取网格数据
     getGridData () {

@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-19 15:05:11
+ * @LastEditTime: 2020-05-28 10:41:25
  * @Description: 巡逻点管理
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\patrolPoint.vue
  -->
@@ -212,7 +212,7 @@ export default {
       tableDatas: {
         pageNum: 1,
         pageSize: 10,
-        total: 100,
+        total: 0,
         rows: []
       },
       dialogVisible: false,

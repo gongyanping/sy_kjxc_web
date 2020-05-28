@@ -21,7 +21,7 @@
       <div class="video-content">
         <div class="video-play" v-resize="onResize">
           <object class="video-object" id="mcuocx" ref="mcuocx" name="name_mcuocx"
-                  classid="clsid:09a28848-0e97-4cef-b950-cea037161155"></object>
+                  classid="clsid:24E9635B-FE64-47A0-B0E0-A76E0E06B3D0"></object>
                   <!-- 24E9635B-FE64-47A0-B0E0-A76E0E06B3D0 老版本-->
         </div>
         <div class="video-tool" @dblclick="zoom">
