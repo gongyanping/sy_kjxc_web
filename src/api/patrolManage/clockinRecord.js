@@ -8,9 +8,9 @@
  */
 import request from '../request.js'
 const clockinRecord = {
-  // 获取打卡记录
-  list () {
-    return request.post('/patrol/record/list')
+  // 获取人员
+  userList () {
+    return request.post('/patrol/record/userList')
   },
   // 获取打卡记录 -- 多条据
   selectList (params) {

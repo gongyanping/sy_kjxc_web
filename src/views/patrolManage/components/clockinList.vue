@@ -5,8 +5,8 @@
     </li> -->
     <li v-for="(item, index) in recordList" :key="index">
       <div class="locate" @click="handleLocate(item)">
-        <img :src="item.icon" />
-        <span>{{ item.idx }}</span>
+        <img :src="require('../../../assets/icon/loca0.png')" />
+        <span>{{ index+1 }}</span>
       </div>
       <div class="top">
         <span :title="item.userName">姓名：{{item.userName}}</span>

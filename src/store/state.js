@@ -23,7 +23,7 @@ export default {
   isShowFlagChange: window.sessionStorage.getItem('isShowFlagChange'),
   opts: {},
   userControllerEdit: 1,
-  pageSizes: [6, 10, 20, 50, 100, 200, 500, 1000, 10000],
+  pageSizes: [10, 20, 50, 100, 200],
   tableHeight: window.screen.height - 430 + 'px', // 有分页
   tableHeight2: window.screen.height - 360 + 'px', // 没有分页
   dictionarySearchPrams: {},

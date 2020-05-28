@@ -10,7 +10,7 @@
   <div class="comm-table-flooter" v-if="tabledatas && tabledatas.total > 0">
     <el-pagination
       @current-change="handleCurrentChange"
-      layout="total, sizes, prev, pager, next"
+      layout="total, prev, next"
       background
       @size-change="handleSizeChange"
       :page-sizes="$store.state.pageSizes"
