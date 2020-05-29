@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-03-24 16:38:14
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-19 15:04:13
+ * @LastEditTime: 2020-05-29 14:32:11
  * @Description: 分页公用组件
  * @FilePath: \sy_kjxc_web\src\components\Pagination.vue
  -->
@@ -10,7 +10,7 @@
   <div class="comm-table-flooter" v-if="tabledatas && tabledatas.total > 0">
     <el-pagination
       @current-change="handleCurrentChange"
-      layout="total, prev, next"
+      :layout="changePageNum ? 'total, sizes, prev, pager, next': 'total, prev, pager, next'"
       background
       @size-change="handleSizeChange"
       :page-sizes="$store.state.pageSizes"
@@ -33,6 +33,12 @@ export default {
           pageNum: 1,
           pageSize: 10
         }
+      }
+    },
+    changePageNum: {
+      type: Boolean,
+      default () {
+        return false
       }
     }
   },

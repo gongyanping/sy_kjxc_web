@@ -1,6 +1,6 @@
  <template>
   <div class="patrolpointDialog">
-    <el-dialog title="请选择点位类型" :visible.sync="visible" width="35%" @close="onCancelPoint" custom-class="light">
+    <el-dialog title="点位管理" :visible.sync="visible" width="35%" @close="onCancelPoint" custom-class="light">
       <el-form ref="patrolForm" :model="patrolForm" label-width="120px" :rules="rules">
         <el-form-item label="任务名称" prop="lineId">
           <el-select
@@ -50,8 +50,11 @@
               :key="item.value"
               :label="item.label"
               :value="item.value"
-            ></el-option>
+            />
           </el-select>
+        </el-form-item>
+        <el-form-item label="点位顺序" prop="sort">
+          <el-input-number v-model="patrolForm.sort" placeholder="请输入点位顺序(数字)" clearable style="width: 50%" />
         </el-form-item>
         <el-form-item label="时间" prop="time" v-if="patrolForm.type !== '1'">
           <el-time-picker format="HH:mm" value-format="HH:mm" v-model="patrolForm.time" placeholder="请选择时间点"></el-time-picker>
@@ -63,7 +66,7 @@
               :key="item.id"
               :label="item.equCode + ' ' + item.equName"
               :value="item.id"
-            ></el-option>
+            />
           </el-select>
         </el-form-item>
       </el-form>

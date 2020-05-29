@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-16 09:31:26
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-19 15:07:21
+ * @LastEditTime: 2020-05-29 14:35:54
  * @Description:
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\components\patrolpointList.vue
  -->

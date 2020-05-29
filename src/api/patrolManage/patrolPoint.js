@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-16 09:31:25
  * @LastEditors: gyp
- * @LastEditTime: 2020-04-22 18:33:24
+ * @LastEditTime: 2020-05-29 16:11:08
  * @Description:
  * @FilePath: \sy_kjxc_web\src\api\patrolManage\patrolPoint.js
  */
@@ -23,6 +23,7 @@ const patrolPoint = {
   delete (params) {
     return request.post('/lineSpot/delete', params)
   },
+  // 获取所有线路
   findAll () {
     return request.get('/line/findAll');
   },
@@ -32,6 +33,10 @@ const patrolPoint = {
   // 获取所有打卡机
   getAllFingerprint (params) {
     return request.get('/lineSpot/getAllFingerprint', { params });
+  },
+  // 获取部门
+  getPlatform () {
+    return request.get('platform/findAll')
   }
 }
 export default patrolPoint

@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-28 10:41:25
+ * @LastEditTime: 2020-05-29 16:26:28
  * @Description: 巡逻点管理
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\patrolPoint.vue
  -->
@@ -70,6 +70,21 @@
           />
         </el-select>
         <el-select
+          v-model="platformId"
+          placeholder="请选择部门"
+          size="small"
+          clearable
+          filterable
+          style="width: 2rem; margin-left: 0.1rem"
+        >
+          <el-option
+            v-for="item in platformOptions"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+        <el-select
           v-model="lineId"
           placeholder="请选择任务名称"
           size="small"
@@ -77,7 +92,6 @@
           filterable
           style="width: 2rem; margin-left: 0.1rem"
         >
-          <el-option key="uniqued0000" label="全部" value />
           <el-option
             v-for="item in lineOptions"
             :key="item.id"
@@ -95,8 +109,13 @@
         <el-button @click="reset" size="small" type="primary" plain
           >重置</el-button
         >
-        <el-button @click="showPolylines = []" size="small" type="success" plain>
-           关闭线路
+        <el-button
+          @click="showPolylines = []"
+          size="small"
+          type="success"
+          plain
+        >
+          关闭线路
         </el-button>
       </div>
     </div>
@@ -109,23 +128,21 @@
         @ready="handler"
         @click="onMapClick"
       >
-        <bml-marker-clusterer :averageCenter="true">
-          <bm-marker
-            v-for="marker of markers"
-            :position="{ lng: marker.lng, lat: marker.lat }"
-            :key="marker.id"
-            @click="onMarkerClick(marker)"
-            :icon="
-              marker.isLocate
-                ? {
-                    url: require('../../assets/icon/loca.png'),
-                    size: { width: 32, height: 32 }
-                  }
-                : { url: marker.icon, size: { width: 32, height: 32 } }
-            "
-            :offset="{ width: 0, height: -14 }"
-          />
-        </bml-marker-clusterer>
+        <bm-marker
+          v-for="marker of markers"
+          :position="{ lng: marker.lng, lat: marker.lat }"
+          :key="marker.id"
+          @click="onMarkerClick(marker)"
+          :icon="
+            marker.isLocate
+              ? {
+                  url: require('../../assets/icon/loca.png'),
+                  size: { width: 32, height: 32 }
+                }
+              : { url: marker.icon, size: { width: 32, height: 32 } }
+          "
+          :offset="{ width: 0, height: -14 }"
+        />
         <bm-info-window
           :position="markerCoord"
           :title="infoWindow.title"
@@ -154,7 +171,11 @@
           @getList="getList"
           @onSavePoint="onSavePoint"
         />
-        <Pagination :tabledatas="tableDatas" @comgetData="getList" />
+        <Pagination
+          :tabledatas="tableDatas"
+          @comgetData="getList"
+          :changePageNum="true"
+        />
         <no-data v-if="tableDatas.rows.length <= 0" />
       </div>
     </div>
@@ -177,8 +198,9 @@ import Pagination from '@/components/Pagination';
 import noData from '@/components/noData';
 import patrolpointList from './components/patrolpointList';
 import patrolpointDialog from './components/patrolpointDialog';
-import { BmlMarkerClusterer, BmMarker } from 'vue-baidu-map';
+import { BmMarker } from 'vue-baidu-map';
 import { GetQueryString } from '@/utils/common.js';
+// import axios from 'axios';
 import _ from 'lodash';
 export default {
   name: 'patrol-point',
@@ -187,7 +209,6 @@ export default {
     noData,
     patrolpointList,
     patrolpointDialog,
-    BmlMarkerClusterer,
     BmMarker
   },
   data () {
@@ -223,7 +244,7 @@ export default {
       markers: [],
       form: {
         pageNumber: 1,
-        pageSize: 6
+        pageSize: 10
       },
       selectedAddr: '',
       onProcessing: false,
@@ -232,7 +253,7 @@ export default {
         contents: ''
       },
       markerCoord: null,
-      BMap: null, // 地图累
+      BMap: null, // 地图类
       map: null, // 地图实例
       local: null, // 服务类
       patrolForm: {
@@ -252,6 +273,8 @@ export default {
       equOptions: [], // 打卡机列表
       addrSearch: '', // 地图关键字搜索位置
       alertShow: false, // 新增点时提示框
+      platformId: '', // 选中的部门
+      platformOptions: [], // 部门列表
       polylines: [], // 全部线路
       showPolylines: [], // 显示的线路
       strokeColors: [
@@ -267,7 +290,7 @@ export default {
         '#8CBB19',
         '#3F0412',
         '#EB8099'
-      ]
+      ] // 线路颜色
     };
   },
   created () {
@@ -282,6 +305,7 @@ export default {
     this.getAllFingerprint(); // 打卡机
     this.getList(); // 巡逻点
     this.getPolylineData(); // 线路
+    this.initPlatList(); // 部门
   },
   methods: {
     handler ({ BMap, map }) {
@@ -301,7 +325,7 @@ export default {
       } else {
         this.form.pageNumber = val1;
       }
-      if (this.inputName || this.typeName) {
+      if (this.inputName || this.typeName || this.platformId) {
         this.showPolylines = [];
       } else if (this.lineId) {
         // 某个线路
@@ -331,6 +355,7 @@ export default {
             ...this.form,
             name: this.inputName,
             type: this.typeName,
+            platformId: this.platformId,
             lineId: this.lineId
           })
         )
@@ -416,11 +441,12 @@ export default {
               };
               let coordArr = [];
               data.forEach(item => {
-                const { lineId, lon, lat } = item;
+                const { lineId, lon, lat, sort } = item;
                 if (curLine === lineId) {
-                  coordArr.push({ lng: lon, lat });
+                  coordArr.push({ lng: lon, lat, sort });
                 }
               });
+              coordArr.sort((a, b) => a.sort - b.sort);
               obj.coordList = [...coordArr, coordArr[0]];
               polyArr.push(obj);
             }
@@ -538,6 +564,7 @@ export default {
     reset () {
       this.inputName = ''; // 关键字
       this.typeName = ''; // 点位类型
+      this.platformId = ''; // 部门
       this.lineId = ''; // 线路
       this.getList();
     },
@@ -572,6 +599,15 @@ export default {
         renderOptions: { map: this.map }
       });
       this.local.search(this.addrSearch);
+    },
+    // 所属平台
+    initPlatList () {
+      this.$api.patrolPoint.getPlatform().then(res => {
+      // axios.get('http://47.105.153.19:8020/platform/findAll').then(res => {
+        if (res.data.code === 0) {
+          this.platformOptions = res.data.data;
+        }
+      });
     }
   }
 };

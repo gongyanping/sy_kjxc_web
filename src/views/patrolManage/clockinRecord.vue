@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-28 13:25:34
+ * @LastEditTime: 2020-05-29 11:43:33
  * @Description: 打卡记录
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\clockinRecord.vue
  -->
@@ -87,7 +87,7 @@
             type="primary"
             size="small"
             class="bt-search"
-            @click="getList"
+            @click="getList(1)"
             >搜索</el-button
           >
           <el-button @click="reset" size="small" type="primary" plain
@@ -109,29 +109,20 @@
         @ready="handler"
         @click="onMapClick"
       >
-        <bml-marker-clusterer :averageCenter="true">
           <bm-marker
             v-for="marker of markers"
             :key="marker.userId + '_' + marker.index"
             :position="{ lng: marker.lng, lat: marker.lat }"
             @click="onMarkerClick(marker)"
-            :icon="
-              marker.isLocate
-                ? {
-                    url: require('../../assets/icon/loca.png'),
-                    size: { width: 32, height: 32 }
-                  }
-                : { url: require('../../assets/icon/loca0.png'), size: { width: 32, height: 32 } }
-            "
+            :icon="{url: require('../../assets/icon/loca0.png'), size: { width: 32, height: 32 }}"
             :offset="{ width: 0, height: -16 }"
           >
           <bm-label
-              :content="marker.index"
+              :content="marker.index + ''"
               :labelStyle="{backgroundColor: 'transparent', color: '#fff', fontSize : '12px', border: '0', zIndex: '5'}"
               :offset="{width: marker.index < 10 ? 12: 8, height: 5}"
           />
           </bm-marker>
-        </bml-marker-clusterer>
         <!-- 轨迹线 -->
         <bm-polyline :path="polylinePaths" />
         <!-- 网格图 -->
@@ -154,6 +145,7 @@
             url: require('../../assets/icon/p11.png'),
             size: { width: 32, height: 44 }
           }"
+          :offset="{ width: 0, height: -22 }"
         />
         <bm-info-window
           :position="markerCoord"
@@ -181,7 +173,7 @@
 </template>
 
 <script>
-import { BmlMarkerClusterer, BmMarker } from 'vue-baidu-map';
+import { BmMarker } from 'vue-baidu-map'; // BmlMarkerClusterer,
 import Pagination from '@/components/Pagination';
 import noData from '@/components/noData';
 import clockinList from './components/clockinList';
@@ -194,7 +186,7 @@ export default {
     Pagination,
     noData,
     clockinList,
-    BmlMarkerClusterer,
+    // BmlMarkerClusterer,
     BmMarker
   },
   data () {
@@ -331,6 +323,7 @@ export default {
       let resetMkPoint = i => {
         this.trackMarker = this.polylinePaths[i];
         if (i < paths) {
+          console.log(i);
           this.timeOut = setTimeout(function () {
             i++;
             resetMkPoint(i);
@@ -343,9 +336,7 @@ export default {
     },
     handleTrack () {
       if (this.isTracking) {
-        this.isTracking = false;
-        this.polylinePaths = [];
-        this.trackMarker = null;
+        this.closeTrack();
       } else {
         this.gpsList();
       }
@@ -363,8 +354,8 @@ export default {
             startTime,
             endTime
           };
-          // this.$api.clockinRecord.gpsList(this.$qs.stringify(pp)).then(res => {
-          axios.get('http://218.76.207.66:8020/gpsDetails/list2', { params: pp }).then(res => {
+          this.$api.clockinRecord.gpsList(this.$qs.stringify(pp)).then(res => {
+          // axios.get('http://218.76.207.66:8020/gpsDetails/list2', { params: pp }).then(res => {
             if (res.data.data.list && res.data.data.list.length) {
               this.polylinePaths = res.data.data.list.map(item => {
                 return {
@@ -388,7 +379,7 @@ export default {
       }
     },
     // 获取打卡记录
-    getList () {
+    getList (pageNumber = 1) {
       if (this.searchForm.platformId) {
         // 只展示某个局的信息
         const searchPlatform = this.platformOptions3.find(
@@ -416,6 +407,10 @@ export default {
         // 全部网格
         this.showPolygons = _.cloneDeep(this.polygons);
         this.mapInit();
+      }
+      this.form = {
+        ...this.form,
+        pageNumber
       }
       this.$api.clockinRecord
         .selectList(
@@ -476,14 +471,6 @@ export default {
       if (lng && lat) {
         this.center = { lng, lat };
         this.zoom = 19;
-        this.markers = this.markers.map(item => {
-          if (item.userId === id) {
-            item.isLocate = true;
-          } else {
-            item.isLocate = false;
-          }
-          return item;
-        });
       } else {
         this.$message.error('该坐标位置不存在');
       }
@@ -497,6 +484,10 @@ export default {
     },
     reset () {
       this.$refs['searchForm'].resetFields();
+      this.form = {
+        pageNumber: 1,
+        pageSize: 10
+      }
       this.searchForm = {
         userName: '',
         platformId: '',
@@ -504,10 +495,16 @@ export default {
         startTime: '',
         endTime: ''
       };
+      this.closeTrack();
+      this.getList();
+    },
+    // 关闭轨迹
+    closeTrack () {
       this.isTracking = false;
       this.polylinePaths = [];
       this.trackMarker = null;
-      this.getList();
+      clearTimeout(this.timeOut);
+      this.timeOut = null;
     },
     // 获取网格数据
     getGridData () {
