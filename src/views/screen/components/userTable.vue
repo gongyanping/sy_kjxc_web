@@ -7,18 +7,11 @@
  * @FilePath: \sy_kjxc_web\src\views\screen\components\dutyleaderDialog.vue
  -->
 <template>
-  <el-dialog
-    title="大队值班领导"
-    :visible.sync="visible"
-    @closed="onClosed"
-    width="60%"
-    custom-class="blue"
-  >
+  <div class="userTable">
     <el-table :data="tableDatas && tableDatas.rows" border class="blueTable" style="100%">
       <el-table-column type="index" label="序号" width="50" align="center" />
       <el-table-column prop="userName" label="姓名" min-width="60" />
       <el-table-column prop="telephone" label="电话" min-width="60" />
-      <el-table-column prop="imei" label="照片" min-width="60" />
       <el-table-column prop="thisMonthState" label="本月未打卡数" align="center" min-width="60" />
       <el-table-column prop="lastMonthState" label="上月未打卡数" align="center" min-width="60" />
       <el-table-column label="操作" align="center" min-width="120">
@@ -29,20 +22,19 @@
         </template>
       </el-table-column>
     </el-table>
-    <Pagination :tabledatas="tableDatas" :isScreen="true" @comgetData="findUserByIdentity" />
-  </el-dialog>
+    <Pagination :tabledatas="tableDatas" :isScreen="true" @comgetData="findUserVo" />
+  </div>
 </template>
 
 <script>
 import Pagination from '@/components/Pagination';
 export default {
-  name: 'dutyleader-dialog',
-  props: ['dutyleaderVisible'],
+  name: 'user-table',
+  props: ['platformGroupId'],
   watch: {
-    dutyleaderVisible (newVal) {
-      this.visible = newVal;
-      if (this.visible) {
-        this.findUserByIdentity();
+    platformGroupId (newVal) {
+      if (newVal) {
+        this.findUserVo();
       }
     }
   },
@@ -51,7 +43,6 @@ export default {
   },
   data () {
     return {
-      visible: false, // 弹出框可见性
       tableDatas: {
         pageNum: 1,
         pageSize: 10,
@@ -61,31 +52,32 @@ export default {
     };
   },
   created () {
-
+    this.findUserVo();
   },
   methods: {
-    // 获取数据
-    findUserByIdentity (pageNumber = 1) {
+    findUserVo (pageNumber = 1) {
       let params = {
+        groupId: this.platformGroupId,
         pageNumber: pageNumber,
         pageSize: 10
       };
-      this.$api.screen.findUserByIdentity(params).then(res => {
+      this.$api.screen.findUserVo(params).then(res => {
         this.tableDatas = {
           ...res.data,
           pageNum: pageNumber,
           pageSize: 10
-        }
-        console.log(this.tableDatas)
+        };
+        console.log(this.tableDatas);
       });
-    },
-    // 关闭弹出框
-    onClosed () {
-      this.visible = false;
-      this.$emit('onDutyleaderClose');
     },
     // 每行点击操作
     handleClick () {}
   }
 };
 </script>
+
+<style lang="less" scoped>
+  .userTable {
+    margin-top: 5px;
+  }
+</style>

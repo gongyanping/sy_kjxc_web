@@ -22,7 +22,7 @@
         <el-button v-if="onProcessing" @click="handleCancelPoint">取消新增巡逻点</el-button>
         <!-- <span class="elAlert" v-if="onProcessing" v-show="alertShow">
           <el-alert title="先在地图上选择点位，再点击确定去进行新增" type="success" @close="alertShow = false" />
-        </span> -->
+        </span>-->
         <span v-if="onProcessing">
           <el-input
             placeholder="输入地址名查询"
@@ -34,12 +34,7 @@
         </span>
       </div>
       <div class="searchWrap">
-        <el-input
-          placeholder="请输入关键字"
-          v-model="inputName"
-          clearable
-          style="width: 150px;"
-        />
+        <el-input placeholder="请输入关键字" v-model="inputName" clearable style="width: 150px;" />
         <el-select
           v-model="typeName"
           placeholder="点位类型"
@@ -95,12 +90,12 @@
         @ready="handler"
         @click="onMapClick"
       >
-          <bm-marker
-            v-for="marker of markers"
-            :position="{ lng: marker.lng, lat: marker.lat }"
-            :key="marker.id"
-            @click="onMarkerClick(marker)"
-            :icon="
+        <bm-marker
+          v-for="marker of markers"
+          :position="{ lng: marker.lng, lat: marker.lat }"
+          :key="marker.id"
+          @click="onMarkerClick(marker)"
+          :icon="
             marker.isLocate
               ? {
                   url: require('../../assets/icon/loca.png'),
@@ -108,8 +103,8 @@
                 }
               : { url: marker.icon, size: { width: 32, height: 32 } }
           "
-            :offset="{ width: 0, height: -14 }"
-          />
+          :offset="{ width: 0, height: -14 }"
+        />
         <bm-info-window
           :position="markerCoord"
           :title="infoWindow.title"
@@ -286,23 +281,31 @@ export default {
     mapShaoyang () {
       const map = this.map;
       // 设置地图的边界
-      let bdary = new BMap.Boundary()
+      let bdary = new BMap.Boundary();
       bdary.get('邵阳', rs => {
-        let EN_JW = '180, 90;' // 东北角
-        let NW_JW = '-180,  90;' // 西北角
-        let WS_JW = '-180, -90;' // 西南角
+        let EN_JW = '180, 90;'; // 东北角
+        let NW_JW = '-180,  90;'; // 西北角
+        let WS_JW = '-180, -90;'; // 西南角
         let SE_JW = '180, -90;'; // 东南角
-        let plyOut = new BMap.Polygon(rs.boundaries[0] + SE_JW + SE_JW + WS_JW + NW_JW + EN_JW + SE_JW, {
-          strokeColor: 'none', fillOpacity: 1, strokeOpacity: 0.5, fillColor: '#F5F3F0'
-        }) // 目标地区外
+        let plyOut = new BMap.Polygon(
+          rs.boundaries[0] + SE_JW + SE_JW + WS_JW + NW_JW + EN_JW + SE_JW,
+          {
+            strokeColor: 'none',
+            fillOpacity: 1,
+            strokeOpacity: 0.5,
+            fillColor: '#F5F3F0'
+          }
+        ); // 目标地区外
         let plyInner = new BMap.Polygon(rs.boundaries[0], {
-          strokeWeight: 2, strokeColor: '#999', fillColor: ''
-        }) // 目标地区
-        map.addOverlay(plyOut) // 添加覆盖物
-        map.addOverlay(plyInner) // 添加覆盖物
+          strokeWeight: 2,
+          strokeColor: '#999',
+          fillColor: ''
+        }); // 目标地区
+        map.addOverlay(plyOut); // 添加覆盖物
+        map.addOverlay(plyInner); // 添加覆盖物
         plyOut.disableMassClear(); // 禁止移除
         plyInner.disableMassClear(); // 禁止移除
-      })
+      });
     },
     // 获取巡逻点列表
     getList (val1 = 1, val2) {
@@ -607,7 +610,7 @@ export default {
     },
     // 所属平台
     initPlatList () {
-      this.$api.patrolPoint.getPlatform().then(res => {
+      this.$api.patrolPoint.getPlatform({ level: 3 }).then(res => {
         // axios.get('http://47.105.153.19:8020/platform/findAll').then(res => {
         if (res.data.code === 0) {
           this.platformOptions = res.data.data;

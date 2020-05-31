@@ -8,7 +8,8 @@
 import axios from 'axios'
 // import { getToken } from '@/utils/token';
 import { Message, Loading } from 'element-ui';
-const serverUrl = 'http://218.76.207.66:8020' // 服务器地址
+let serverUrl = 'http://47.105.153.19:8029' // 服务器地址
+// let serverUrl = 'http://218.76.207.66:8020' // 服务器地址
 // const serverUrl = process.env.VUE_APP_BASE_API // 服务器地址
 const request = axios.create({
   timeout: 60 * 1000,

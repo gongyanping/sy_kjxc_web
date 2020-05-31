@@ -9,6 +9,10 @@
 
 import request from '../request.js'
 const screen = {
+  // 查询全部接口
+  getPoliceCarInit () {
+    return request.get('/patrolCar/getPoliceCarInit')
+  },
   // 获取快警平台信息
   findPlatform () {
     return request.get('/platformUser/findPlatform')

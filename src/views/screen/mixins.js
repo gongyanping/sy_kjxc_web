@@ -7,7 +7,7 @@
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
 import customMapConfig from '@/assets/json/custom_map_config.json';
-import axios from 'axios';
+import _ from 'lodash';
 const basicScreen = {
   data () {
     // 中间顶部的统计数据
@@ -125,6 +125,8 @@ const basicScreen = {
       platformTitle: '', // 当前平台名称
       policeVisible: false, // 快警-弹出框可见性
       dutyleaderVisible: false, // 大队值班领导-弹出框可见性
+      polygons: [], // 全部网格数组
+      showPolygons: [], // 显示的网格数组
       videoStyle: {
         height: '100%',
         width: '100%'
@@ -143,12 +145,10 @@ const basicScreen = {
      */
     mapInit () {
       const map = this.map;
-      console.log(map)
       // 设置地图的边界
       let bdary = new BMap.Boundary()
       console.log(bdary);
       bdary.get(this.cityName, function (rs) {
-        map.clearOverlays()
         let EN_JW = '180, 90;' // 东北角
         let NW_JW = '-180,  90;' // 西北角
         let WS_JW = '-180, -90;' // 西南角
@@ -163,25 +163,93 @@ const basicScreen = {
         map.addOverlay(plyInner) // 添加覆盖物
         plyOut.disableMassClear(); // 禁止移除
         plyInner.disableMassClear(); // 禁止移除
-        // this.PolygonList['mapOut'] = plyOut; // 添加到覆盖物数组
-        // this.PolygonList['plyInner'] = plyInner; // 添加到覆盖物数组
       })
     },
     /**
      * 老接口-获取全部数据
      */
-    getAlldataReq () {
-      let url = 'http://218.76.207.66:8181/api/getPoliceCarInit'
-      axios.get(url).then((result) => {
-        this.getAllPoint(result.data.deptList)
+    getPoliceCarInit () {
+      this.$api.screen.getPoliceCarInit().then(res => {
+        this.getAllPoint(res.data.data)
       })
     },
     /**
      * 设置地图上车辆的点位和平台网格
      * @param {Array} data 车辆和网格数据
      */
-    getAllPoint () {
+    getAllPoint (data) {
+      let gridArray = []; // 格式化后的网格数据
+      let coordArray = data.map(item => {
+        return {
+          name: item.parentName + item.name,
+          coordList: item.coordList
+        };
+      }); // 未格式化的网格数据
+      coordArray.map((each) => {
+        const { name, coordList } = each;
+        let tempArray = []; // 一个区域网格
+        if (coordList.length) {
+          // 数组有坐标点才进行计算
+          for (let i = 0; i < coordList.length; i++) {
+            // 一个分局可能包含多个分区
+            let arr = coordList[i][0].split(';');
+            if (arr.length) {
+              // 有坐标点才进行计算
+              arr.forEach(element => {
+                let eleCoord = element.split(',');
+                let obj = {
+                  lng: eleCoord[0],
+                  lat: eleCoord[1]
+                };
+                tempArray.push(obj);
+              });
+            }
+          }
+        }
+        if (tempArray.length) {
+          // 有数据才加入网格数据组
+          gridArray.push({
+            name,
+            coordList: tempArray
+          });
+        }
+      });
+      this.polygons = gridArray;
+      this.showPolygons = _.cloneDeep(this.polygons);
+      console.log(this.polygons)
+    },
+    initWebSocket () {
+      // 初始化weosocket
+      let wsuri = 'ws://218.76.207.66:8181/quickWebSocketServer.action';
+      this.websock = new WebSocket(wsuri)
+      this.websock.onopen = this.websocketonopen
 
+      this.websock.onerror = this.websocketonerror
+
+      this.websock.onmessage = this.websocketonmessage
+      this.websock.onclose = this.websocketclose
+    },
+    videoClose () {
+      this.showview = false
+      this.centerPointVideo = null
+    },
+    websocketonopen () {
+      console.log('WebSocket连接成功')
+    },
+    websocketonerror (e) { // 错误
+      console.log('WebSocket连接发生错误' + e.data)
+    },
+    websocketonmessage (e) { // 数据接收
+      if (e.data !== undefined) {
+        // this.queue.push(JSON.parse(e.data))
+        console.log(e.data);
+      }
+    },
+    websocketsend (agentData) { // 数据发送
+      this.websock.send(agentData)
+    },
+    websocketclose: function (e) { // 关闭
+      console.log('connection closed (' + e.code + ')')
     },
     /**
      * 点击各个板块的标题，查看更多
@@ -221,7 +289,7 @@ const basicScreen = {
     onPoliceOpen (row) {
       const { id, parentName, name } = row;
       this.policeVisible = true;
-      this.flatformId = id;
+      this.platformId = id;
       this.platformTitle = parentName + '-' + name;
     },
     /**
@@ -229,18 +297,20 @@ const basicScreen = {
      */
     onPoliceClose () {
       this.policeVisible = false;
-      this.flatformId = '';
+      this.platformId = '';
       this.platformTitle = '';
     },
     /**
      * 大队值班领导
      */
     findUserByIdentity () {
-      this.$api.screen.findUserByIdentity()
+      let params = {
+        pageNumber: 1,
+        pageSize: 15
+      }
+      this.$api.screen.findUserByIdentity(params)
         .then(res => {
-          if (res.data.code === 0) {
-            this.dutyLeaderList = res.data.data;
-          }
+          this.dutyLeaderList = res.data.rows;
         })
     }
   }

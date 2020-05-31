@@ -35,8 +35,8 @@ const patrolPoint = {
     return request.get('/lineSpot/getAllFingerprint', { params });
   },
   // 获取部门
-  getPlatform () {
-    return request.get('platform/findAll')
+  getPlatform (params) {
+    return request.get('/platform/list', { params })
   }
 }
 export default patrolPoint

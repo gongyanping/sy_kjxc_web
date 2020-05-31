@@ -17,38 +17,45 @@
     >
       <div class="content">
         <ul class="groupList">
-          <li class="title">
-            分组情况一览
-          </li>
-          <li :class="groupIndex === index" v-for="(item, index) in platformGroupList" :key="index" @click="onGroupClick(item, index)">
-            {{ item.name }}
-          </li>
+          <li class="title">分组情况一览</li>
+          <li
+            :class="{'active': groupIndex === index}"
+            v-for="(item, index) in platformGroupList"
+            :key="index"
+            @click="onGroupClick(item, index)"
+          >{{ item.name }}</li>
         </ul>
         <div class="main">
           <ul class="tabWrap">
-            <li :class="tabIndex === 'user'" @click="onTabClick('user')">人员列表</li>
-            <li :class="tabIndex === 'equip'" @click="onTabClick('equip')">所属装备</li>
+            <li :class="{'active': tabIndex === 'user'}" @click="onTabClick('user')">人员列表</li>
+            <li :class="{'active': tabIndex === 'equip'}" @click="onTabClick('equip')">所属装备</li>
           </ul>
-          <dutyleader-dialog v-if="tabIndex === 'user'" />
-          <equip-table v-if="tabIndex === 'equip'" />
+          <user-table :platformGroupId="platformGroupId" v-if="tabIndex === 'user'" />
+          <equip-table
+            :platformGroupId="platformGroupId"
+            v-if="tabIndex === 'equip'"
+          />
         </div>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
-import dutyleaderDialog from './dutyleaderDialog'; // 人员table
+import userTable from './userTable'; // 人员table
 import equipTable from './equipTable'; // 设备table
 export default {
   name: 'police-dialog',
   components: {
-    dutyleaderDialog,
+    userTable,
     equipTable
   },
-  props: ['policeVisible', 'title'],
+  props: ['policeVisible', 'platformId', 'title'],
   watch: {
     policeVisible (newVal) {
       this.visible = newVal;
+      if (this.visible) {
+        this.findByPlatformId();
+      }
     }
   },
   data () {
@@ -60,10 +67,9 @@ export default {
       tabIndex: 'user' // user:人员 equip:设备
     };
   },
-  created () {
-    this.findByPlatformId(); // 分组列表
-    this.getUserList(); // 人员列表
-  },
+  // created () {
+  //   this.getUserList(); // 人员列表
+  // },
   methods: {
     // 关闭弹出框
     onClosed () {
@@ -72,7 +78,10 @@ export default {
     },
     // 根据平台id查询所有小组
     findByPlatformId () {
-      this.$api.screen.findByPlatformId()
+      this.$api.screen
+        .findByPlatformId({
+          platformId: this.platformId
+        })
         .then(res => {
           if (res.data.code === 0) {
             this.platformGroupList = res.data.data;
@@ -81,34 +90,7 @@ export default {
               this.platformGroupId = this.platformGroupList[0].id; // 默认给选中第一项
             }
           }
-        })
-    },
-    // 人员列表
-    getUserList () {
-      if (this.platformGroupId) {
-        // 分组id是必传
-        let params = {
-          groupId: this.platformGroupId
-        }
-        this.$api.screen.findUserVo(params)
-          .then(res => {
-            if (res.data.code === 0) {
-              this.userData = res.data.data;
-            }
-          })
-      }
-    },
-    // 设备列表
-    getEquipList () {
-      let params = {
-        groupId: this.findEquipmentForGroupId
-      }
-      this.$api.findUserVo(params)
-        .then(res => {
-          if (res.data.code === 0) {
-            this.equipData = res.data.data;
-          }
-        })
+        });
     },
     /**
      * 分组信息点击查看
@@ -119,13 +101,6 @@ export default {
       const { id } = row;
       this.platformGroupId = id;
       this.groupIndex = index;
-      if (this.tabIndex === 'user') {
-      // 人员列表
-        this.getUserList();
-      } else {
-        // 设备列表
-        this.getEquipList();
-      }
     },
     /**
      * tab标签页点击查看
@@ -134,11 +109,6 @@ export default {
     onTabClick (tab) {
       if (this.tabIndex !== tab) {
         this.tabIndex = tab;
-        if (tab === 'user') {
-          this.getUserList();
-        } else {
-          this.getEquipList();
-        }
       }
     }
   }
@@ -150,11 +120,56 @@ export default {
   .content {
     display: flex;
     height: 685px;
+    font-size: 16px;
+    color: #eee;
     .groupList {
       width: 200px;
       height: 100%;
       border: solid 1px #1e6abc;
       box-shadow: 0 0 5px #1e6abc;
+      > li {
+        &.title {
+          color: #fff;
+          font-size: 18px;
+          font-weight: bold;
+          cursor: default;
+          &:hover {
+            text-shadow: none;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+          }
+        }
+        &.active {
+          color: #1e6abc;
+        }
+        color: #eee;
+        padding: 6px 15px;
+        border-bottom: solid 1px #1e6abc;
+        cursor: pointer;
+        &:hover {
+          -webkit-box-shadow: inset 0 0 5px #2c58a6;
+          box-shadow: inset 0 0 5px #2c58a6;
+        }
+      }
+    }
+    .main {
+      width: calc(100% - 250px);
+      margin-left: 20px;
+      .tabWrap {
+        display: flex;
+        > li {
+          padding: 5px 20px;
+          border: solid 1px #1e6abc;
+          cursor: pointer;
+          &:first-of-type {
+            border-right: none;
+          }
+          &.active {
+            background: #152e53;
+            color: #ffffff;
+          }
+        }
+      }
     }
   }
 }

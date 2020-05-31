@@ -8,84 +8,69 @@
  -->
 
 <template>
-  <el-dialog title="大队值班领导" :visible.sync="visible" @closed="onClosed" width="60%" custom-class="blue">
-    <el-table :data="tableData" border class="blueTable" style="100%">
+  <div class="equipTable">
+    <el-table :data="tableDatas && tableDatas.rows" border class="blueTable" style="100%">
       <el-table-column type="index" label="序号" width="50" align="center" />
-      <el-table-column prop="name" label="姓名"  min-width="60"/>
-      <el-table-column prop="tel" label="电话" min-width="60" />
-      <el-table-column prop="platformparent" label="照片" min-width="60" />
-      <el-table-column prop="num1" label="本月未打卡数" align="center" min-width="60" />
-      <el-table-column prop="num2" label="上月未打卡数" align="center" min-width="60" />
-      <el-table-column label="操作" align="center" min-width="120">
-      <template slot-scope="scope">
-        <el-button @click="handleClick(scope.row)" type="text" size="small">打卡记录</el-button>
-        <el-button type="text" size="small">巡逻任务</el-button>
-        <el-button type="text" size="small">地图轨迹</el-button>
-        <el-button type="text" size="small">视频</el-button>
-      </template>
-    </el-table-column>
+      <el-table-column prop="name" label="装备名"  min-width="80"/>
+      <el-table-column prop="tel" label="类型" min-width="60" />
+      <el-table-column prop="createTime" label="入库时间" min-width="60" />
     </el-table>
-  </el-dialog>
+    <Pagination :tabledatas="tableDatas" :isScreen="true" @comgetData="findEquipmentForGroupId" />
+  </div>
 </template>
 
 <script>
+import Pagination from '@/components/Pagination';
 export default {
-  name: 'dutyleader-dialog',
-  props: ['dutyleaderVisible'],
+  name: 'equip-table',
+  props: ['platformGroupId'],
   watch: {
-    dutyleaderVisible (newVal) {
-      this.visible = newVal;
+    platformGroupId (newVal) {
+      if (newVal) {
+        this.findEquipmentForGroupId();
+      }
     }
+  },
+  components: {
+    Pagination
   },
   data () {
     return {
-      visible: false, // 弹出框可见性
-      tableData: [
-        {
-          name: '王小虎',
-          tel: '13551070745',
-          platformparent: '上海市普陀',
-          num1: '213',
-          num2: 213
-        },
-        {
-          name: '王小虎',
-          tel: '13551070745',
-          platformparent: '上海市普陀',
-          num1: '213',
-          num2: 213
-        }, {
-          name: '王小虎',
-          tel: '13551070745',
-          platformparent: '上海市普陀',
-          num1: '213',
-          num2: 213
-        }, {
-          name: '王小虎',
-          tel: '13551070745',
-          platformparent: '上海市普陀',
-          num1: '213',
-          num2: 213
-        }, {
-          name: '王小虎',
-          tel: '13551070745',
-          platformparent: '上海市普陀',
-          num1: '213',
-          num2: 213
-        }
-      ] // 表格数据
+      tableDatas: {
+        pageNum: 1,
+        pageSize: 10,
+        total: 0,
+        rows: []
+      } // 表格数据
     };
   },
+  created () {
+    this.findEquipmentForGroupId();
+  },
   methods: {
-    // 关闭弹出框
-    onClosed () {
-      this.visible = false;
-      this.$emit('onDutyleaderClose')
+    findEquipmentForGroupId (pageNumber = 1) {
+      let params = {
+        groupId: this.platformGroupId,
+        pageNumber: pageNumber,
+        pageSize: 10
+      };
+      this.$api.screen.findEquipmentForGroupId(params).then(res => {
+        this.tableDatas = {
+          ...res.data,
+          pageNum: pageNumber,
+          pageSize: 10
+        };
+        console.log(this.tableDatas);
+      });
     },
     // 每行点击操作
-    handleClick () {
-
-    }
+    handleClick () {}
   }
 };
 </script>
+
+<style lang="less" scoped>
+  .equipTable {
+    margin-top: 5px;
+  }
+</style>

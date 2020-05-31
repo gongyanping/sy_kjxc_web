@@ -56,19 +56,35 @@
           @ready="handler"
         >
         <!-- 网格图 -->
-        <!-- <bm-polygon
+        <bm-polygon
           v-for="(polygon, index) of showPolygons"
           :key="index"
           :path="polygon.coordList"
-          :stroke-color="'#f00'"
+          :stroke-color="'#ffffff'"
           :stroke-weight="2"
-          :stroke-opacity="0.6"
+          :stroke-opacity="0.5"
           :stroke-style="'dashed'"
-          :fill-color="polygon.fillColor"
-          :fill-opacity="0.5"
-        /> -->
+          :fill-color="'#ffffff'"
+          :fill-opacity="0.2"
+        />
+        <!-- 点位置 -->
+        <!-- <bm-marker
+            v-for="marker of markers"
+            :position="{ lng: marker.lng, lat: marker.lat }"
+            :key="marker.id"
+            @click="onMarkerClick(marker)"
+            :icon="
+            marker.isLocate
+              ? {
+                  url: require('../../assets/icon/loca.png'),
+                  size: { width: 32, height: 32 }
+                }
+              : { url: marker.icon, size: { width: 32, height: 32 } }
+          "
+            :offset="{ width: 0, height: -14 }"
+          /> -->
         </baidu-map>
-        <comm-box :customStyle="'vedioBox'">
+        <comm-box :customStyle="'vedioBox'" v-if="1 < 0">
           <div slot="content" class="videoWrap">
             <KedaVideo ref="Keda" :videoStyle='videoStyle' :videoTitle="'测试'" />
           </div>
@@ -88,7 +104,7 @@
       </el-aside>
     </el-container>
     <police-dialog :platformId="platformId" :title="platformTitle" :policeVisible="policeVisible" @onPoliceClose="onPoliceClose" />
-    <dutyleader-dialog :data="dutyLeaderList" :dutyleaderVisible="dutyleaderVisible" @onDutyleaderClose="onDutyleaderClose" />
+    <dutyleader-dialog :dutyleaderVisible="dutyleaderVisible" @onDutyleaderClose="onDutyleaderClose" />
   </el-container>
 </template>
 
@@ -118,26 +134,28 @@ export default {
   },
   mixins: [basicScreen],
   created () {
+    this.getPoliceCarInit(); // 获取全部信息
     this.findPlatform(); // 获取快警平台信息
     this.findUserByIdentity(); // 获取大队值班领导
   },
   mounted () {
-    setTimeout(() => {
-      let fakeChannels = [{
-        'puid': '889a6842cddc469a80e6317cac526f63',
-        'channelId': '5',
-        'domainId': 'a6dd9e0b801a4dddbb8dd928c610ea67',
-        'domainName': 'kedacom',
-        'channelName': '车内'
-      }, {
-        'puid': '889a6842cddc469a80e6317cac526f63',
-        'channelId': '4',
-        'domainId': 'a6dd9e0b801a4dddbb8dd928c610ea67',
-        'domainName': 'kedacom',
-        'channelName': '车前'
-      }]
-      this.$refs.Keda.play(fakeChannels)
-    }, 3000)
+    this.initWebSocket();
+    // setTimeout(() => {
+    //   let fakeChannels = [{
+    //     'puid': '889a6842cddc469a80e6317cac526f63',
+    //     'channelId': '5',
+    //     'domainId': 'a6dd9e0b801a4dddbb8dd928c610ea67',
+    //     'domainName': 'kedacom',
+    //     'channelName': '车内'
+    //   }, {
+    //     'puid': '889a6842cddc469a80e6317cac526f63',
+    //     'channelId': '4',
+    //     'domainId': 'a6dd9e0b801a4dddbb8dd928c610ea67',
+    //     'domainName': 'kedacom',
+    //     'channelName': '车前'
+    //   }]
+    //   this.$refs.Keda.play(fakeChannels)
+    // }, 3000)
   }
 };
 </script>
