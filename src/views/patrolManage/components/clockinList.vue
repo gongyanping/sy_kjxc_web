@@ -5,11 +5,11 @@
     </li> -->
     <li v-for="(item, index) in recordList" :key="index">
       <div class="locate" @click="handleLocate(item)">
-        <img :src="require('../../../assets/icon/loca0.png')" />
+        <img :src="require('../../../assets/icon/loca1.png')" />
         <span>{{ index+1 }}</span>
       </div>
       <div class="top">
-        <span :title="item.userName">姓名：{{item.userName}}</span>
+        <span :title="item.userName">姓名：<b>{{item.userName}}</b></span>
         <span :title="item.clocktime">打卡时间：{{item.clocktime}}</span>
       </div>
       <div class="center">
@@ -44,7 +44,6 @@
           <el-button
             type="primary"
             plain
-            size="small"
             slot="reference"
           >查看图片</el-button>
         </el-popover>
@@ -52,7 +51,6 @@
           v-else
           type="primary"
           plain
-          size="small"
           @click="viewNopic"
         >查看图片</el-button>
       </div>
@@ -113,7 +111,7 @@ export default {
       }
     }
     padding: 15px 15px 15px 30px;
-    font-size: 14px;
+    font-size: 16px;
     color: #333333;
     border-bottom: solid 1px #dddddd;
     position: relative;

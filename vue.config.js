@@ -32,7 +32,7 @@ module.exports = {
   runtimeCompiler: true,
 
   // 默认情况下 babel-loader 会忽略所有 node_modules 中的文件。如果你想要通过 Babel 显式转译一个依赖，可以在这个选项中列出来。
-  transpileDependencies: ['postcss-px2rem'],
+  // transpileDependencies: ['postcss-px2rem'],
 
   // 如果你不需要生产环境的 source map，可以将其设置为 false 以加速生产环境构建。
   productionSourceMap: false,
@@ -116,13 +116,13 @@ module.exports = {
       // },
       less: {
         javascriptEnabled: true
-      },
-      // rem转换
-      postcss: {
-        plugins: [
-          require('postcss-px2rem')({ remUnit: 100 }) // 换算的基数
-        ]
       }
+      // rem转换
+      // ,postcss: {
+      //   plugins: [
+      //     require('postcss-px2rem')({ remUnit: 100 }) // 换算的基数
+      //   ]
+      // }
     }
   },
   // 是否为 Babel 或 TypeScript 使用 thread-loader。该选项在系统的 CPU 有多于一个内核时自动启用，仅作用于生产构建。

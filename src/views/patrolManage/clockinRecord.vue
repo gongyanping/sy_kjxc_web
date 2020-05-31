@@ -19,19 +19,17 @@
         <el-form-item label="关键字" prop="userName">
           <el-input
             v-model="searchForm.userName"
-            size="small"
             placeholder="请输入用户名"
             clearable
-            style="width: 1.8rem"
+            style="width: 180px"
           ></el-input>
         </el-form-item>
         <el-form-item label="所属平台">
           <el-select
             v-model="searchForm.platformId"
             placeholder="请选择所属平台"
-            size="small"
             clearable
-            style="width: 1.8rem"
+            style="width: 180px"
           >
             <el-option
               v-for="item in platformOptions3"
@@ -45,9 +43,8 @@
           <el-select
             v-model="searchForm.state"
             placeholder="请选择打卡状态"
-            size="small"
             clearable
-            style="width: 1.8rem"
+            style="width: 180px"
           >
             <el-option
               v-for="item in punchclockList"
@@ -64,7 +61,6 @@
               placeholder="开始时间"
               v-model="searchForm.startTime"
               style="width: 100%;"
-              size="small"
               value-format="yyyy-MM-dd HH:mm:ss"
               clearable
             ></el-date-picker>
@@ -76,7 +72,6 @@
               placeholder="结束时间"
               v-model="searchForm.endTime"
               style="width: 100%;"
-              size="small"
               value-format="yyyy-MM-dd HH:mm:ss"
               clearable
             ></el-date-picker>
@@ -85,15 +80,14 @@
         <el-form-item>
           <el-button
             type="primary"
-            size="small"
             class="bt-search"
             @click="getList(1)"
             >搜索</el-button
           >
-          <el-button @click="reset" size="small" type="primary" plain
+          <el-button @click="reset" type="primary" plain
             >重置</el-button
           >
-          <el-button @click="handleTrack" size="small" type="success" plain>
+          <el-button @click="handleTrack" type="success" plain>
             <span v-if="!isTracking">查看轨迹</span>
             <span v-else>关闭轨迹</span>
           </el-button>
@@ -107,14 +101,13 @@
         :zoom="zoom"
         :scroll-wheel-zoom="true"
         @ready="handler"
-        @click="onMapClick"
       >
           <bm-marker
-            v-for="marker of markers"
-            :key="marker.userId + '_' + marker.index"
+            v-for="(marker, index) of markers"
+            :key="marker.userId + index"
             :position="{ lng: marker.lng, lat: marker.lat }"
             @click="onMarkerClick(marker)"
-            :icon="{url: require('../../assets/icon/loca0.png'), size: { width: 32, height: 32 }}"
+            :icon="{url: require('../../assets/icon/loca1.png'), size: { width: 32, height: 32 }}"
             :offset="{ width: 0, height: -16 }"
           >
           <bm-label
@@ -213,7 +206,8 @@ export default {
       },
       platformOptions3: [], // 平台
       markers: [],
-      BMap: null,
+      BMap: null, // 地图类
+      map: null, // 地图实例
       markerCoord: null, // 弹出框坐标
       infoWindow: {
         // 弹出框信息
@@ -311,19 +305,42 @@ export default {
     this.timeOut = null;
   },
   methods: {
-    handler ({ BMap }) {
+    handler ({ BMap, map }) {
       this.BMap = BMap;
+      this.map = map;
+      this.mapShaoyang();
     },
     mapInit () {
       this.zoom = 12;
       this.center = { lng: 111.28, lat: 27.14 };
+    },
+    mapShaoyang () {
+      const map = this.map;
+      // 设置地图的边界
+      let bdary = new BMap.Boundary()
+      bdary.get('邵阳', rs => {
+        let EN_JW = '180, 90;' // 东北角
+        let NW_JW = '-180,  90;' // 西北角
+        let WS_JW = '-180, -90;' // 西南角
+        let SE_JW = '180, -90;'; // 东南角
+        let plyOut = new BMap.Polygon(rs.boundaries[0] + SE_JW + SE_JW + WS_JW + NW_JW + EN_JW + SE_JW, {
+          strokeColor: 'none', fillOpacity: 1, strokeOpacity: 0.5, fillColor: '#F5F3F0'
+        }) // 目标地区外
+        let plyInner = new BMap.Polygon(rs.boundaries[0], {
+          strokeWeight: 2, strokeColor: '#999', fillColor: ''
+        }) // 目标地区
+        map.addOverlay(plyOut) // 添加覆盖物
+        map.addOverlay(plyInner) // 添加覆盖物
+        plyOut.disableMassClear(); // 禁止移除
+        plyInner.disableMassClear(); // 禁止移除
+      })
     },
     run () {
       let paths = this.polylinePaths.length; // 获得有几个点
       let resetMkPoint = i => {
         this.trackMarker = this.polylinePaths[i];
         if (i < paths) {
-          console.log(i);
+          // console.log(i);
           this.timeOut = setTimeout(function () {
             i++;
             resetMkPoint(i);
@@ -408,10 +425,20 @@ export default {
         this.showPolygons = _.cloneDeep(this.polygons);
         this.mapInit();
       }
+      if (pageNumber) {
+        this.infoWindow = {
+        // 弹出框信息
+          show: false,
+          name: '',
+          addr: '',
+          time: ''
+        }
+      }
       this.form = {
         ...this.form,
         pageNumber
       }
+      this.markers = [];
       this.$api.clockinRecord
         .selectList(
           this.$qs.stringify({
@@ -436,8 +463,7 @@ export default {
                   '<div class="markerLabel"><p><b>打卡人：</b>' +
                     item.userName +
                     '</p><p><b>时间：</b>' +
-                    item.clocktime || '' + '</p></div>',
-                  isLocate: false
+                    item.clocktime || '' + '</p></div>'
                 };
                 return obj2;
               }); // 打卡点
@@ -466,7 +492,6 @@ export default {
       };
       this.markerCoord = { lng, lat };
     },
-    onMapClick () {},
     handleLocate (id, lng, lat) {
       if (lng && lat) {
         this.center = { lng, lat };
@@ -575,7 +600,7 @@ export default {
 .patrolmainWrap {
   .patrolHeader {
     min-height: 60px;
-    padding: 0;
+    padding: 5px 0;
     display: flex;
     align-items: center;
     justify-content: space-between;

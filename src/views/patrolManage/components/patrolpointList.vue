@@ -18,9 +18,9 @@
         <p class="ellipsis">地址：{{ item.address }}</p>
       </div>
       <div style="text-align:right;">
-        <el-button class="bt-edit" type="primary" size="mini" @click="handleEdit(item)">编辑</el-button>
+        <el-button class="bt-edit" type="primary" size="small" @click="handleEdit(item)">编辑</el-button>
         <p style="margin-top: 5px;">
-          <el-button class="bt-edit" type="primary" size="mini" @click="handleCopy(item)" plain>复制</el-button>
+          <el-button class="bt-edit" type="primary" size="small" @click="handleCopy(item)" plain>复制</el-button>
         </p>
       </div>
       <i class="el-icon-close delIcon" @click="onDelete(item.id, item.name)"></i>
@@ -85,7 +85,7 @@ export default {
     .flex-center();
     justify-content: space-between;
     padding: 20px 15px;
-    font-size: 14px;
+    font-size: 16px;
     color: #333333;
     border-bottom: solid 1px #dddddd;
     position: relative;

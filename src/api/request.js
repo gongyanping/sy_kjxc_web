@@ -8,9 +8,8 @@
 import axios from 'axios'
 // import { getToken } from '@/utils/token';
 import { Message, Loading } from 'element-ui';
-// const href = window.location.href.origin + ':8020';
-// const serverUrl = 'http://localhost:8020' // 服务器地址
-const serverUrl = process.env.VUE_APP_BASE_API // 服务器地址
+const serverUrl = 'http://218.76.207.66:8020' // 服务器地址
+// const serverUrl = process.env.VUE_APP_BASE_API // 服务器地址
 const request = axios.create({
   timeout: 60 * 1000,
   baseURL: serverUrl, // 如果多个服务器地址的话，可以新去掉该配置，新建文件进行配置，直接在写接口的地方调用服务器地址

@@ -13,54 +13,38 @@
       <div>
         <el-button
           type="primary"
-          size="small"
           @click="handleNew"
           :disabled="onProcessing && !this.patrolForm.lon"
         >
           <span v-if="!onProcessing">新增巡逻点</span>
           <span v-else>确定巡逻点</span>
         </el-button>
-        <el-button v-if="onProcessing" @click="handleCancelPoint" size="small"
-          >取消新增巡逻点</el-button
-        >
-        <span class="elAlert" v-if="onProcessing" v-show="alertShow">
-          <el-alert
-            title="先在地图上选择点位，再点击确定去进行新增"
-            type="success"
-            @close="alertShow = false"
-          />
-        </span>
+        <el-button v-if="onProcessing" @click="handleCancelPoint">取消新增巡逻点</el-button>
+        <!-- <span class="elAlert" v-if="onProcessing" v-show="alertShow">
+          <el-alert title="先在地图上选择点位，再点击确定去进行新增" type="success" @close="alertShow = false" />
+        </span> -->
         <span v-if="onProcessing">
           <el-input
-            placeholder="可输入地址名查询地点"
-            size="small"
+            placeholder="输入地址名查询"
             v-model="addrSearch"
             clearable
-            style="width: 2rem;margin: 0 0.1rem"
+            style="width: 180px;margin: 5px 10px"
           />
-          <el-button
-            type="primary"
-            size="small"
-            class="bt-search"
-            @click="searchAddr"
-            >查询</el-button
-          >
+          <el-button type="primary" class="bt-search" @click="searchAddr">查询</el-button>
         </span>
       </div>
       <div class="searchWrap">
         <el-input
           placeholder="请输入关键字"
-          size="small"
           v-model="inputName"
           clearable
-          style="width: 2rem;"
-        ></el-input>
+          style="width: 150px;"
+        />
         <el-select
           v-model="typeName"
-          placeholder="请选择点位类型"
-          size="small"
+          placeholder="点位类型"
           clearable
-          style="width: 2rem; margin-left: 0.1rem"
+          style="width: 140px; margin-left: 10px"
         >
           <el-option
             v-for="item in typeOptions"
@@ -72,10 +56,9 @@
         <el-select
           v-model="platformId"
           placeholder="请选择部门"
-          size="small"
           clearable
           filterable
-          style="width: 2rem; margin-left: 0.1rem"
+          style="width: 180px; margin-left: 10px"
         >
           <el-option
             v-for="item in platformOptions"
@@ -87,10 +70,9 @@
         <el-select
           v-model="lineId"
           placeholder="请选择任务名称"
-          size="small"
           clearable
           filterable
-          style="width: 2rem; margin-left: 0.1rem"
+          style="width: 205px; margin-left: 10px"
         >
           <el-option
             v-for="item in lineOptions"
@@ -99,24 +81,9 @@
             :value="item.id"
           />
         </el-select>
-        <el-button
-          type="primary"
-          size="small"
-          class="bt-search"
-          @click="getList(1)"
-          >搜索</el-button
-        >
-        <el-button @click="reset" size="small" type="primary" plain
-          >重置</el-button
-        >
-        <el-button
-          @click="showPolylines = []"
-          size="small"
-          type="success"
-          plain
-        >
-          关闭线路
-        </el-button>
+        <el-button type="primary" class="bt-search" @click="getList(1)">搜索</el-button>
+        <el-button @click="reset" type="primary" plain>重置</el-button>
+        <el-button @click="showPolylines = []" type="success" plain>关闭线路</el-button>
       </div>
     </div>
     <div class="mainWrap">
@@ -128,12 +95,12 @@
         @ready="handler"
         @click="onMapClick"
       >
-        <bm-marker
-          v-for="marker of markers"
-          :position="{ lng: marker.lng, lat: marker.lat }"
-          :key="marker.id"
-          @click="onMarkerClick(marker)"
-          :icon="
+          <bm-marker
+            v-for="marker of markers"
+            :position="{ lng: marker.lng, lat: marker.lat }"
+            :key="marker.id"
+            @click="onMarkerClick(marker)"
+            :icon="
             marker.isLocate
               ? {
                   url: require('../../assets/icon/loca.png'),
@@ -141,8 +108,8 @@
                 }
               : { url: marker.icon, size: { width: 32, height: 32 } }
           "
-          :offset="{ width: 0, height: -14 }"
-        />
+            :offset="{ width: 0, height: -14 }"
+          />
         <bm-info-window
           :position="markerCoord"
           :title="infoWindow.title"
@@ -171,11 +138,7 @@
           @getList="getList"
           @onSavePoint="onSavePoint"
         />
-        <Pagination
-          :tabledatas="tableDatas"
-          @comgetData="getList"
-          :changePageNum="true"
-        />
+        <Pagination :tabledatas="tableDatas" @comgetData="getList" :changePageNum="true" />
         <no-data v-if="tableDatas.rows.length <= 0" />
       </div>
     </div>
@@ -277,19 +240,21 @@ export default {
       platformOptions: [], // 部门列表
       polylines: [], // 全部线路
       showPolylines: [], // 显示的线路
+      markersLength: 0, // 点长度
       strokeColors: [
+        '#BD8CBB',
         '#D81E06',
-        '#E96309',
-        '#D4237A',
-        '#F91C03',
+        '#14A849',
+        '#2264BC',
         '#1296DB',
         '#13227A',
         '#03A8A4',
         '#594D9C',
-        '#14A849',
+        '#D4237A',
         '#8CBB19',
         '#3F0412',
-        '#EB8099'
+        '#EB8099',
+        '#EFB40D'
       ] // 线路颜色
     };
   },
@@ -311,11 +276,33 @@ export default {
     handler ({ BMap, map }) {
       this.BMap = BMap;
       this.map = map;
+      this.mapShaoyang();
     },
     // 初始化地图
     mapInit () {
       this.zoom = 12;
       this.center = { lng: 111.28, lat: 27.14 };
+    },
+    mapShaoyang () {
+      const map = this.map;
+      // 设置地图的边界
+      let bdary = new BMap.Boundary()
+      bdary.get('邵阳', rs => {
+        let EN_JW = '180, 90;' // 东北角
+        let NW_JW = '-180,  90;' // 西北角
+        let WS_JW = '-180, -90;' // 西南角
+        let SE_JW = '180, -90;'; // 东南角
+        let plyOut = new BMap.Polygon(rs.boundaries[0] + SE_JW + SE_JW + WS_JW + NW_JW + EN_JW + SE_JW, {
+          strokeColor: 'none', fillOpacity: 1, strokeOpacity: 0.5, fillColor: '#F5F3F0'
+        }) // 目标地区外
+        let plyInner = new BMap.Polygon(rs.boundaries[0], {
+          strokeWeight: 2, strokeColor: '#999', fillColor: ''
+        }) // 目标地区
+        map.addOverlay(plyOut) // 添加覆盖物
+        map.addOverlay(plyInner) // 添加覆盖物
+        plyOut.disableMassClear(); // 禁止移除
+        plyInner.disableMassClear(); // 禁止移除
+      })
     },
     // 获取巡逻点列表
     getList (val1 = 1, val2) {
@@ -325,30 +312,49 @@ export default {
       } else {
         this.form.pageNumber = val1;
       }
-      if (this.inputName || this.typeName || this.platformId) {
+      if (this.inputName || this.typeName) {
         this.showPolylines = [];
+      } else if (this.platformId && !this.lineId) {
+        // 某个平台
+        this.showPolylines = this.polylines.filter(
+          item => item.platformId === this.platformId
+        );
+        if (this.showPolylines.length) {
+          // 先定位到线路
+          this.zoom = 16;
+          this.center = {
+            lng: this.showPolylines[0].coordList[0].lng,
+            lat: this.showPolylines[0].coordList[0].lat
+          };
+        } else {
+          this.showPolylines = [];
+        }
       } else if (this.lineId) {
+        this.platformId = '';
         // 某个线路
         this.showPolylines = this.polylines.filter(
           item => item.lineId === this.lineId
         );
         if (this.showPolylines.length) {
           // 先定位到线路
-          this.zoom = 14;
+          this.zoom = 17;
+          let length = this.showPolylines[0].coordList.length;
+          if (length) {
+            length = Math.floor(length / 2);
+          }
           this.center = {
-            lng: this.showPolylines[0].coordList[0].lng,
-            lat: this.showPolylines[0].coordList[0].lat
+            lng: this.showPolylines[0].coordList[length].lng,
+            lat: this.showPolylines[0].coordList[length].lat
           };
         } else {
-          // 全部线路
-          this.showPolylines = _.cloneDeep(this.polylines);
-          this.mapInit();
+          this.showPolylines = [];
         }
       } else {
         // 全部线路
         this.showPolylines = _.cloneDeep(this.polylines);
         this.mapInit();
       }
+      this.markers = [];
       this.$api.patrolPoint
         .list(
           this.$qs.stringify({
@@ -366,31 +372,23 @@ export default {
               pageNum: this.form.pageNumber,
               pageSize: this.form.pageSize
             };
-            this.markers = res.data.data.rows.map(item => {
-              const { id, lineId, name, lon, lat } = item;
-              let wholeName = this.lineOptions.find(item => item.id === lineId)
-                ? this.lineOptions.find(item => item.id === lineId).name
-                : ''; // 名称
-              let numName = wholeName
-                ? wholeName.slice(
-                  wholeName.indexOf('号') - 1,
-                  wholeName.indexOf('号')
-                )
-                : 0; // 几号线路
-              if (numName === '三') {
-                numName = 3;
-              }
-              let obj = {
-                id: id,
-                name: name,
-                lng: lon,
-                lat: lat,
-                isLocate: false,
-                icon: require('../../assets/icon/loca' + numName + '.png')
-              };
-              return obj;
-            });
-            this.markersLength = this.markers.length;
+            if (res.data.data.rows.length) {
+              this.markers = res.data.data.rows.map(item => {
+                const { id, lineName, name, lon, lat } = item;
+                const lineNum = lineName.slice(-1);
+                let obj = {
+                  id,
+                  name,
+                  lng: lon,
+                  lat,
+                  isLocate: false,
+                  lineNum,
+                  icon: require('../../assets/icon/loca' + lineNum + '.png')
+                };
+                return obj;
+              });
+              this.markersLength = this.markers.length;
+            }
           }
         })
         .catch(err => {
@@ -405,6 +403,7 @@ export default {
             name: '',
             type: '',
             lineId: '',
+            platformId: '',
             pageNumber: 1,
             pageSize: 1000000
           })
@@ -414,32 +413,38 @@ export default {
             let data = res.data.data.rows;
             let lineArr = []; // 线路id
             let polyArr = []; // 线路数组
+            let reg = /^[1-9]+[0-9]*]*$/; // 正整数验证
             data.forEach(item => {
-              const { lineId } = item;
-              if (!lineArr.includes(lineId)) {
-                lineArr.push(lineId);
+              const { lineId, platformId, lineName } = item;
+              if (!lineArr.find(item => item.lineId === lineId)) {
+                let lineNum = 0;
+                if (lineName) {
+                  const last = lineName.slice(-1);
+                  if (reg.test(last)) {
+                    lineNum = parseInt(last);
+                  }
+                }
+                lineArr.push({
+                  lineId,
+                  platformId,
+                  lineName,
+                  lineNum
+                });
               }
             });
             for (let i = 0; i < lineArr.length; i++) {
-              let curLine = lineArr[i];
-              let wholeName = this.lineOptions.find(item => item.id === curLine)
-                ? this.lineOptions.find(item => item.id === curLine).name
-                : ''; // 名称
-              let numName = wholeName
-                ? wholeName.slice(
-                  wholeName.indexOf('号') - 1,
-                  wholeName.indexOf('号')
-                )
-                : 0; // 几号线路
+              let { lineId, platformId, lineName, lineNum } = lineArr[i];
+              let curLine = lineId;
               let obj = {
-                lineId: curLine,
-                wholeName,
+                lineId,
+                platformId,
+                lineName,
                 strokeColor:
-                  parseInt(numName) > 12
-                    ? this.strokeColors[parseInt(numName) - 12]
-                    : this.strokeColors[parseInt(numName)]
+                  lineNum < 12
+                    ? this.strokeColors[lineNum]
+                    : this.strokeColors[lineNum - 12]
               };
-              let coordArr = [];
+              let coordArr = []; // 闭环线路坐标
               data.forEach(item => {
                 const { lineId, lon, lat, sort } = item;
                 if (curLine === lineId) {
@@ -603,7 +608,7 @@ export default {
     // 所属平台
     initPlatList () {
       this.$api.patrolPoint.getPlatform().then(res => {
-      // axios.get('http://47.105.153.19:8020/platform/findAll').then(res => {
+        // axios.get('http://47.105.153.19:8020/platform/findAll').then(res => {
         if (res.data.code === 0) {
           this.platformOptions = res.data.data;
         }
@@ -616,14 +621,15 @@ export default {
 <style lang="less" scoped>
 .patrolmainWrap {
   .patrolHeader {
-    height: 60px;
-    padding: 0 20px;
+    min-height: 62px;
+    padding: 5px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     box-sizing: border-box;
     background: #ffffff;
     border-bottom: solid 1px #ccc;
+    font-size: 15px;
     .elAlert {
       width: 324px;
       display: inline-block;
