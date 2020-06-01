@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-16 09:30:32
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-26 16:17:32
+ * @LastEditTime: 2020-06-01 16:45:06
  * @Description: eslint配置
  * @FilePath: \sy_kjxc_web\.eslintrc.js
  */
@@ -10,10 +10,12 @@ module.exports = {
   root: true,
   env: {
     node: true,
-    browser: true
+    browser: true,
+    es6: true
   },
   globals: {
-    BMap: true
+    BMap: true,
+    BMapLib: true,
   },
   'extends': [
     'plugin:vue/essential',

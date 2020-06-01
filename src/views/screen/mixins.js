@@ -2,11 +2,12 @@
  * @Author: gyp
  * @Date: 2020-05-08 18:20:13
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-26 16:19:32
+ * @LastEditTime: 2020-06-01 17:51:31
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
 import customMapConfig from '@/assets/json/custom_map_config.json';
+import axios from 'axios';
 import _ from 'lodash';
 const basicScreen = {
   data () {
@@ -47,38 +48,10 @@ const basicScreen = {
         { name: '汽车', value: 1 },
         { name: '摩托', value: 2 }], // 巡检车辆的导航
       curnavIndex: 0, // 当前选中的巡检车辆的索引,
-      dutyLeaderList: [{
-        name: '汽车北站2号平台',
-        human: '陆华林',
-        phone: '13973959376'
-      }, {
-        name: '武冈广乐路1号平台',
-        human: '钟亚新',
-        phone: '18073909053'
-      }, {
-        name: '武冈春园路2号平台',
-        human: '肖金华',
-        phone: '15073970921'
-      }, {
-        name: '城步儒林镇城南平台',
-        human: '杨文成',
-        phone: '13873932991'
-      }, {
-        name: '新邵老城区1号平台',
-        human: '彭育桂',
-        phone: '13507395193'
-      }, {
-        name: '新邵大坪2号平台',
-        human: '陈雄杰',
-        phone: '13975933098'
-      }, {
-        name: '绥宁中心街2号平台',
-        human: '苏民华',
-        phone: '13873973873'
-      }], // 大队值班领导
+      dutyLeaderList: [], // 大队值班领导
       realtimeAlertList: [{
         palt: '北塔汽车北站2号平台',
-        descri: '其朋友在邵阳大饭店被人殴打其朋友在邵阳大饭店被人殴打其朋友在邵阳大饭店被人殴打其朋友在邵阳大饭店被人殴打其朋友在邵阳大饭店被人殴打',
+        descri: '其朋友在邵阳大饭店被人殴打',
         time: '08:13:04',
         level: '其它警情'
       }, {
@@ -125,12 +98,15 @@ const basicScreen = {
       platformTitle: '', // 当前平台名称
       policeVisible: false, // 快警-弹出框可见性
       dutyleaderVisible: false, // 大队值班领导-弹出框可见性
+      markers: [], // 车辆点位数据
+      showMarkers: [], // 显示的车辆点位数据
       polygons: [], // 全部网格数组
       showPolygons: [], // 显示的网格数组
       videoStyle: {
         height: '100%',
         width: '100%'
-      }
+      },
+      infoBox: null // 弹出框窗口
     }
   },
   methods: {
@@ -147,7 +123,6 @@ const basicScreen = {
       const map = this.map;
       // 设置地图的边界
       let bdary = new BMap.Boundary()
-      console.log(bdary);
       bdary.get(this.cityName, function (rs) {
         let EN_JW = '180, 90;' // 东北角
         let NW_JW = '-180,  90;' // 西北角
@@ -169,15 +144,17 @@ const basicScreen = {
      * 老接口-获取全部数据
      */
     getPoliceCarInit () {
-      this.$api.screen.getPoliceCarInit().then(res => {
-        this.getAllPoint(res.data.data)
+      // this.$api.screen.getPoliceCarInit().then(res => {
+      axios.get('http://218.76.207.66:8181/api/getPoliceCarInit').then(res => {
+        this.getAllGrid(res.data.deptList);
+        this.getAllPoint(res.data.deptList);
       })
     },
     /**
-     * 设置地图上车辆的点位和平台网格
-     * @param {Array} data 车辆和网格数据
+     * 设置地图上车辆的平台网格
+     * @param {Array} data 网格数据
      */
-    getAllPoint (data) {
+    getAllGrid (data) {
       let gridArray = []; // 格式化后的网格数据
       let coordArray = data.map(item => {
         return {
@@ -217,6 +194,100 @@ const basicScreen = {
       this.polygons = gridArray;
       this.showPolygons = _.cloneDeep(this.polygons);
       console.log(this.polygons)
+    },
+    /**
+     * 设置地图上车辆的点位
+     * @param {Array} data 车辆数据
+     */
+    getAllPoint (data) {
+      let pointArray = [];
+      data.map(every => {
+        const { parentName, name, leader, resourceList } = every;
+        if (resourceList.length) {
+          // 有点位
+          resourceList.map(item => {
+            const { lon, lat, type } = item;
+            if (lon && lat) {
+              // 有经纬度
+              let obj = {
+                ...item,
+                lng: lon,
+                wholeName: parentName + name,
+                parentName,
+                name,
+                leader,
+                icon: require('../../assets/icon/car' + type + '.png')
+              }
+              delete obj.lon;
+              pointArray.push(obj);
+            }
+          })
+        }
+      });
+      this.markers = pointArray;
+      this.showMarkers = _.cloneDeep(this.markers);
+      console.log(this.showMarkers)
+    },
+    /**
+     * 车辆点击弹出框
+     * @param {Object} marker 点信息
+     */
+    onMarkerClick (marker) {
+      const { lng, lat, parentName, name, leader, carCode, type } = marker;
+      let myWindow = ['<div class="myInfobox" id = "infoWindow">' +
+          ' <div class="top-left"></div>' +
+          ' <div class="top-right"></div>' +
+          ' <div class="bottom-left"></div>' +
+          ' <div class="bottom-right"></div>' +
+          ' <div class="top">' +
+          '   <div class="pName">' + parentName + '</div>' +
+          '   <div class="sName">' + name + '</div>' +
+          ' </div>' +
+          ' <div class="center">' +
+          '    <div class="carName">' + carCode + '</div>' +
+          '    <div class="leaderName">' + leader + '</div>' +
+          ' </div>'
+      ]
+      switch (type) {
+        case '1':
+          myWindow[0] += '<div style = "border:0.01rem solid #5ab1ef;height:73%">'
+          myWindow[0] += '<div style="display:flex;flex-direction: row;text-align:left;color: #ffffff;font-size: 0.1rem;margin: 0.05rem 0.1rem;">' +
+              '<div style=\'color: #5ab1ef;\'>装备清单</div>' +
+              '</div>' +
+              '<div style="display:flex;flex-direction: row;color: #ffffff;font-size: 0.1rem;margin: 0.05rem 0.1rem;">' +
+              '<div style=\'width: 30%\'>手枪:2</div><div style=\'width: 38%\'>防弹头盔:5 </div><div style=\'width: 34%\'>警戒带:2</div></div>' +
+              '<div style="display:flex;flex-direction: row;justify-content:space-between;color: #ffffff;font-size: 0.1rem;margin: 0.05rem 0.1rem;">' +
+              '<div style=\'width: 30%\'>盾牌:4</div><div style=\'width: 38%\'>单警装备:10</div><div style=\'width: 34%\'>防弹衣:5</div>' +
+              '</div>' +
+              '<div style="display:flex;flex-direction: row;justify-content:space-between;color: #ffffff;font-size: 0.1rem;margin: 0.05rem 0.1rem;">' +
+              '<div style=\'width: 30%\'>阻车器:2</div><div style=\'width: 38%\'>电子抓捕器:2</div><div style=\'width: 34%\'>执法记录仪:6</div></div>' +
+              '<div style="display:flex;flex-direction: row;justify-content:space-between;color: #ffffff;font-size: 0.1rem;margin: 0.05rem 0.1rem;">' +
+              '<div style=\'width: 30%\'>约束带:4</div><div style=\'width: 38%\'>停车示意牌:5</div><div style=\'width: 34%\'>反光背心:8</div>' +
+              '</div>' +
+              '<div style="display:flex;flex-direction: row;justify-content:space-around;color: #ffffff;font-size: 0.1rem;margin: 0.05rem 0.1rem;">' +
+              '<div style=\'width: 60%\'>处警车350兆车载台:3</div><div style=\'width: 40%\'>350兆对讲机:7</div>' +
+              '</div>'
+          break;
+        case '2':
+          break;
+        case '3':
+          break;
+        default:
+          break;
+      }
+      let infoBox = new BMapLib.InfoBox(this.map, myWindow, {
+        boxStyle: {
+          background: 'transparent',
+          width: '350px',
+          height: '300px'
+        },
+        offset: new BMap.Size(0, 35),
+        closeIconMargin: '1px 1px 0 0',
+        enableAutoPan: true,
+        closeIconUrl: require('../../assets/icon/close.png')
+      })
+      let point = new BMap.Point(lng, lat)
+      infoBox.open(new BMap.Marker(point));
     },
     initWebSocket () {
       // 初始化weosocket

@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 13:53:04
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-08 17:29:11
+ * @LastEditTime: 2020-06-01 17:00:51
  * @Description: 统一的有边框的容器
  * @FilePath: \sy_kjxc_web\src\components\commBox.vue
  -->
@@ -53,44 +53,41 @@ export default {
   .commBorder();
   box-sizing: border-box;
   position: relative;
-  .top-left {
+  .border-common{
     width: 10px;
     height: 10px;
+    position: absolute;
+  }
+  .top-left {
+    .border-common();
     border-left: 2px solid #5ab1ef;
     border-top: 2px solid #5ab1ef;
-    position: absolute;
     left: -1px;
     top: -1px;
   }
 
   .top-right {
-    width: 0.1rem;
-    height: 0.1rem;
-    border-right: 0.02rem solid #5ab1ef;
-    border-top: 0.02rem solid #5ab1ef;
-    position: absolute;
-    right: -0.01rem;
-    top: -0.01rem;
+    .border-common();
+    border-right: 2px solid #5ab1ef;
+    border-top: 2px solid #5ab1ef;
+    right: -1px;
+    top: -1px;
   }
 
   .bottom-left {
-    width: 0.1rem;
-    height: 0.1rem;
-    border-left: 0.02rem solid #5ab1ef;
-    border-bottom: 0.02rem solid #5ab1ef;
-    position: absolute;
-    left: -0.01rem;
-    bottom: -0.01rem;
+    .border-common();
+    border-left: 2px solid #5ab1ef;
+    border-bottom: 2px solid #5ab1ef;
+    left: -1px;
+    bottom: -1px;
   }
 
   .bottom-right {
-    width: 0.1rem;
-    height: 0.1rem;
-    border-right: 0.02rem solid #5ab1ef;
-    border-bottom: 0.02rem solid #5ab1ef;
-    position: absolute;
-    right: -0.01rem;
-    bottom: -0.01rem;
+    .border-common();
+    border-right: 2px solid #5ab1ef;
+    border-bottom: 2px solid #5ab1ef;
+    right: -1px;
+    bottom: -1px;
   }
 }
 
