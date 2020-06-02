@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-03-17 09:42:11
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-29 16:41:50
+ * @LastEditTime: 2020-06-02 16:38:51
  * @Description:
  * @FilePath: \sy_kjxc_web\src\router\index.js
  */
@@ -47,7 +47,7 @@ export const constantRoutes = [
     path: '/',
     name: 'index',
     component: Layout,
-    redirect: '/patrolPoint'
+    redirect: '/clockinRecord'
   },
   {
     path: '/patrolPoint',

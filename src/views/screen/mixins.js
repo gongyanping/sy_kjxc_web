@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 18:20:13
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-01 17:51:31
+ * @LastEditTime: 2020-06-02 17:22:38
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
@@ -106,7 +106,10 @@ const basicScreen = {
         height: '100%',
         width: '100%'
       },
-      infoBox: null // 弹出框窗口
+      lastInfoBox: null, // 弹出框窗口
+      showView: false, // 视频播放可见性
+      videoName: '', // 视频播放标题
+      viewUrlMap: {} // 存储视频的对象
     }
   },
   methods: {
@@ -202,19 +205,20 @@ const basicScreen = {
     getAllPoint (data) {
       let pointArray = [];
       data.map(every => {
-        const { parentName, name, leader, resourceList } = every;
+        const { parentName, deptName, leader, resourceList } = every;
         if (resourceList.length) {
           // 有点位
           resourceList.map(item => {
             const { lon, lat, type } = item;
+            console.log(type);
             if (lon && lat) {
               // 有经纬度
               let obj = {
                 ...item,
                 lng: lon,
-                wholeName: parentName + name,
+                wholeName: parentName + deptName,
                 parentName,
-                name,
+                name: deptName,
                 leader,
                 icon: require('../../assets/icon/car' + type + '.png')
               }
@@ -233,7 +237,13 @@ const basicScreen = {
      * @param {Object} marker 点信息
      */
     onMarkerClick (marker) {
-      const { lng, lat, parentName, name, leader, carCode, type } = marker;
+      const { lng, lat, parentName, name, leader, carCode, type, devid, jsonText, videoList } = marker;
+      let mileage = 0;
+      let speed = 0;
+      if (jsonText) {
+        mileage = jsonText.mileage;
+        speed = jsonText.speed;
+      }
       let myWindow = ['<div class="myInfobox" id = "infoWindow">' +
           ' <div class="top-left"></div>' +
           ' <div class="top-right"></div>' +
@@ -250,30 +260,50 @@ const basicScreen = {
       ]
       switch (type) {
         case '1':
-          myWindow[0] += '<div style = "border:0.01rem solid #5ab1ef;height:73%">'
-          myWindow[0] += '<div style="display:flex;flex-direction: row;text-align:left;color: #ffffff;font-size: 0.1rem;margin: 0.05rem 0.1rem;">' +
+          myWindow[0] += '<div style = "border:1px solid #5ab1ef;height:73%">'
+          myWindow[0] += '<div style="display:flex;flex-direction: row;text-align:left;color: #ffffff;font-size: 14px;margin: 5px 10px;">' +
               '<div style=\'color: #5ab1ef;\'>装备清单</div>' +
               '</div>' +
-              '<div style="display:flex;flex-direction: row;color: #ffffff;font-size: 0.1rem;margin: 0.05rem 0.1rem;">' +
+              '<div style="display:flex;flex-direction: row;color: #ffffff;font-size: 14px;margin: 5px 10px;">' +
               '<div style=\'width: 30%\'>手枪:2</div><div style=\'width: 38%\'>防弹头盔:5 </div><div style=\'width: 34%\'>警戒带:2</div></div>' +
-              '<div style="display:flex;flex-direction: row;justify-content:space-between;color: #ffffff;font-size: 0.1rem;margin: 0.05rem 0.1rem;">' +
+              '<div style="display:flex;flex-direction: row;justify-content:space-between;color: #ffffff;font-size: 14px;margin: 5px 10px;">' +
               '<div style=\'width: 30%\'>盾牌:4</div><div style=\'width: 38%\'>单警装备:10</div><div style=\'width: 34%\'>防弹衣:5</div>' +
               '</div>' +
-              '<div style="display:flex;flex-direction: row;justify-content:space-between;color: #ffffff;font-size: 0.1rem;margin: 0.05rem 0.1rem;">' +
+              '<div style="display:flex;flex-direction: row;justify-content:space-between;color: #ffffff;font-size: 14px;margin: 5px 10px;">' +
               '<div style=\'width: 30%\'>阻车器:2</div><div style=\'width: 38%\'>电子抓捕器:2</div><div style=\'width: 34%\'>执法记录仪:6</div></div>' +
-              '<div style="display:flex;flex-direction: row;justify-content:space-between;color: #ffffff;font-size: 0.1rem;margin: 0.05rem 0.1rem;">' +
+              '<div style="display:flex;flex-direction: row;justify-content:space-between;color: #ffffff;font-size: 14px;margin: 5px 10px;">' +
               '<div style=\'width: 30%\'>约束带:4</div><div style=\'width: 38%\'>停车示意牌:5</div><div style=\'width: 34%\'>反光背心:8</div>' +
               '</div>' +
-              '<div style="display:flex;flex-direction: row;justify-content:space-around;color: #ffffff;font-size: 0.1rem;margin: 0.05rem 0.1rem;">' +
+              '<div style="display:flex;flex-direction: row;justify-content:space-around;color: #ffffff;font-size: 14px;margin: 5px 10px;">' +
               '<div style=\'width: 60%\'>处警车350兆车载台:3</div><div style=\'width: 40%\'>350兆对讲机:7</div>' +
               '</div>'
           break;
         case '2':
-          break;
         case '3':
+          if (jsonText && mileage && speed) {
+            myWindow[0] += '<div style = "border:1px solid #5ab1ef;height:73%">'
+            myWindow[0] += '<div style="display:flex;flex-direction: row;text-align:left;color: #ffffff;font-size: 14px;margin: 30px 10px;">' +
+                  '<div style=\'width: 100%\' id = \'male' + devid + '\'>巡逻里程:' + (mileage / 1000).toFixed(2) + '公里</div>' +
+                  '</div>' +
+                  '<div style="display:flex;flex-direction: row;text-align:left;color: #ffffff;font-size: 14px;margin: 30px 10px;">' +
+                  '<div style=\'width: 100%\' id = \'speed' + devid + '\'>速度:' + speed.toFixed(2) + '公里/小时</div>' +
+                  '</div>'
+          }
           break;
         default:
           break;
+      }
+      if (videoList !== null && videoList.length > 0) {
+        this.viewUrlMap[devid] = videoList
+        myWindow[0] += '<div style="display:flex;flex-direction: row;justify-content:space-around;color: #25f3e6;font-size: 15px;margin: 10px;font-weight: bold">' +
+          '        <div  style="cursor:pointer;text-align: left" onclick="tapclick(\'' + devid + '\',\'' + carCode + '\')">查看监控</div>' +
+          '      </div>' +
+          '    </div>'
+      } else {
+        myWindow[0] += ' </div>   </div>'
+      }
+      if (this.lastInfoBox) {
+        this.lastInfoBox.close();
       }
       let infoBox = new BMapLib.InfoBox(this.map, myWindow, {
         boxStyle: {
@@ -286,8 +316,9 @@ const basicScreen = {
         enableAutoPan: true,
         closeIconUrl: require('../../assets/icon/close.png')
       })
-      let point = new BMap.Point(lng, lat)
-      infoBox.open(new BMap.Marker(point));
+      this.lastInfoBox = infoBox;
+      let point = new BMap.Point(lng, lat);
+      this.lastInfoBox.open(new BMap.Marker(point));
     },
     initWebSocket () {
       // 初始化weosocket
@@ -301,7 +332,7 @@ const basicScreen = {
       this.websock.onclose = this.websocketclose
     },
     videoClose () {
-      this.showview = false
+      this.showView = false
       this.centerPointVideo = null
     },
     websocketonopen () {

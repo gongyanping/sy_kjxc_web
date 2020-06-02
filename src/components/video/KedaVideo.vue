@@ -11,12 +11,12 @@
     </div>
     <div class="video-container">
       <div class="list-menu">
-        <!-- <vue-custom-scrollbar class="warp" :settings="settings"> -->
+        <vue-custom-scrollbar class="warp" :settings="settings">
           <div v-for="(channel, index) in channels" :key="index" class="item menuClass" @click="startRealPlay(index)"
                style="cursor: pointer;">
             {{channel.channelName}}
           </div>
-        <!-- </vue-custom-scrollbar> -->
+        </vue-custom-scrollbar>
       </div>
       <div class="video-content">
         <div class="video-play" v-resize="onResize">
@@ -40,11 +40,14 @@
 // 兼容低版本IE
 import 'babel-polyfill';
 import resize from 'vue-resize-directive';
-// import vueCustomScrollbar from 'vue-custom-scrollbar';
+import vueCustomScrollbar from 'vue-custom-scrollbar';
 
 export default {
   name: 'kedaVideo',
   props: ['videoStyle', 'videoTitle'],
+  components: {
+    vueCustomScrollbar
+  },
   data () {
     return {
       mcuocx: null,

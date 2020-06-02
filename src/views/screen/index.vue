@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 12:44:26
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-01 17:31:27
+ * @LastEditTime: 2020-06-02 18:30:28
  * @Description: 大屏
  * @FilePath: \sy_kjxc_web\src\views\screen\index.vue
  -->
@@ -114,13 +114,9 @@
             />
           </bm-marker>
         </baidu-map>
-        <comm-box :customStyle="'vedioBox'" v-if="1 < 0">
+        <comm-box :customStyle="'vedioBox'" v-show="showView">
           <div slot="content" class="videoWrap">
-            <KedaVideo
-              ref="Keda"
-              :videoStyle="videoStyle"
-              :videoTitle="'测试'"
-            />
+            <KedaVideo ref="Keda" :videoStyle='videoStyle' :videoTitle="videoName" @close="videoClose" />
           </div>
         </comm-box>
       </el-main>
@@ -189,6 +185,22 @@ export default {
     this.findUserByIdentity(); // 获取大队值班领导
   },
   mounted () {
+    /**
+     * 播放监控视频
+     * @param {String} id 设备id
+     * @param {String} videoTitle 车辆名称
+     */
+    let self = this;
+    window.tapclick = (id, videoTitle) => {
+      self.showView = true
+      self.videoName = videoTitle
+      self.videoProps = this.viewUrlMap[id]
+      self.$refs.Keda.play(this.videoProps)
+      self.lastInfoBox.close()
+      setTimeout(() => {
+        self.centerPointVideo = id
+      }, 300)
+    }
     // this.initWebSocket();
     // setTimeout(() => {
     //   let fakeChannels = [{

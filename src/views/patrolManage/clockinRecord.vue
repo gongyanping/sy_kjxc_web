@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-04-15 10:48:52
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-29 11:43:33
+ * @LastEditTime: 2020-06-02 16:24:08
  * @Description: 打卡记录
  * @FilePath: \sy_kjxc_web\src\views\patrolManage\clockinRecord.vue
  -->
@@ -16,13 +16,29 @@
         :model="searchForm"
         label-width="100px"
       >
-        <el-form-item label="关键字" prop="userName">
+        <el-form-item label="用户名" prop="userName">
           <el-input
+            v-if="!searchForm.platformId"
             v-model="searchForm.userName"
             placeholder="请输入用户名"
             clearable
             style="width: 180px"
-          ></el-input>
+          />
+          <el-select
+            v-else
+            v-model="searchForm.userName"
+            placeholder="请输入用户名"
+            clearable
+            filterable
+            style="width: 180px;"
+          >
+            <el-option
+              v-for="item in showUserList"
+              :key="item.id"
+              :label="item.userName"
+              :value="item.userName"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="所属平台">
           <el-select
@@ -30,6 +46,7 @@
             placeholder="请选择所属平台"
             clearable
             style="width: 180px"
+            @change="onSelectChange"
           >
             <el-option
               v-for="item in platformOptions3"
@@ -78,15 +95,10 @@
           </el-col>
         </el-form-item>
         <el-form-item>
-          <el-button
-            type="primary"
-            class="bt-search"
-            @click="getList(1)"
+          <el-button type="primary" class="bt-search" @click="getList(1)"
             >搜索</el-button
           >
-          <el-button @click="reset" type="primary" plain
-            >重置</el-button
-          >
+          <el-button @click="reset" type="primary" plain>重置</el-button>
           <el-button @click="handleTrack" type="success" plain>
             <span v-if="!isTracking">查看轨迹</span>
             <span v-else>关闭轨迹</span>
@@ -102,20 +114,29 @@
         :scroll-wheel-zoom="true"
         @ready="handler"
       >
-          <bm-marker
-            v-for="(marker, index) of markers"
-            :key="marker.userId + index"
-            :position="{ lng: marker.lng, lat: marker.lat }"
-            @click="onMarkerClick(marker)"
-            :icon="{url: require('../../assets/icon/loca1.png'), size: { width: 32, height: 32 }}"
-            :offset="{ width: 0, height: -16 }"
-          >
+        <bm-marker
+          v-for="(marker, index) of markers"
+          :key="marker.userId + index"
+          :position="{ lng: marker.lng, lat: marker.lat }"
+          @click="onMarkerClick(marker)"
+          :icon="{
+            url: require('../../assets/icon/loca1.png'),
+            size: { width: 32, height: 32 }
+          }"
+          :offset="{ width: 0, height: -16 }"
+        >
           <bm-label
-              :content="marker.index + ''"
-              :labelStyle="{backgroundColor: 'transparent', color: '#fff', fontSize : '12px', border: '0', zIndex: '5'}"
-              :offset="{width: marker.index < 10 ? 12: 8, height: 5}"
+            :content="marker.index + ''"
+            :labelStyle="{
+              backgroundColor: 'transparent',
+              color: '#fff',
+              fontSize: '12px',
+              border: '0',
+              zIndex: '5'
+            }"
+            :offset="{ width: marker.index < 10 ? 12 : 8, height: 5 }"
           />
-          </bm-marker>
+        </bm-marker>
         <!-- 轨迹线 -->
         <bm-polyline :path="polylinePaths" />
         <!-- 网格图 -->
@@ -317,23 +338,31 @@ export default {
     mapShaoyang () {
       const map = this.map;
       // 设置地图的边界
-      let bdary = new BMap.Boundary()
+      let bdary = new BMap.Boundary();
       bdary.get('邵阳', rs => {
-        let EN_JW = '180, 90;' // 东北角
-        let NW_JW = '-180,  90;' // 西北角
-        let WS_JW = '-180, -90;' // 西南角
+        let EN_JW = '180, 90;'; // 东北角
+        let NW_JW = '-180,  90;'; // 西北角
+        let WS_JW = '-180, -90;'; // 西南角
         let SE_JW = '180, -90;'; // 东南角
-        let plyOut = new BMap.Polygon(rs.boundaries[0] + SE_JW + SE_JW + WS_JW + NW_JW + EN_JW + SE_JW, {
-          strokeColor: 'none', fillOpacity: 1, strokeOpacity: 0.5, fillColor: '#F5F3F0'
-        }) // 目标地区外
+        let plyOut = new BMap.Polygon(
+          rs.boundaries[0] + SE_JW + SE_JW + WS_JW + NW_JW + EN_JW + SE_JW,
+          {
+            strokeColor: 'none',
+            fillOpacity: 1,
+            strokeOpacity: 0.5,
+            fillColor: '#F5F3F0'
+          }
+        ); // 目标地区外
         let plyInner = new BMap.Polygon(rs.boundaries[0], {
-          strokeWeight: 2, strokeColor: '#999', fillColor: ''
-        }) // 目标地区
-        map.addOverlay(plyOut) // 添加覆盖物
-        map.addOverlay(plyInner) // 添加覆盖物
+          strokeWeight: 2,
+          strokeColor: '#999',
+          fillColor: ''
+        }); // 目标地区
+        map.addOverlay(plyOut); // 添加覆盖物
+        map.addOverlay(plyInner); // 添加覆盖物
         plyOut.disableMassClear(); // 禁止移除
         plyInner.disableMassClear(); // 禁止移除
-      })
+      });
     },
     run () {
       let paths = this.polylinePaths.length; // 获得有几个点
@@ -372,7 +401,7 @@ export default {
             endTime
           };
           this.$api.clockinRecord.gpsList(this.$qs.stringify(pp)).then(res => {
-          // axios.get('http://218.76.207.66:8020/gpsDetails/list2', { params: pp }).then(res => {
+            // axios.get('http://218.76.207.66:8020/gpsDetails/list2', { params: pp }).then(res => {
             if (res.data.data.list && res.data.data.list.length) {
               this.polylinePaths = res.data.data.list.map(item => {
                 return {
@@ -427,17 +456,17 @@ export default {
       }
       if (pageNumber) {
         this.infoWindow = {
-        // 弹出框信息
+          // 弹出框信息
           show: false,
           name: '',
           addr: '',
           time: ''
-        }
+        };
       }
       this.form = {
         ...this.form,
         pageNumber
-      }
+      };
       this.markers = [];
       this.$api.clockinRecord
         .selectList(
@@ -460,10 +489,10 @@ export default {
                   lng: item.lon,
                   index: index + 1,
                   content:
-                  '<div class="markerLabel"><p><b>打卡人：</b>' +
-                    item.userName +
-                    '</p><p><b>时间：</b>' +
-                    item.clocktime || '' + '</p></div>'
+                    '<div class="markerLabel"><p><b>打卡人：</b>' +
+                      item.userName +
+                      '</p><p><b>时间：</b>' +
+                      item.clocktime || '' + '</p></div>'
                 };
                 return obj2;
               }); // 打卡点
@@ -512,7 +541,7 @@ export default {
       this.form = {
         pageNumber: 1,
         pageSize: 10
-      }
+      };
       this.searchForm = {
         userName: '',
         platformId: '',
@@ -583,6 +612,10 @@ export default {
           this.platformOptions3 = res.data.data;
         }
       });
+    },
+    // 平台切换
+    onSelectChange (val) {
+      this.showUserList = this.userList.filter(item => item.platformId === val);
     },
     // 人员列表
     initUserList () {
