@@ -2,15 +2,15 @@
  * @Author: gyp
  * @Date: 2020-05-11 09:13:28
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-11 10:02:27
+ * @LastEditTime: 2020-06-03 10:43:24
  * @Description: 巡检车辆列表
  * @FilePath: \sy_kjxc_web\src\views\screen\components\patrolcarList.vue
  -->
 <template>
   <ul class="patrolcarList">
     <li class="patrolcarItem" v-for="(item, index) in data" :key="index">
-      <div class="car">{{ item.car }}</div>
-      <div class="status">{{ item.status }}</div>
+      <div class="car">{{ item.carCode }}</div>
+      <div class="status">{{ item.jsonText && item.jsonText.speed && item.jsonText.speed > 0 ? '行驶中' : '暂停中'}}</div>
       <el-button size="mini" class="bt-tool">监控</el-button>
     </li>
   </ul>

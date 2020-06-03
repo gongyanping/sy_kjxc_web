@@ -2,12 +2,13 @@
  * @Author: gyp
  * @Date: 2020-05-08 18:20:13
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-02 17:22:38
+ * @LastEditTime: 2020-06-03 15:08:33
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
 import customMapConfig from '@/assets/json/custom_map_config.json';
 import axios from 'axios';
+import Queue from 'queue';
 import _ from 'lodash';
 const basicScreen = {
   data () {
@@ -42,7 +43,7 @@ const basicScreen = {
       mapStyle: { // 地图自定义样式
         styleJson: customMapConfig
       },
-      // PolygonList: {}, // 多边形覆盖物对象
+
       platformList: [], // 快警平台信息
       carnavData: [{ name: '全部', value: 0 },
         { name: '汽车', value: 1 },
@@ -90,10 +91,8 @@ const basicScreen = {
         time: '07:11:12',
         level: '群众求助'
       }], // 实时警情
-      patrolcarList: [{
-        car: '湘E33124',
-        status: '行驶中'
-      }], // 巡检车辆
+      patrolcarArray: [], // 全部巡查车辆数据
+      patrolcarList: [], // 当前类别的巡检车辆
       platformId: '', // 当前平台id
       platformTitle: '', // 当前平台名称
       policeVisible: false, // 快警-弹出框可见性
@@ -109,7 +108,9 @@ const basicScreen = {
       lastInfoBox: null, // 弹出框窗口
       showView: false, // 视频播放可见性
       videoName: '', // 视频播放标题
-      viewUrlMap: {} // 存储视频的对象
+      viewUrlMap: {}, // 存储视频的对象
+      queue: Queue(), // 用来存车辆数据的队列
+      timer: null // 实时点位
     }
   },
   methods: {
@@ -204,6 +205,7 @@ const basicScreen = {
      */
     getAllPoint (data) {
       let pointArray = [];
+      let carArray = [];
       data.map(every => {
         const { parentName, deptName, leader, resourceList } = every;
         if (resourceList.length) {
@@ -225,12 +227,20 @@ const basicScreen = {
               delete obj.lon;
               pointArray.push(obj);
             }
+            let obb = {
+              ...item,
+              lng: lon
+            }
+            delete obb.lon;
+            carArray.push(obb);
           })
         }
       });
       this.markers = pointArray;
-      this.showMarkers = _.cloneDeep(this.markers);
-      console.log(this.showMarkers)
+      this.showMarkers = pointArray;
+      this.patrolcarArray = carArray;
+      this.patrolcarList = carArray;
+      console.log(this.patrolcarList)
     },
     /**
      * 车辆点击弹出框
@@ -320,14 +330,25 @@ const basicScreen = {
       let point = new BMap.Point(lng, lat);
       this.lastInfoBox.open(new BMap.Marker(point));
     },
+    changeCarList (val) {
+      this.curnavIndex = val;
+      if (val === 0) {
+        // 全部
+        this.patrolcarList = _.cloneDeep(this.patrolcarArray);
+      } else if (val === 1) {
+        // 汽车
+        this.patrolcarList = this.patrolcarArray.filter(item => item.type === '2');
+      } else {
+        // 摩托
+        this.patrolcarList = this.patrolcarArray.filter(item => item.type === '3');
+      }
+    },
     initWebSocket () {
       // 初始化weosocket
       let wsuri = 'ws://218.76.207.66:8181/quickWebSocketServer.action';
       this.websock = new WebSocket(wsuri)
       this.websock.onopen = this.websocketonopen
-
       this.websock.onerror = this.websocketonerror
-
       this.websock.onmessage = this.websocketonmessage
       this.websock.onclose = this.websocketclose
     },
@@ -342,9 +363,9 @@ const basicScreen = {
       console.log('WebSocket连接发生错误' + e.data)
     },
     websocketonmessage (e) { // 数据接收
+      console.log(e);
       if (e.data !== undefined) {
-        // this.queue.push(JSON.parse(e.data))
-        console.log(e.data);
+        this.queue.push(JSON.parse(e.data))
       }
     },
     websocketsend (agentData) { // 数据发送
@@ -352,6 +373,31 @@ const basicScreen = {
     },
     websocketclose: function (e) { // 关闭
       console.log('connection closed (' + e.code + ')')
+    },
+    /**
+     * 实时车辆位置
+     */
+    setTimer () {
+      this.timer = setInterval(() => {
+        let queue = this.queue
+        if (queue.length > 0) {
+          let len = queue.length;
+          if (len > 30) len = 30;
+          for (let i = 0; i < len; i++) {
+            let obj = queue.shift();
+            const { deviceId, lon, lat, mileage, speed } = obj;
+            this.showMarkers = this.markers.map(item => {
+              if (item.deviceId === deviceId) {
+                item.lng = lon
+                item.lat = lat
+              }
+              item.jsonText.mileage = mileage;
+              item.jsonText.speed = speed;
+              return item;
+            })
+          }
+        }
+      }, 1000)
     },
     /**
      * 点击各个板块的标题，查看更多

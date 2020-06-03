@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 12:44:26
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-02 18:30:28
+ * @LastEditTime: 2020-06-03 15:07:11
  * @Description: 大屏
  * @FilePath: \sy_kjxc_web\src\views\screen\index.vue
  -->
@@ -32,7 +32,7 @@
                   :class="{ active: index === curnavIndex }"
                   v-for="(item, index) in carnavData"
                   :key="index"
-                  @click="curnavIndex = item.value"
+                  @click="changeCarList(item.value)"
                 >
                   {{ item.name }}
                 </li>
@@ -185,6 +185,7 @@ export default {
     this.findUserByIdentity(); // 获取大队值班领导
   },
   mounted () {
+    this.timer();
     /**
      * 播放监控视频
      * @param {String} id 设备id
@@ -201,23 +202,10 @@ export default {
         self.centerPointVideo = id
       }, 300)
     }
-    // this.initWebSocket();
-    // setTimeout(() => {
-    //   let fakeChannels = [{
-    //     'puid': '889a6842cddc469a80e6317cac526f63',
-    //     'channelId': '5',
-    //     'domainId': 'a6dd9e0b801a4dddbb8dd928c610ea67',
-    //     'domainName': 'kedacom',
-    //     'channelName': '车内'
-    //   }, {
-    //     'puid': '889a6842cddc469a80e6317cac526f63',
-    //     'channelId': '4',
-    //     'domainId': 'a6dd9e0b801a4dddbb8dd928c610ea67',
-    //     'domainName': 'kedacom',
-    //     'channelName': '车前'
-    //   }]
-    //   this.$refs.Keda.play(fakeChannels)
-    // }, 3000)
+  },
+  beforeDestroy () {
+    clearInterval(this.timer);
+    this.timer = null;
   }
 };
 </script>
