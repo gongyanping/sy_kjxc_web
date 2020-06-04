@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 12:44:26
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-03 15:07:11
+ * @LastEditTime: 2020-06-04 16:56:29
  * @Description: 大屏
  * @FilePath: \sy_kjxc_web\src\views\screen\index.vue
  -->
@@ -116,7 +116,12 @@
         </baidu-map>
         <comm-box :customStyle="'vedioBox'" v-show="showView">
           <div slot="content" class="videoWrap">
-            <KedaVideo ref="Keda" :videoStyle='videoStyle' :videoTitle="videoName" @close="videoClose" />
+            <KedaVideo
+              ref="Keda"
+              :videoStyle="videoStyle"
+              :videoTitle="videoName"
+              @close="videoClose"
+            />
           </div>
         </comm-box>
       </el-main>
@@ -127,7 +132,9 @@
           @onTitleClick="onTitleClick"
         >
           <el-scrollbar slot="content" class="scrollBar">
-            <dutyleader-list :data="dutyLeaderList" />
+            <dutyleader-list
+            :data="dutyLeaderList"
+            @onUserClick="onUserClick" />
           </el-scrollbar>
         </comm-box>
         <comm-box
@@ -151,6 +158,19 @@
       :dutyleaderVisible="dutyleaderVisible"
       @onDutyleaderClose="onDutyleaderClose"
     />
+    <userdetail-dialog
+      v-if="userdetailVisible"
+      :userId="currentUserId"
+      :userdetailVisible="userdetailVisible"
+      @onUserdetailClose="onUserdetailClose"
+    />
+    <policesituation-dialog
+      :situationVisible ="situationVisible"
+      @onSituationClose="situationVisible = false" />
+    <dealsituation-dialog
+      :dealsituaVisible ="dealsituaVisible"
+      @onSituationClose="dealsituaVisible = false" />
+    <nopunch-dialog />
   </el-container>
 </template>
 
@@ -163,6 +183,10 @@ import dutyleaderList from './components/dutyleaderList'; // 大队值班领导-
 import realtimealertList from './components/realtimealertList'; // 实时警情
 import policeDialog from './components/policeDialog'; // 快警平台信息--弹出框
 import dutyleaderDialog from './components/dutyleaderDialog'; // 大队值班领导--弹出框
+import userdetailDialog from './components/userdetailDialog'; // 用户详情--弹出框
+import policesituationDialog from './components/policesituationDialog'; // 当日警情
+import dealsituationDialog from './components/dealsituationDialog'; // 当日警情
+import nopunchDialog from './components/nopunchDialog'; // 今日未打卡列表
 import KedaVideo from '@/components/video/KedaVideo'; // 监控视频
 import basicScreen from './mixins.js';
 export default {
@@ -176,6 +200,10 @@ export default {
     realtimealertList,
     policeDialog,
     dutyleaderDialog,
+    userdetailDialog,
+    policesituationDialog,
+    dealsituationDialog,
+    nopunchDialog,
     KedaVideo
   },
   mixins: [basicScreen],
@@ -193,15 +221,15 @@ export default {
      */
     let self = this;
     window.tapclick = (id, videoTitle) => {
-      self.showView = true
-      self.videoName = videoTitle
-      self.videoProps = this.viewUrlMap[id]
-      self.$refs.Keda.play(this.videoProps)
-      self.lastInfoBox.close()
+      self.showView = true;
+      self.videoName = videoTitle;
+      self.videoProps = this.viewUrlMap[id];
+      self.$refs.Keda.play(this.videoProps);
+      self.lastInfoBox.close();
       setTimeout(() => {
-        self.centerPointVideo = id
-      }, 300)
-    }
+        self.centerPointVideo = id;
+      }, 300);
+    };
   },
   beforeDestroy () {
     clearInterval(this.timer);
@@ -239,8 +267,8 @@ export default {
   position: relative;
   width: 350px;
   height: 300px;
-  background:#2c3e50;
-  .border-common{
+  background: #2c3e50;
+  .border-common {
     width: 10px;
     height: 10px;
     position: absolute;
@@ -277,7 +305,7 @@ export default {
     bottom: -1px;
   }
   .top {
-    display:flex;
+    display: flex;
     font-size: 16px;
     margin: 20px 5px 5px;
     padding: 0 5px;
@@ -292,7 +320,7 @@ export default {
     }
   }
   .center {
-    display:flex;
+    display: flex;
     font-size: 16px;
     margin: 5px;
     padding: 0 5px;

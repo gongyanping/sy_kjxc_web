@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-11 20:36:48
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-18 15:12:28
+ * @LastEditTime: 2020-06-04 11:30:59
  * @Description: 点击每一个块茎平台，查看它的详情
  * @FilePath: \sy_kjxc_web\src\views\screen\components\policeDialog.vue
  -->
@@ -30,7 +30,11 @@
             <li :class="{'active': tabIndex === 'user'}" @click="onTabClick('user')">人员列表</li>
             <li :class="{'active': tabIndex === 'equip'}" @click="onTabClick('equip')">所属装备</li>
           </ul>
-          <user-table :platformGroupId="platformGroupId" v-if="tabIndex === 'user'" />
+          <user-table
+            :platformGroupId="platformGroupId"
+            v-if="tabIndex === 'user'"
+            @onUserClick="onUserClick"
+          />
           <equip-table
             :platformGroupId="platformGroupId"
             v-if="tabIndex === 'equip'"
@@ -67,13 +71,12 @@ export default {
       tabIndex: 'user' // user:人员 equip:设备
     };
   },
-  // created () {
-  //   this.getUserList(); // 人员列表
-  // },
   methods: {
     // 关闭弹出框
     onClosed () {
       this.visible = false;
+      this.groupIndex = 0;
+      this.tabIndex = 'user';
       this.$emit('onPoliceClose');
     },
     // 根据平台id查询所有小组
@@ -110,6 +113,14 @@ export default {
       if (this.tabIndex !== tab) {
         this.tabIndex = tab;
       }
+    },
+    /**
+     * 人员的操作
+     * @param {String} id 人员id
+     * @param {String} type 操作类型
+     */
+    onUserClick (id, type) {
+      this.$emit('onUserClick', id, type);
     }
   }
 };

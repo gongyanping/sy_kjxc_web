@@ -2,13 +2,13 @@
  * @Author: gyp
  * @Date: 2020-05-11 09:13:28
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-18 15:28:07
+ * @LastEditTime: 2020-06-04 14:37:18
  * @Description: 大队值班领导列表
  * @FilePath: \sy_kjxc_web\src\views\screen\components\dutyleaderList.vue
  -->
 <template>
   <ul class="dutyleaderList">
-    <li class="dutyItem" v-for="(item, index) in data" :key="index">
+    <li class="dutyItem" v-for="(item, index) in data" :key="index" @click="onItemClick(item.id)">
       <span class="addr"> {{ item.id }} </span>
       <span class="person">{{ item.userName }}</span>
       <span class="phone">{{ item.telephone }}</span>
@@ -19,7 +19,12 @@
 <script>
 export default {
   name: 'dutyleader-list',
-  props: ['data']
+  props: ['data'],
+  methods: {
+    onItemClick (userId) {
+      this.$emit('onUserClick', userId, 'look');
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

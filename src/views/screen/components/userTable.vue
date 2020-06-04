@@ -2,9 +2,9 @@
  * @Author: gyp
  * @Date: 2020-05-11 09:13:28
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-18 15:32:50
+ * @LastEditTime: 2020-06-04 14:27:11
  * @Description: 大队值班领导列表弹出框
- * @FilePath: \sy_kjxc_web\src\views\screen\components\dutyleaderDialog.vue
+ * @FilePath: \sy_kjxc_web\src\views\screen\components\userTable.vue
  -->
 <template>
   <div class="userTable">
@@ -16,9 +16,9 @@
       <el-table-column prop="lastMonthState" label="上月未打卡数" align="center" min-width="60" />
       <el-table-column label="操作" align="center" min-width="120">
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small">打卡记录</el-button>
-          <el-button type="text" size="small">巡逻任务</el-button>
-          <el-button type="text" size="small">地图轨迹</el-button>
+          <el-button @click="handleClick(scope.row.id, 'record')" type="text" size="small">打卡记录</el-button>
+          <el-button @click="handleClick(scope.row.id, 'task')" type="text" size="small">巡逻任务</el-button>
+          <el-button @click="handleClick(scope.row.id, 'track')" type="text" size="small">地图轨迹</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -70,8 +70,14 @@ export default {
         console.log(this.tableDatas);
       });
     },
-    // 每行点击操作
-    handleClick () {}
+    /**
+     * 人员的操作
+     * @param {String} id 人员id
+     * @param {String} type 操作类型
+     */
+    handleClick (id, type) {
+      this.$emit('onUserClick', id, type);
+    }
   }
 };
 </script>
