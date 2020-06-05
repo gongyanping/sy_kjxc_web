@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-11 09:13:28
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-04 14:27:11
+ * @LastEditTime: 2020-06-05 10:48:29
  * @Description: 大队值班领导列表弹出框
  * @FilePath: \sy_kjxc_web\src\views\screen\components\userTable.vue
  -->
@@ -10,11 +10,11 @@
   <div class="userTable">
     <el-table :data="tableDatas && tableDatas.rows" border class="blueTable" style="100%">
       <el-table-column type="index" label="序号" width="50" align="center" />
-      <el-table-column prop="userName" label="姓名" min-width="60" />
+      <el-table-column prop="userName" label="姓名" min-width="50" />
       <el-table-column prop="telephone" label="电话" min-width="60" />
       <el-table-column prop="thisMonthState" label="本月未打卡数" align="center" min-width="60" />
       <el-table-column prop="lastMonthState" label="上月未打卡数" align="center" min-width="60" />
-      <el-table-column label="操作" align="center" min-width="120">
+      <el-table-column label="操作" align="center" min-width="110">
         <template slot-scope="scope">
           <el-button @click="handleClick(scope.row.id, 'record')" type="text" size="small">打卡记录</el-button>
           <el-button @click="handleClick(scope.row.id, 'task')" type="text" size="small">巡逻任务</el-button>

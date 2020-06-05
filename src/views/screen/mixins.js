@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 18:20:13
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-04 17:47:52
+ * @LastEditTime: 2020-06-05 17:33:49
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
@@ -22,7 +22,7 @@ const basicScreen = {
       {
         icon: 'dashboard',
         title: '平均处警时长',
-        value: 198
+        value: '2\'56'
       },
       {
         icon: 'chart',
@@ -114,6 +114,11 @@ const basicScreen = {
       userdetailVisible: false, // 用户详情-弹出框可见性
       situationVisible: false, // 警情-弹出框可见性
       dealsituaVisible: false, // 处警-弹出框可见性
+      nopunchVisible: false, // 未打卡列表-弹出层可见性
+      datacheckVisible: false, // 数据考核-弹出框可见性
+      recordlistVisible: false, // 打卡记录-弹出框可见性
+      patroltaskVisible: false, // 巡逻任务-弹出框可见性
+      maptrackVisible: false, // 地图轨迹-弹出框可见性
       currentUserId: '', // 当前选中用户的id
       markers: [], // 车辆点位数据
       showMarkers: [], // 显示的车辆点位数据
@@ -470,6 +475,28 @@ const basicScreen = {
       }, 1000);
     },
     /**
+     * 顶部统计点击事件
+     * @param {String} title 标题
+     */
+    onStatopClick (title) {
+      switch (title) {
+        case '当日警情数':
+          this.situationVisible = true;
+          break;
+        case '平均处警时长':
+          this.dealsituaVisible = true;
+          break;
+        case '未打卡数据':
+          this.nopunchVisible = true;
+          break;
+        case '数据考核':
+          this.datacheckVisible = true;
+          break;
+        default:
+          break;
+      }
+    },
+    /**
      * 点击各个板块的标题，查看更多
      * @param {String} name 标题
      */
@@ -535,15 +562,19 @@ const basicScreen = {
      */
     onUserClick (userId, type) {
       this.currentUserId = userId;
+      alert(this.currentUserId)
       switch (type) {
         case 'look':
           this.userdetailVisible = true;
           break;
         case 'record':
+          this.recordlistVisible = true;
           break;
         case 'task':
+          this.patroltaskVisible = true;
           break;
         case 'track':
+          this.maptrackVisible = true;
           break;
         default:
           break;

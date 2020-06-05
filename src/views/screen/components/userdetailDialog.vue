@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-06-04 10:36:16
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-04 11:17:13
+ * @LastEditTime: 2020-06-05 11:21:07
  * @Description: 用户详情展示
  * @FilePath: \sy_kjxc_web\src\views\screen\components\userdetailDialog.vue
 -->
@@ -45,7 +45,7 @@
         </li>
         <li>
           <span class="title">巡逻里程：</span>
-          <span class="val">{{ userInfo.sum }}</span>
+          <span class="val">{{ userInfo.sum }} km</span>
         </li>
         <li>
           <span class="title">本月请假天数：</span>
@@ -79,15 +79,10 @@
 <script>
 export default {
   name: 'userdetail-dialog',
-  props: ['userdetailVisible', 'userId'],
-  watch: {
-    userdetailVisible (newVal) {
-      this.visible = newVal;
-    }
-  },
+  props: ['userId'],
   data () {
     return {
-      visible: false, // 弹出框可见性
+      visible: true, // 弹出框可见性
       userInfo: {
         userName: '',
         telephone: '',
@@ -120,8 +115,7 @@ export default {
     },
     // 关闭弹出框
     onClosed () {
-      this.visible = false;
-      this.$emit('userdetailClose');
+      this.$emit('onUserdetailClose');
     }
   }
 };
@@ -130,18 +124,30 @@ export default {
 <style lang="less" scoped>
 .userDetail {
   .basicUser {
+    color: #fff;
     overflow: hidden;
+    border: 1px solid #2C58A6;
+    -webkit-box-shadow: inset 0 0 3px #2C58A6;
+    box-shadow: inset 0 0 3px #2C58A6;
+    padding: 5px 20px;
     > li {
       float: left;
       width: 50%;
-      height: 40px;
-      line-height: 40px;
+      height: 44px;
+      line-height: 44px;
       font-size: 16px;
-      border-bottom: dotted 1px #ccc;
+      border-bottom: dotted 1px #2c58a6;
+      &:last-of-type, &:nth-last-of-type(2) {
+        border-bottom: none;
+      }
       .title {
-        font-weight: bold;
+        color: #25f3e6;
+        color: #ddd;
       }
     }
   }
+}
+/deep/ .blue.el-dialog {
+  height: 600px;
 }
 </style>

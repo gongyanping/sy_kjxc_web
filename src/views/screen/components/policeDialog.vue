@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-11 20:36:48
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-04 11:30:59
+ * @LastEditTime: 2020-06-05 09:59:42
  * @Description: 点击每一个块茎平台，查看它的详情
  * @FilePath: \sy_kjxc_web\src\views\screen\components\policeDialog.vue
  -->
@@ -164,7 +164,7 @@ export default {
       }
     }
     .main {
-      width: calc(100% - 250px);
+      width: calc(100% - 220px);
       margin-left: 20px;
       .tabWrap {
         display: flex;

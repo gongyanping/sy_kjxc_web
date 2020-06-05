@@ -2,14 +2,14 @@
  * @Author: gyp
  * @Date: 2020-06-04 16:34:45
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-04 16:58:14
+ * @LastEditTime: 2020-06-05 11:18:45
  * @Description: 警情数弹出框
  * @FilePath: \sy_kjxc_web\src\views\screen\components\policesituationDialog.vue
 -->
 <template>
   <div class="policeSituation">
     <el-dialog
-      :title="当日警情"
+      :title="'当日警情'"
       :visible.sync="visible"
       @closed="onClosed"
       width="60%"
@@ -48,10 +48,10 @@
         </div>
         <div class="tableWrap">
           <el-table :data="tableData" border class="blueTable" style="100%">
-            <el-table-column prop="dname" label="单位" align="center" />
-            <el-table-column prop="scase" label="刑事案件" align="center" />
-            <el-table-column prop="dcase" label="治安案件" align="center" />
-            <el-table-column prop="ocase" label="其他案件" align="center" />
+            <el-table-column prop="dname" label="单位" align="center" min-width="100" />
+            <el-table-column prop="scase" label="刑事案件" align="center" min-width="50"/>
+            <el-table-column prop="dcase" label="治安案件" align="center" min-width="50"/>
+            <el-table-column prop="ocase" label="其他案件" align="center" min-width="50"/>
           </el-table>
         </div>
       </div>
@@ -62,14 +62,9 @@
 <script>
 export default {
   name: 'policesituation-dialog',
-  props: ['situationVisible'],
-  watch: {
-    situationVisible (newVal) {
-      this.visible = newVal;
-    }
-  },
   data () {
     return {
+      visible: true,
       tableData: [{
         dname: '北塔分局龙山路1号平台',
         scase: 0,
@@ -120,7 +115,6 @@ export default {
   },
   methods: {
     onClosed () {
-      this.visible = false;
       this.$emit('onSituationClose');
     }
   }
@@ -131,26 +125,31 @@ export default {
   .policeSituation{
     .content {
       display: flex;
+      height: 100%;
       .statisWrap {
-        width: 30%;
+        width: 250px;
         height: 100%;
-        border: 0.01rem solid #1e6abc;
-        box-shadow: 0 0 0.05rem #1e6abc;
+        border: 1px solid #1e6abc;
+        box-shadow: 0 0 5px #1e6abc;
         display: flex;
         .classifyWrap {
           width:48%;
-          font-size: 0.15rem;
+          font-size: 18px;
           color:#25f3e6;
-          > div {
+          > li {
              width:100%;
              padding: 20px;
           }
         }
-        .tableWrap {
-          width: 70%;
-          height: 100%;
-        }
       }
+      .tableWrap {
+        width: calc(100% - 270px);
+        margin-left: 20px;
+        height: 100%;
+      }
+    }
+    /deep/ .blue.el-dialog {
+      height: 600px;
     }
   }
 </style>

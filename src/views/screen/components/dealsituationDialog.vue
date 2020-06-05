@@ -2,14 +2,14 @@
  * @Author: gyp
  * @Date: 2020-06-04 16:34:45
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-04 17:45:09
+ * @LastEditTime: 2020-06-05 11:27:43
  * @Description: 处警情况弹出框
  * @FilePath: \sy_kjxc_web\src\views\screen\components\dealsituationDialog.vue
 -->
 <template>
   <div class="dealSituation">
     <el-dialog
-      :title="警情情况"
+      :title="'处警情况'"
       :visible.sync="visible"
       @closed="onClosed"
       width="60%"
@@ -22,10 +22,10 @@
           </div>
           <el-scrollbar class="scrollerWrap">
             <div
-              class="platformInfo"
+              :class="['platformInfo', {'active': index === curIndex}]"
               v-for="(item, index) in platformArray"
               :key="index"
-              @click="changeTable(item.list)"
+              @click="changeTable(index, item.list)"
             >
               <div class="basic">
                 <div>{{ item.name }}</div>
@@ -50,14 +50,10 @@
 <script>
 export default {
   name: 'dealsituation-dialog',
-  props: ['dealsituaVisible'],
-  watch: {
-    dealsituaVisible (newVal) {
-      this.visible = newVal;
-    }
-  },
   data () {
     return {
+      visible: true,
+      curIndex: 0,
       platformArray: [{
         name: '大祥城南公园5号平台',
         time: '2\'55',
@@ -216,15 +212,18 @@ export default {
           human: '邵铁民,匡觉铭'
         }]
       }],
-      tableDetailList: this.platformArray[0].list
+      tableDetailList: []
     };
   },
+  created () {
+    this.tableDetailList = this.platformArray[0].list;
+  },
   methods: {
-    changeTable: function (val) {
-      this.tableDetailList = val
+    changeTable: function (index, list) {
+      this.curIndex = index;
+      this.tableDetailList = list;
     },
     onClosed () {
-      this.visible = false;
       this.$emit('onDealsituaClose');
     }
   }
@@ -235,30 +234,56 @@ export default {
 .dealSituation {
   .content {
     display: flex;
+    height: 100%;
     .statisWrap {
-      width: 30%;
+      width: 280px;
       height: 100%;
-      border: 0.01rem solid #1e6abc;
-      box-shadow: 0 0 0.05rem #1e6abc;
+      border: 1px solid #1e6abc;
+      box-shadow: 0 0 5px #1e6abc;
       .title {
         width: 100%;
-        height: 10%;
+        width: 100%;
+        height: 48px;
+        color: #25f3e6;
+        line-height: 48px;
+        font-size: 18px;
+        padding: 0 10px;
+        color: #25f3e6;
       }
       .scrollerWrap {
         width: 100%;
-        height: 90%;
-        .basic {
-          display: flex;
-          justify-content:space-between;
-          padding: 5px 10px 20px;
-          font-size: 16px;
+        height: clac(100% - 48px);
+        padding: 0 5px;
+        .platformInfo {
+          border: 1px solid #1e6abc;
+          margin-bottom: 10px;
+          color: #fff;
+          &.active {
+            background: #152e53;
+          }
+          &:hover {
+            box-shadow: 0 0 5px #1e6abc;
+            text-shadow: 0 0 3px #fff;
+          }
+          .basic {
+            display: flex;
+            justify-content:space-between;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+          }
         }
       }
     }
     .tableWrap {
-      width: 70%;
+      width: calc(100% - 300px);
+      margin-left: 20px;
       height: 100%;
     }
+  }
+
+  /deep/ .blue.el-dialog {
+    height: 600px;
   }
 }
 </style>

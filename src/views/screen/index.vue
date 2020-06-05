@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 12:44:26
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-04 16:56:29
+ * @LastEditTime: 2020-06-05 17:23:46
  * @Description: 大屏
  * @FilePath: \sy_kjxc_web\src\views\screen\index.vue
  -->
@@ -26,17 +26,18 @@
           @onTitleClick="onTitleClick"
         >
           <div slot="content" class="whAuto">
+            <ul class="carNav">
+              <li
+                :class="{ active: index === curnavIndex }"
+                v-for="(item, index) in carnavData"
+                :key="index"
+                @click="changeCarList(item.value)"
+              >
+                {{ item.name }}
+              </li>
+            </ul>
+            <div class="seize40"></div>
             <el-scrollbar class="scrollBar">
-              <ul class="carNav">
-                <li
-                  :class="{ active: index === curnavIndex }"
-                  v-for="(item, index) in carnavData"
-                  :key="index"
-                  @click="changeCarList(item.value)"
-                >
-                  {{ item.name }}
-                </li>
-              </ul>
               <patrolcar-list :data="patrolcarList" />
             </el-scrollbar>
           </div>
@@ -49,6 +50,7 @@
               class="staItem"
               v-for="(item, index) in headStaData"
               :key="index"
+              @click="onStatopClick(item.title)"
             >
               <div class="staitem-icon">
                 <svg-icon :icon-class="item.icon" />
@@ -57,7 +59,11 @@
                 <div :class="['staitem-name', 'staitem' + index]">
                   {{ item.title }}
                 </div>
+                <div v-if="item.title === '平均处警时长'" class="staitem-num">
+                  {{ item.value }}
+                </div>
                 <count-to
+                  v-else
                   class="staitem-num"
                   :startVal="0"
                   :endVal="item.value"
@@ -133,8 +139,9 @@
         >
           <el-scrollbar slot="content" class="scrollBar">
             <dutyleader-list
-            :data="dutyLeaderList"
-            @onUserClick="onUserClick" />
+              :data="dutyLeaderList"
+              @onUserClick="onUserClick"
+            />
           </el-scrollbar>
         </comm-box>
         <comm-box
@@ -152,6 +159,7 @@
       :platformId="platformId"
       :title="platformTitle"
       :policeVisible="policeVisible"
+      @onUserClick="onUserClick"
       @onPoliceClose="onPoliceClose"
     />
     <dutyleader-dialog
@@ -161,16 +169,39 @@
     <userdetail-dialog
       v-if="userdetailVisible"
       :userId="currentUserId"
-      :userdetailVisible="userdetailVisible"
       @onUserdetailClose="onUserdetailClose"
     />
     <policesituation-dialog
-      :situationVisible ="situationVisible"
-      @onSituationClose="situationVisible = false" />
+      v-if="situationVisible"
+      @onSituationClose="situationVisible = false"
+    />
     <dealsituation-dialog
-      :dealsituaVisible ="dealsituaVisible"
-      @onSituationClose="dealsituaVisible = false" />
-    <nopunch-dialog />
+      v-if="dealsituaVisible"
+      @onDealsituaClose="dealsituaVisible = false"
+    />
+    <nopunch-dialog
+      v-if="nopunchVisible"
+      @onNopunchClose="nopunchVisible = false"
+    />
+    <datacheck-dialog
+      v-if="datacheckVisible"
+      @onDatacheckClose="datacheckVisible = false"
+    />
+    <recordlist-dialog
+      v-if="recordlistVisible"
+      :userId="currentUserId"
+      @onrecordlistClose="recordlistVisible = false"
+    />
+    <patroltask-dialog
+      v-if="patroltaskVisible"
+      :userId="currentUserId"
+      @onPatroltaskClose="patroltaskVisible = false"
+    />
+    <maptrack-dialog
+      v-if="maptrackVisible"
+      :userId="currentUserId"
+      @onMaptrackClose="maptrackVisible = false"
+    />
   </el-container>
 </template>
 
@@ -187,6 +218,10 @@ import userdetailDialog from './components/userdetailDialog'; // 用户详情--�
 import policesituationDialog from './components/policesituationDialog'; // 当日警情
 import dealsituationDialog from './components/dealsituationDialog'; // 当日警情
 import nopunchDialog from './components/nopunchDialog'; // 今日未打卡列表
+import datacheckDialog from './components/datacheckDialog'; // 今日未打卡列表
+import recordlistDialog from './components/recordlistDialog'; // 打卡记录
+import patroltaskDialog from './components/patroltaskDialog'; // 巡逻任务
+import maptrackDialog from './components/maptrackDialog'; // 地图轨迹
 import KedaVideo from '@/components/video/KedaVideo'; // 监控视频
 import basicScreen from './mixins.js';
 export default {
@@ -204,6 +239,10 @@ export default {
     policesituationDialog,
     dealsituationDialog,
     nopunchDialog,
+    datacheckDialog,
+    recordlistDialog,
+    patroltaskDialog,
+    maptrackDialog,
     KedaVideo
   },
   mixins: [basicScreen],
@@ -213,7 +252,7 @@ export default {
     this.findUserByIdentity(); // 获取大队值班领导
   },
   mounted () {
-    this.timer();
+    this.setTimer();
     /**
      * 播放监控视频
      * @param {String} id 设备id
