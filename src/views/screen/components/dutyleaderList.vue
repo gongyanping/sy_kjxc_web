@@ -8,7 +8,7 @@
  -->
 <template>
   <ul class="dutyleaderList">
-    <li class="dutyItem" v-for="(item, index) in data" :key="index" @click="onItemClick(item.id)">
+    <li class="dutyItem" v-for="(item, index) in data" :key="index" @click="onItemClick(item.id, item.userName)">
       <span class="addr"> {{ item.id }} </span>
       <span class="person">{{ item.userName }}</span>
       <span class="phone">{{ item.telephone }}</span>
@@ -21,8 +21,8 @@ export default {
   name: 'dutyleader-list',
   props: ['data'],
   methods: {
-    onItemClick (userId) {
-      this.$emit('onUserClick', userId, 'look');
+    onItemClick (userId, userName) {
+      this.$emit('onUserClick', userId, 'look', userName);
     }
   }
 };

@@ -120,10 +120,13 @@ const basicScreen = {
       patroltaskVisible: false, // 巡逻任务-弹出框可见性
       maptrackVisible: false, // 地图轨迹-弹出框可见性
       currentUserId: '', // 当前选中用户的id
+      currentUserName: '', // 当前选中用户的名称
       markers: [], // 车辆点位数据
       showMarkers: [], // 显示的车辆点位数据
       polygons: [], // 全部网格数组
       showPolygons: [], // 显示的网格数组
+      labels: [], // 网格标注
+      showLabels: [], // 显示的网格标注
       videoStyle: {
         height: '100%',
         width: '100%'
@@ -183,6 +186,7 @@ const basicScreen = {
       axios.get('http://218.76.207.66:8181/api/getPoliceCarInit').then(res => {
         this.getAllGrid(res.data.deptList);
         this.getAllPoint(res.data.deptList);
+        console.log(res.data.deptList)
       });
     },
     /**
@@ -191,12 +195,28 @@ const basicScreen = {
      */
     getAllGrid (data) {
       let gridArray = []; // 格式化后的网格数据
-      let coordArray = data.map(item => {
-        return {
-          name: item.parentName + item.name,
+      let coordArray = []; // 未格式化的网格数据
+      let labelArray = []; // 未格式化的网格标签
+      data.map(item => {
+        let objGrid = {
+          name: item.parentName + item.deptName,
           coordList: item.coordList
         };
-      }); // 未格式化的网格数据
+        coordArray.push(objGrid);
+        let lng = 0;
+        let lat = 0;
+        if (item.conrdinate.split(',')) {
+          lng = item.conrdinate.split(',')[0];
+          lat = item.conrdinate.split(',')[1];
+        } // 格式化
+        let objLabel = {
+          name: item.parentName + item.deptName,
+          conrdinate: lng && lat ? { lng, lat } : ''
+        }
+        labelArray.push(objLabel);
+      });
+      this.labels = labelArray;
+      this.showLabels = labelArray;
       coordArray.map(each => {
         const { name, coordList } = each;
         let tempArray = []; // 一个区域网格
@@ -243,7 +263,6 @@ const basicScreen = {
           // 有点位
           resourceList.map(item => {
             const { lon, lat, type } = item;
-            console.log(type);
             if (lon && lat) {
               // 有经纬度
               let obj = {
@@ -271,7 +290,7 @@ const basicScreen = {
       this.showMarkers = pointArray;
       this.patrolcarArray = carArray;
       this.patrolcarList = carArray;
-      console.log(this.patrolcarList);
+      console.log(this.markers);
     },
     /**
      * 车辆点击弹出框
@@ -369,7 +388,7 @@ const basicScreen = {
         this.viewUrlMap[devid] = videoList;
         myWindow[0] +=
           '<div style="display:flex;flex-direction: row;justify-content:space-around;color: #25f3e6;font-size: 15px;margin: 10px;font-weight: bold">' +
-          '        <div  style="cursor:pointer;text-align: left" onclick="tapclick(\'' +
+          '        <div style="cursor:pointer;text-align: left;font-weight:bold;" onclick="tapclick(\'' +
           devid +
           '\',\'' +
           carCode +
@@ -413,6 +432,18 @@ const basicScreen = {
           item => item.type === '3'
         );
       }
+    },
+    /**
+     * 监控车辆
+     * @param {Object} row 一行的值
+     */
+    monitorCar (row) {
+      const { lng, lat, devid, carCode } = row;
+      if (lng && lat) {
+        this.center = { lng, lat };
+        this.zoom = 17;
+      }
+      window.tapclick(devid, carCode);
     },
     initWebSocket () {
       // 初始化weosocket
@@ -501,7 +532,15 @@ const basicScreen = {
      * @param {String} name 标题
      */
     onTitleClick (name) {
+      if (name.includes('快警平台信息')) {
+        name = 1;
+      }
       switch (name) {
+        case 1:
+          this.showPolygons = _.cloneDeep(this.polygons);
+          this.showMarkers = _.cloneDeep(this.markers);
+          this.showLabels = _.cloneDeep(this.labels);
+          break;
         case '大队值班领导':
           this.dutyleaderVisible = true;
           break;
@@ -534,6 +573,32 @@ const basicScreen = {
       this.policeVisible = true;
       this.platformId = id;
       this.platformTitle = parentName + '-' + name;
+      // 网格
+      let pName = parentName.slice(0, parentName.length - 1);
+      this.showPolygons = this.polygons.filter(item => {
+        let polyName = item.name;
+        return polyName.includes(pName) && polyName.includes(name);
+      });
+      if (this.showPolygons.length) {
+        // 先定位到区域
+        this.zoom = 14;
+        this.center = {
+          lng: this.showPolygons[0].coordList[0].lng,
+          lat: this.showPolygons[0].coordList[0].lat
+        };
+      } else {
+        this.mapInit();
+      }
+      // 车辆
+      this.showMarkers = this.markers.filter(item => {
+        let wholeName = item.wholeName;
+        return wholeName.includes(pName) && wholeName.includes(name);
+      })
+      // 网格标签
+      this.showLabels = this.markers.filter(item => {
+        let labelName = item.name;
+        return labelName.includes(pName) && labelName.includes(name);
+      })
     },
     /**
      * 关闭快警平台弹出框
@@ -560,9 +625,10 @@ const basicScreen = {
      * @param {String} userId 用户id
      * @param {String} type 操作类型
      */
-    onUserClick (userId, type) {
+    onUserClick (userId, type, name) {
+      debugger;
       this.currentUserId = userId;
-      alert(this.currentUserId)
+      this.currentUserName = name;
       switch (type) {
         case 'look':
           this.userdetailVisible = true;

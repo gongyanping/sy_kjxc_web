@@ -118,9 +118,10 @@ export default {
      * 人员的操作
      * @param {String} id 人员id
      * @param {String} type 操作类型
+     * @param {String} name 人员名称
      */
-    onUserClick (id, type) {
-      this.$emit('onUserClick', id, type);
+    onUserClick (id, type, name) {
+      this.$emit('onUserClick', id, type, name);
     }
   }
 };

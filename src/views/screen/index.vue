@@ -20,11 +20,7 @@
             <police-list :data="platformList" @onPoliceOpen="onPoliceOpen" />
           </el-scrollbar>
         </comm-box>
-        <comm-box
-          :title="'巡检车辆'"
-          :customStyle="'leftbotBox'"
-          @onTitleClick="onTitleClick"
-        >
+        <comm-box :title="'巡检车辆'" :customStyle="'leftbotBox'" @onTitleClick="onTitleClick">
           <div slot="content" class="whAuto">
             <ul class="carNav">
               <li
@@ -32,13 +28,11 @@
                 v-for="(item, index) in carnavData"
                 :key="index"
                 @click="changeCarList(item.value)"
-              >
-                {{ item.name }}
-              </li>
+              >{{ item.name }}</li>
             </ul>
             <div class="seize40"></div>
             <el-scrollbar class="scrollBar">
-              <patrolcar-list :data="patrolcarList" />
+              <patrolcar-list :data="patrolcarList" @monitorCar="monitorCar" />
             </el-scrollbar>
           </div>
         </comm-box>
@@ -56,12 +50,8 @@
                 <svg-icon :icon-class="item.icon" />
               </div>
               <div class="staitem-content">
-                <div :class="['staitem-name', 'staitem' + index]">
-                  {{ item.title }}
-                </div>
-                <div v-if="item.title === '平均处警时长'" class="staitem-num">
-                  {{ item.value }}
-                </div>
+                <div :class="['staitem-name', 'staitem' + index]">{{ item.title }}</div>
+                <div v-if="item.title === '平均处警时长'" class="staitem-num">{{ item.value }}</div>
                 <count-to
                   v-else
                   class="staitem-num"
@@ -93,6 +83,21 @@
             :stroke-style="'dashed'"
             :fill-color="'#ffffff'"
             :fill-opacity="0.2"
+          />
+          <!-- 网格名称 -->
+          <bm-label
+            v-for="(label, index) of showLabels"
+            :key="label.name + index"
+            :position="label.conrdinate"
+            :content="label.name"
+            :labelStyle="{
+              color: '#ffffff',
+              fontSize: '16px',
+              fontFamily: '微软雅黑',
+              fontWeight: 'bold',
+              border: 'none',
+              background: 'none'
+            }"
           />
           <!-- 点位置 -->
           <bm-marker
@@ -132,23 +137,12 @@
         </comm-box>
       </el-main>
       <el-aside class="rightWrap">
-        <comm-box
-          :title="'大队值班领导'"
-          :customStyle="'righttopBox'"
-          @onTitleClick="onTitleClick"
-        >
+        <comm-box :title="'大队值班领导'" :customStyle="'righttopBox'" @onTitleClick="onTitleClick">
           <el-scrollbar slot="content" class="scrollBar">
-            <dutyleader-list
-              :data="dutyLeaderList"
-              @onUserClick="onUserClick"
-            />
+            <dutyleader-list :data="dutyLeaderList" @onUserClick="onUserClick" />
           </el-scrollbar>
         </comm-box>
-        <comm-box
-          :title="'实时警情'"
-          :titleStyle="'orange'"
-          :customStyle="'rightbotBox'"
-        >
+        <comm-box :title="'实时警情'" :titleStyle="'orange'" :customStyle="'rightbotBox'">
           <el-scrollbar slot="content" class="scrollBar">
             <realtimealert-list :data="realtimeAlertList" />
           </el-scrollbar>
@@ -164,6 +158,7 @@
     />
     <dutyleader-dialog
       :dutyleaderVisible="dutyleaderVisible"
+      @onUserClick="onUserClick"
       @onDutyleaderClose="onDutyleaderClose"
     />
     <userdetail-dialog
@@ -171,35 +166,26 @@
       :userId="currentUserId"
       @onUserdetailClose="onUserdetailClose"
     />
-    <policesituation-dialog
-      v-if="situationVisible"
-      @onSituationClose="situationVisible = false"
-    />
-    <dealsituation-dialog
-      v-if="dealsituaVisible"
-      @onDealsituaClose="dealsituaVisible = false"
-    />
-    <nopunch-dialog
-      v-if="nopunchVisible"
-      @onNopunchClose="nopunchVisible = false"
-    />
-    <datacheck-dialog
-      v-if="datacheckVisible"
-      @onDatacheckClose="datacheckVisible = false"
-    />
+    <policesituation-dialog v-if="situationVisible" @onSituationClose="situationVisible = false" />
+    <dealsituation-dialog v-if="dealsituaVisible" @onDealsituaClose="dealsituaVisible = false" />
+    <nopunch-dialog v-if="nopunchVisible" @onNopunchClose="nopunchVisible = false" />
+    <datacheck-dialog v-if="datacheckVisible" @onDatacheckClose="datacheckVisible = false" />
     <recordlist-dialog
       v-if="recordlistVisible"
       :userId="currentUserId"
+      :userName="currentUserName"
       @onrecordlistClose="recordlistVisible = false"
     />
     <patroltask-dialog
       v-if="patroltaskVisible"
       :userId="currentUserId"
+      :userName="currentUserName"
       @onPatroltaskClose="patroltaskVisible = false"
     />
     <maptrack-dialog
       v-if="maptrackVisible"
       :userId="currentUserId"
+      :userName="currentUserName"
       @onMaptrackClose="maptrackVisible = false"
     />
   </el-container>
@@ -264,7 +250,7 @@ export default {
       self.videoName = videoTitle;
       self.videoProps = this.viewUrlMap[id];
       self.$refs.Keda.play(this.videoProps);
-      self.lastInfoBox.close();
+      // self.lastInfoBox.close();
       setTimeout(() => {
         self.centerPointVideo = id;
       }, 300);

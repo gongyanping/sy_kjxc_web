@@ -23,7 +23,7 @@
         <el-table-column prop="platform" label="平台" />
         <el-table-column prop="address1" label="组" />
         <el-table-column prop="address2" label="应打卡时间" min-width="90" />
-        <el-table-column label="打卡申诉" align="center">
+        <!-- <el-table-column label="打卡申诉" align="center">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text" size="small"
               >资料</el-button
@@ -36,7 +36,7 @@
               >查看</el-button
             >
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </el-dialog>
   </div>

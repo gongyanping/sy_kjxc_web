@@ -36,6 +36,14 @@ const screen = {
   // 查询用户详细信息
   findUserDetails (params) {
     return request.get('/platformUser/findUserDetails', { params })
+  },
+  // 获取用户打卡记录
+  userAllClockedList (params) {
+    return request.get('/user/userAllClockedList', { params })
+  },
+  // 获取用户任务
+  taskList (params) {
+    return request.get('/user/taskList', { params })
   }
 }
 export default screen

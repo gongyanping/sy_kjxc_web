@@ -11,7 +11,7 @@
     <li class="patrolcarItem" v-for="(item, index) in data" :key="index">
       <div class="car">{{ item.carCode }}</div>
       <div class="status">{{ item.jsonText && item.jsonText.speed && item.jsonText.speed > 0 ? '行驶中' : '暂停中'}}</div>
-      <el-button size="mini" class="bt-tool">监控</el-button>
+      <el-button size="mini" class="bt-tool" @click="monitor(item)">监控</el-button>
     </li>
   </ul>
 </template>
@@ -19,7 +19,12 @@
 <script>
 export default {
   name: 'patrolcar-list',
-  props: ['data']
+  props: ['data'],
+  methods: {
+    monitor (row) {
+      this.$emit('monitorCar', row)
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

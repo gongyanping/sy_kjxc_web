@@ -10,7 +10,7 @@
 <template>
   <div class="recordList">
     <el-dialog
-      title="巡逻任务"
+      :title="userName + '的巡逻任务'"
       :visible.sync="visible"
       width="60%"
       @closed="onClosed"
@@ -33,7 +33,7 @@
 import Pagination from '@/components/Pagination';
 export default {
   name: 'patroltask-dialog',
-  props: ['userId'],
+  props: ['userId', 'userName'],
   components: {
     Pagination
   },
@@ -49,11 +49,27 @@ export default {
     };
   },
   created () {
+    this.getPatroltask();
   },
   methods: {
+    getPatroltask (pageNumber = 1) {
+      let params = {
+        userId: this.userId,
+        pageNumber: pageNumber,
+        pageSize: 10
+      };
+      this.$api.screen.taskList(params).then(res => {
+        console.log(res)
+        this.tableDatas = {
+          ...res.data,
+          pageNum: pageNumber,
+          pageSize: 10
+        };
+      })
+    },
     // 关闭弹出框
     onClosed () {
-      this.$emit('onMaptrackClose');
+      this.$emit('onPatroltaskClose');
     }
   }
 };
@@ -62,7 +78,7 @@ export default {
 <style lang="less" scoped>
 .recordList {
   /deep/ .blue.el-dialog {
-    height: 600px;
+    height: 640px;
   }
 }
 </style>

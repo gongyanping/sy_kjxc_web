@@ -17,11 +17,11 @@
       <el-table-column prop="noclock" label="未打卡数" align="center" min-width="60" />
       <el-table-column prop="clock" label="打卡数" align="center" min-width="60" />
       <el-table-column prop="policenum" label="已出警数" align="center" min-width="60" />
-      <el-table-column label="操作" align="center">
+      <!-- <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button @click="handleClick(scope.row)" type="text" size="small">查看详情</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
   </el-dialog>
 </div>

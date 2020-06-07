@@ -10,7 +10,7 @@
 <template>
   <div class="recordList">
     <el-dialog
-      title="打卡列表"
+      :title="userName + '的打卡列表'"
       :visible.sync="visible"
       width="60%"
       @closed="onClosed"
@@ -41,10 +41,9 @@
 
 <script>
 import Pagination from '@/components/Pagination';
-import axios from 'axios';
 export default {
   name: 'recordlist-dialog',
-  props: ['userId'],
+  props: ['userId', 'userName'],
   components: {
     Pagination
   },
@@ -70,8 +69,13 @@ export default {
         pageNumber: pageNumber,
         pageSize: 10
       };
-      axios.get('http://218.76.207.66:8019/admin/assessment/userAllClockedList', params).then(res => {
-        console.log(res);
+      this.$api.screen.userAllClockedList(params).then(res => {
+        console.log(res)
+        this.tableDatas = {
+          ...res.data,
+          pageNum: pageNumber,
+          pageSize: 10
+        };
       })
     },
     // 关闭弹出框
@@ -85,7 +89,7 @@ export default {
 <style lang="less" scoped>
 .recordList {
   /deep/ .blue.el-dialog {
-    height: 600px;
+    height: 640px;
   }
 }
 </style>

@@ -16,9 +16,9 @@
       <el-table-column prop="lastMonthState" label="上月未打卡数" align="center" min-width="60" />
       <el-table-column label="操作" align="center" min-width="110">
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row.id, 'record')" type="text" size="small">打卡记录</el-button>
-          <el-button @click="handleClick(scope.row.id, 'task')" type="text" size="small">巡逻任务</el-button>
-          <el-button @click="handleClick(scope.row.id, 'track')" type="text" size="small">地图轨迹</el-button>
+          <el-button @click="handleClick(scope.row.id, 'record', scope.row.userName)" type="text" size="small">打卡记录</el-button>
+          <el-button @click="handleClick(scope.row.id, 'task', scope.row.userName)" type="text" size="small">巡逻任务</el-button>
+          <el-button @click="handleClick(scope.row.id, 'track', scope.row.userName)" type="text" size="small">地图轨迹</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -67,16 +67,16 @@ export default {
           pageNum: pageNumber,
           pageSize: 10
         };
-        console.log(this.tableDatas);
       });
     },
     /**
      * 人员的操作
      * @param {String} id 人员id
      * @param {String} type 操作类型
+     * @param {String} name 人员名称
      */
-    handleClick (id, type) {
-      this.$emit('onUserClick', id, type);
+    handleClick (id, type, name) {
+      this.$emit('onUserClick', id, type, name);
     }
   }
 };
