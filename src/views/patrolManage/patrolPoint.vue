@@ -54,6 +54,7 @@
           clearable
           filterable
           style="width: 180px; margin-left: 10px"
+          @change="onPlatformChange"
         >
           <el-option
             v-for="item in platformOptions"
@@ -70,7 +71,7 @@
           style="width: 205px; margin-left: 10px"
         >
           <el-option
-            v-for="item in lineOptions"
+            v-for="item in showLineOptions"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -228,6 +229,7 @@ export default {
       lineId: '', // b0b61152d17f4ae7a5c52af5a7657d79
       taskId: '',
       lineOptions: [], // 任务名称
+      showLineOptions: [], // 显示的任务名称
       equOptions: [], // 打卡机列表
       addrSearch: '', // 地图关键字搜索位置
       alertShow: false, // 新增点时提示框
@@ -593,6 +595,7 @@ export default {
     findAll () {
       this.$api.patrolPoint.findAll().then(res => {
         this.lineOptions = res.data.data;
+        this.showLineOptions = _.cloneDeep(this.lineOptions);
       });
     },
     // 获取所有的打卡机
@@ -600,6 +603,11 @@ export default {
       this.$api.patrolPoint.getAllFingerprint().then(res => {
         this.equOptions = res.data.data.filter(item => item.equCode);
       });
+    },
+    // 平台改变-线路改变
+    onPlatformChange (val) {
+      this.lineId = '';
+      this.showLineOptions = this.lineOptions.filter(item => item.platformId === val);
     },
     // 地图上关键字搜索
     searchAddr () {

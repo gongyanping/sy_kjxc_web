@@ -47,7 +47,7 @@ export const constantRoutes = [
     path: '/',
     name: 'index',
     component: Layout,
-    redirect: '/screen'
+    redirect: '/clockinRecord'
   },
   {
     path: '/patrolPoint',
