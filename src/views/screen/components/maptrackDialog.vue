@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-06-05 17:24:12
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-05 17:24:47
+ * @LastEditTime: 2020-06-08 15:22:16
  * @Description: 地图轨迹
  * @FilePath: \sy_kjxc_web\src\views\screen\components\maptrackDialog.vue
 -->
@@ -12,7 +12,7 @@
     <el-dialog
       :title="userName + '的地图轨迹'"
       :visible.sync="visible"
-      width="60%"
+      width="70%"
       @closed="onClosed"
       custom-class="blue"
     >
@@ -45,7 +45,7 @@
         @ready="handler"
       >
         <!-- 轨迹线 -->
-        <bm-polyline :path="polylinePaths" />
+        <bm-polyline :path="polylinePaths" stroke-color="#ffa500" />
         <!-- 轨迹运动 -->
         <bm-marker
           v-if="trackMarker"

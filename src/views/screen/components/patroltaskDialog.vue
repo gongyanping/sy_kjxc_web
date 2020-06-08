@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-06-05 17:25:09
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-05 17:34:37
+ * @LastEditTime: 2020-06-08 16:23:55
  * @Description: 巡逻任务
  * @FilePath: \sy_kjxc_web\src\views\screen\components\patroltaskDialog.vue
 -->
@@ -12,7 +12,7 @@
     <el-dialog
       :title="userName + '的巡逻任务'"
       :visible.sync="visible"
-      width="60%"
+      width="70%"
       @closed="onClosed"
       custom-class="blue"
     >
@@ -24,7 +24,7 @@
         <el-table-column prop="address" label="巡逻位置" />
         <el-table-column prop="date" label="打卡时间" />
       </el-table>
-      <Pagination :tabledatas="tableDatas" :isScreen="true" @comgetData="getRecordList()" />
+      <Pagination :tabledatas="tableDatas" :isScreen="true" @comgetData="getPatroltask" />
     </el-dialog>
   </div>
 </template>
@@ -56,10 +56,10 @@ export default {
       let params = {
         userId: this.userId,
         pageNumber: pageNumber,
-        pageSize: 10
+        pageSize: 10,
+        name: ''
       };
-      this.$api.screen.taskList(params).then(res => {
-        console.log(res)
+      this.$api.screen.userSpotList(params).then(res => {
         this.tableDatas = {
           ...res.data,
           pageNum: pageNumber,

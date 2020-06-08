@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 18:20:13
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-05 17:33:49
+ * @LastEditTime: 2020-06-08 15:14:02
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
@@ -626,7 +626,6 @@ const basicScreen = {
      * @param {String} type 操作类型
      */
     onUserClick (userId, type, name) {
-      debugger;
       this.currentUserId = userId;
       this.currentUserName = name;
       switch (type) {

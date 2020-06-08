@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-09 09:52:32
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-13 11:48:40
+ * @LastEditTime: 2020-06-08 16:23:26
  * @Description: 大屏接口
  * @FilePath: \sy_kjxc_web\src\api\screen\screen.js
  */
@@ -42,8 +42,8 @@ const screen = {
     return request.get('/user/userAllClockedList', { params })
   },
   // 获取用户任务
-  taskList (params) {
-    return request.get('/user/taskList', { params })
+  userSpotList (params) {
+    return request.get('/user/userSpotList', { params })
   }
 }
 export default screen
