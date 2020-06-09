@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-06-04 10:36:16
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-05 11:21:07
+ * @LastEditTime: 2020-06-09 17:35:15
  * @Description: 用户详情展示
  * @FilePath: \sy_kjxc_web\src\views\screen\components\userdetailDialog.vue
 -->
@@ -12,6 +12,7 @@
     :visible.sync="visible"
     @closed="onClosed"
     custom-class="blue"
+    width="50%"
   >
     <div class="userDetail">
       <ul class="basicUser">
@@ -148,6 +149,6 @@ export default {
   }
 }
 /deep/ .blue.el-dialog {
-  height: 600px;
+  height: 480px;
 }
 </style>

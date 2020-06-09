@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-11 09:13:28
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-18 15:32:50
+ * @LastEditTime: 2020-06-09 18:01:48
  * @Description: 大队值班领导列表弹出框
  * @FilePath: \sy_kjxc_web\src\views\screen\components\dutyleaderDialog.vue
  -->
@@ -11,7 +11,6 @@
     title="大队值班领导"
     :visible.sync="visible"
     @closed="onClosed"
-    width="60%"
     custom-class="blue"
   >
     <el-table :data="tableDatas && tableDatas.rows" border class="blueTable" style="100%">
@@ -91,7 +90,6 @@ export default {
      * @param {String} name 人员名称
      */
     handleClick (id, type, name) {
-      alert(id)
       this.$emit('onUserClick', id, type, name);
     }
   }

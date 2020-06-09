@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-06-05 16:19:47
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-08 15:13:43
+ * @LastEditTime: 2020-06-09 18:19:49
  * @Description: 打卡记录
  * @FilePath: \sy_kjxc_web\src\views\screen\components\recordlistDialog.vue
 -->
@@ -12,7 +12,6 @@
     <el-dialog
       :title="userName + '的打卡列表'"
       :visible.sync="visible"
-      width="70%"
       @closed="onClosed"
       custom-class="blue"
     >
@@ -87,11 +86,3 @@ export default {
   }
 };
 </script>
-
-<style lang="less" scoped>
-.recordList {
-  /deep/ .blue.el-dialog {
-    height: 640px;
-  }
-}
-</style>

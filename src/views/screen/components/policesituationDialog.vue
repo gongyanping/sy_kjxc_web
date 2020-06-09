@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-06-04 16:34:45
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-05 11:18:45
+ * @LastEditTime: 2020-06-09 17:38:31
  * @Description: 警情数弹出框
  * @FilePath: \sy_kjxc_web\src\views\screen\components\policesituationDialog.vue
 -->
@@ -12,7 +12,6 @@
       :title="'当日警情'"
       :visible.sync="visible"
       @closed="onClosed"
-      width="60%"
       custom-class="blue"
     >
       <div class="content">

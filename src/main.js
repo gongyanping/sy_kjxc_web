@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-03-17 09:42:11
  * @LastEditors: gyp
- * @LastEditTime: 2020-04-16 15:13:54
+ * @LastEditTime: 2020-06-09 15:18:32
  * @Description: 入口文件
  * @FilePath: \sy_kjxc_web\src\main.js
  */
@@ -25,8 +25,7 @@ import moreBox from '@/components/moreBox.vue'
 import './icons' // icon
 import request from '@/api/request'
 import './styles/index.less'
-// import '@/assets/font/iconfont/iconfont.css'
-// import '@/assets/font/iconfont/iconfont.js'
+import '@/assets/font/iconfont/iconfont.css'
 import BaiduMap from 'vue-baidu-map'
 import Qs from 'qs';
 

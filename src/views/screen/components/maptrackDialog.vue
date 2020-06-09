@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-06-05 17:24:12
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-08 15:22:16
+ * @LastEditTime: 2020-06-09 18:27:41
  * @Description: 地图轨迹
  * @FilePath: \sy_kjxc_web\src\views\screen\components\maptrackDialog.vue
 -->
@@ -12,11 +12,15 @@
     <el-dialog
       :title="userName + '的地图轨迹'"
       :visible.sync="visible"
-      width="70%"
       @closed="onClosed"
       custom-class="blue"
     >
-      <el-form :inline="true" ref="searchForm" :model="searchForm" label-width="100px">
+      <el-form
+        :inline="true"
+        ref="searchForm"
+        :model="searchForm"
+        label-width="100px"
+      >
         <el-form-item label="时间">
           <el-date-picker
             v-model="searchForm.dateRange"
@@ -81,31 +85,35 @@ export default {
       visible: true,
       isTracking: false,
       pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick (picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick (picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick (picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick (picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
           }
-        }, {
-          text: '最近一个月',
-          onClick (picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近三个月',
-          onClick (picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
+        ]
       },
       dateRange: '',
       mapStyle: {
@@ -118,7 +126,10 @@ export default {
     const invoiceEnd = new Date();
     const invoiceStart = new Date();
     invoiceStart.setTime(invoiceStart.getTime() - 3600 * 1000 * 24 * 30);
-    this.searchForm.dateRange = [this.formatDate(invoiceStart, 'yyyy-MM-dd hh:mm:ss'), this.formatDate(invoiceEnd, 'yyyy-MM-dd hh:mm:ss')];
+    this.searchForm.dateRange = [
+      this.formatDate(invoiceStart, 'yyyy-MM-dd hh:mm:ss'),
+      this.formatDate(invoiceEnd, 'yyyy-MM-dd hh:mm:ss')
+    ];
     this.gpsList();
   },
   beforeDestroy () {
@@ -170,7 +181,7 @@ export default {
         let resetMkPoint = i => {
           this.trackMarker = this.polylinePaths[i];
           if (i < paths) {
-          // console.log(i);
+            // console.log(i);
             this.timeOut = setTimeout(function () {
               i++;
               resetMkPoint(i);
@@ -192,7 +203,7 @@ export default {
     gpsList () {
       // 真实数据
       const { dateRange } = this.searchForm;
-      console.log(dateRange)
+      console.log(dateRange);
       if (dateRange.length === 2) {
         let pp = {
           userId: this.userId,
@@ -233,7 +244,10 @@ export default {
     },
     formatDate (date, fmt) {
       if (/(y+)/.test(fmt)) {
-        fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+        fmt = fmt.replace(
+          RegExp.$1,
+          (date.getFullYear() + '').substr(4 - RegExp.$1.length)
+        );
       }
       let o = {
         'M+': date.getMonth() + 1,
@@ -245,7 +259,10 @@ export default {
       for (let k in o) {
         if (new RegExp(`(${k})`).test(fmt)) {
           let str = o[k] + '';
-          fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? str : this.padLeftZero(str));
+          fmt = fmt.replace(
+            RegExp.$1,
+            RegExp.$1.length === 1 ? str : this.padLeftZero(str)
+          );
         }
       }
       return fmt;
@@ -262,12 +279,20 @@ export default {
   .el-form-item {
     margin-bottom: 20px;
   }
-  .map {
-    width: 100%;
-    height: 505px;
+  @media screen and (max-width: 1366px) {
+    .map {
+      width: 100%;
+      height: 310px;
+    }
+    /deep/ .blue.el-dialog {
+      height: 485px;
+    }
   }
-  /deep/ .blue.el-dialog {
-    height: 680px;
+  @media screen and (min-width: 1366px) {
+    .map {
+      width: 100%;
+      height: 560px;
+    }
   }
 }
 </style>

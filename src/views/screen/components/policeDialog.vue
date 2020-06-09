@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-11 20:36:48
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-05 09:59:42
+ * @LastEditTime: 2020-06-09 18:06:01
  * @Description: 点击每一个块茎平台，查看它的详情
  * @FilePath: \sy_kjxc_web\src\views\screen\components\policeDialog.vue
  -->
@@ -12,7 +12,6 @@
       :title="title"
       :visible.sync="visible"
       @closed="onClosed"
-      width="60%"
       custom-class="blue"
     >
       <div class="content">
@@ -129,9 +128,19 @@ export default {
 
 <style lang="less" scoped>
 .policeDialog {
+  @media screen and (max-width: 1366px){
+    .content {
+      height: 480px;
+    }
+  }
+  @media screen and (min-width: 1366px){
+    .content {
+      height: 600px;
+    }
+  }
   .content {
     display: flex;
-    height: 685px;
+    min-height: 400px;
     font-size: 16px;
     color: #eee;
     .groupList {

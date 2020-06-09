@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-09 09:52:32
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-08 16:23:26
+ * @LastEditTime: 2020-06-09 10:06:03
  * @Description: 大屏接口
  * @FilePath: \sy_kjxc_web\src\api\screen\screen.js
  */
@@ -44,6 +44,10 @@ const screen = {
   // 获取用户任务
   userSpotList (params) {
     return request.get('/user/userSpotList', { params })
+  },
+  // 获取数据考核
+  checkList (params) {
+    return request.get('/platform/list', { params })
   }
 }
 export default screen

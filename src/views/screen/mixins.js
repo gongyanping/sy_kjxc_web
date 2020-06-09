@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 18:20:13
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-08 15:14:02
+ * @LastEditTime: 2020-06-09 18:10:38
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
@@ -17,7 +17,7 @@ const basicScreen = {
       {
         icon: 'component', // 图标
         title: '当日警情数', // 名称
-        value: 100 // 数值
+        value: 48 // 数值
       },
       {
         icon: 'dashboard',
@@ -136,7 +136,9 @@ const basicScreen = {
       videoName: '', // 视频播放标题
       viewUrlMap: {}, // 存储视频的对象
       queue: Queue(), // 用来存车辆数据的队列
-      timer: null // 实时点位
+      timer: null, // 实时点位
+      todayDate: '', // 今天日期
+      htmlWidth: document.documentElement.clientWidth || document.body.clientWidth
     };
   },
   methods: {
@@ -186,7 +188,6 @@ const basicScreen = {
       axios.get('http://218.76.207.66:8181/api/getPoliceCarInit').then(res => {
         this.getAllGrid(res.data.deptList);
         this.getAllPoint(res.data.deptList);
-        console.log(res.data.deptList)
       });
     },
     /**
@@ -212,7 +213,7 @@ const basicScreen = {
         let objLabel = {
           name: item.parentName + item.deptName,
           conrdinate: lng && lat ? { lng, lat } : ''
-        }
+        };
         labelArray.push(objLabel);
       });
       this.labels = labelArray;
@@ -248,7 +249,6 @@ const basicScreen = {
       });
       this.polygons = gridArray;
       this.showPolygons = _.cloneDeep(this.polygons);
-      console.log(this.polygons);
     },
     /**
      * 设置地图上车辆的点位
@@ -290,7 +290,6 @@ const basicScreen = {
       this.showMarkers = pointArray;
       this.patrolcarArray = carArray;
       this.patrolcarList = carArray;
-      console.log(this.markers);
     },
     /**
      * 车辆点击弹出框
@@ -317,26 +316,26 @@ const basicScreen = {
       }
       let myWindow = [
         '<div class="myInfobox" id = "infoWindow">' +
-          ' <div class="top-left"></div>' +
-          ' <div class="top-right"></div>' +
-          ' <div class="bottom-left"></div>' +
-          ' <div class="bottom-right"></div>' +
-          ' <div class="top">' +
-          '   <div class="pName">' +
+          '<div class="top-left"></div>' +
+          '<div class="top-right"></div>' +
+          '<div class="bottom-left"></div>' +
+          '<div class="bottom-right"></div>' +
+          '<div class="top">' +
+          '<div class="pName">' +
           parentName +
           '</div>' +
-          '   <div class="sName">' +
+          '<div class="sName">' +
           name +
           '</div>' +
-          ' </div>' +
-          ' <div class="center">' +
-          '    <div class="carName">' +
+          '</div>' +
+          '<div class="center">' +
+          '<div class="carName">' +
           carCode +
           '</div>' +
-          '    <div class="leaderName">' +
+          '<div class="leaderName">' +
           leader +
           '</div>' +
-          ' </div>'
+          '</div>'
       ];
       switch (type) {
         case '1':
@@ -467,7 +466,6 @@ const basicScreen = {
     },
     websocketonmessage (e) {
       // 数据接收
-      console.log(e);
       if (e.data !== undefined) {
         this.queue.push(JSON.parse(e.data));
       }
@@ -540,6 +538,8 @@ const basicScreen = {
           this.showPolygons = _.cloneDeep(this.polygons);
           this.showMarkers = _.cloneDeep(this.markers);
           this.showLabels = _.cloneDeep(this.labels);
+          this.center = { lng: 111.28, lat: 27.14 }; // 地图中心点
+          this.zoom = 14; // 地图初始化缩放级别
           break;
         case '大队值班领导':
           this.dutyleaderVisible = true;
@@ -593,12 +593,12 @@ const basicScreen = {
       this.showMarkers = this.markers.filter(item => {
         let wholeName = item.wholeName;
         return wholeName.includes(pName) && wholeName.includes(name);
-      })
+      });
       // 网格标签
       this.showLabels = this.markers.filter(item => {
         let labelName = item.name;
         return labelName.includes(pName) && labelName.includes(name);
-      })
+      });
     },
     /**
      * 关闭快警平台弹出框
@@ -651,6 +651,50 @@ const basicScreen = {
     onUserdetailClose () {
       this.currentUserId = '';
       this.userdetailVisible = false;
+    },
+    /**
+     * 关闭未打卡数据弹出框
+     */
+    onNopunchClose () {
+      this.nopunchVisible = false;
+      this.getNopunchData();
+    },
+    /**
+     * 关闭数据考核弹出框
+     */
+    onDatacheckClose () {
+      this.datacheckVisible = false;
+      this.getCheckData();
+    },
+    /**
+     * 获取未打卡数据的总数
+     */
+    getNopunchData () {
+      let params = {
+        userId: '',
+        pageSize: 10,
+        pageNumber: 1,
+        name: '',
+        state: 0,
+        date: this.todayDate
+      };
+      this.$api.screen.userAllClockedList(params).then(res => {
+        this.headStaData[2].value = res.data.total;
+      });
+    },
+    /**
+     * 获取数据考核的总数
+     */
+    getCheckData () {
+      let params = {
+        startDate: this.todayDate,
+        endDate: this.todayDate,
+        pageSize: 10,
+        pageNumber: 1
+      };
+      this.$api.screen.checkList(params).then(res => {
+        this.headStaData[3].value = res.data.total;
+      });
     }
   }
 };

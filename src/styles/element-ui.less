@@ -39,6 +39,9 @@
   td {
     background: #0e2039;
     padding: 10px 0;
+    .el-button {
+      padding: 0;
+    }
   }
   tr:hover > td {
     background: #0a2447;
@@ -79,11 +82,24 @@
 }
 //  深色蓝色系列
 .blue {
+  @media screen and (max-width: 1366px){
+    &.el-dialog {
+      margin-top: 5px !important;
+      width: 85%;
+      height: 680px;
+    }
+  }
+  @media screen and (min-width: 1366px){
+    &.el-dialog {
+      margin-top: 65px !important;
+      width: 68%;
+      height: 735px;
+    }
+  }
   &.el-dialog {
-    margin-top: 65px !important;
     background: #0e2039;
     color: #ffffff;
-    height: 800px;
+    min-height: 400px;
   }
   .el-dialog__header {
     box-shadow: 0 2px 3px -3px #ccc;

@@ -12,7 +12,6 @@
       :title="'处警情况'"
       :visible.sync="visible"
       @closed="onClosed"
-      width="60%"
       custom-class="blue"
     >
       <div class="content">

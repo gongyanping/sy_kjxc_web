@@ -1,7 +1,7 @@
 <template>
   <div ref="videoPage" class="video-page" :style="videoStyle">
     <div class="video-header">
-      <div class="left"><span class="menus">暂停</span><span class="menus">截屏</span></div>
+      <!-- <div class="left"><span class="menus">暂停</span><span class="menus">截屏</span></div> -->
       <div class="title">
         {{videoTitle}}
       </div>
@@ -12,7 +12,7 @@
     <div class="video-container">
       <div class="list-menu">
         <vue-custom-scrollbar class="warp" :settings="settings">
-          <div v-for="(channel, index) in channels" :key="index" class="item menuClass" @click="startRealPlay(index)"
+          <div v-for="(channel, index) in channels" :key="index" :class="['item', 'menuClass', {active: index === currentIndex}]" @click="startRealPlay(index)"
                style="cursor: pointer;">
             {{channel.channelName}}
           </div>
@@ -22,14 +22,13 @@
         <div class="video-play" v-resize="onResize">
           <object class="video-object" id="mcuocx" ref="mcuocx" name="name_mcuocx"
                   classid="clsid:24E9635B-FE64-47A0-B0E0-A76E0E06B3D0"></object>
-                  <!-- 24E9635B-FE64-47A0-B0E0-A76E0E06B3D0 老版本-->
         </div>
         <div class="video-tool" @dblclick="zoom">
           <i class="iconfont icon-ai08" @click="stopRealPlay"></i>
-          <i :class="videoInfo.voiceClass" @click="voice"></i>
+          <i :class="videoInfo.voiceClass" class="cursorp"  @click="voice"></i>
           <span class="error">{{error}}</span>
           <span class="high" @click="switchQuality">{{videoInfo.highText}}</span>
-          <i class="iconfont icon-quanping quanping" @click="zoom"></i>
+          <i class="iconfont icon-quanping cursorp" @click="zoom"></i>
         </div>
       </div>
     </div>
@@ -76,19 +75,7 @@ export default {
         level: '',
         holdTime: ''
       },
-      channels: [{
-        'puid': '889a6842cddc469a80e6317cac526f63',
-        'channelId': '5',
-        'domainId': 'a6dd9e0b801a4dddbb8dd928c610ea67',
-        'domainName': 'kedacom',
-        'channelName': '车内'
-      }, {
-        'puid': '889a6842cddc469a80e6317cac526f63',
-        'channelId': '4',
-        'domainId': 'a6dd9e0b801a4dddbb8dd928c610ea67',
-        'domainName': 'kedacom',
-        'channelName': '车前'
-      }]
+      channels: []
     };
   },
   watch: {
@@ -181,14 +168,13 @@ export default {
       return result;
     },
     startRealPlay (index) {
-      debugger;
       let vm = this;
+      vm.currentIndex = index;
       if (!vm.mcuocx || !vm.isInitMcuOcx) {
         return;
       }
 
       vm.stopRealPlay();
-      vm.currentIndex = index;
 
       let loginInfo = vm.getLoginInfo();
       let channelInfo = vm.getChannelInfo(index);
@@ -200,7 +186,6 @@ export default {
       // 0 is tcp;  1 is udp
       vm.mcuocx.SetStreamPattern(1);
       let playId = vm.mcuocx.StartRealPlay(loginInfo, channelInfo, streamInfo, vm.windowIndex)
-      console.log(playId);
       if (playId === -1) {
         let code = vm.mcuocx.GetLastErrCode();
         if (code === 40001) {
@@ -218,6 +203,7 @@ export default {
     },
     stopRealPlay () {
       let vm = this;
+      alert(vm.playId)
       if (vm.playId !== -1) {
         let result = vm.mcuocx.StopRealPlay(vm.playId, vm.windowIndex);
         if (result === -1) {
@@ -252,13 +238,14 @@ export default {
     },
     voice () {
       let vm = this;
+      alert(vm.videoInfo.voice);
       if (vm.playId !== -1) {
         vm.videoInfo.voice = vm.videoInfo.voice ? 0 : 1;
-        vm.mcuocx.SetWndSoundEnable(vm.windowIndex, vm.videoInfo.voice);
+        alert(vm.videoInfo.voice);
+        vm.mcuocx.SetWndSoundEnable(vm.windowIndex, 0);
       }
     },
     play (channels) {
-      debugger;
       let vm = this;
       if (channels.length !== 0) {
         vm.currentIndex = 0;
@@ -289,7 +276,6 @@ export default {
     window.onunload = vm.unInitMcuOcx;
   },
   directives: { resize }
-  // ,components: { vueCustomScrollbar }
 }
 
 </script>
@@ -343,6 +329,9 @@ export default {
             text-align: center;
             padding: 5px 0px 5px 0px;
             border-bottom: 0.3px solid #566573;
+            &.active {
+              background: #152e53;
+            }
           }
         }
       }
@@ -384,6 +373,9 @@ export default {
           }
           i {
             margin-left: 2px;
+          }
+          .cursorp {
+            cursor: pointer;
           }
         }
       }

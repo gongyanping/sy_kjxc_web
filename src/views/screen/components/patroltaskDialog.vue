@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-06-05 17:25:09
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-08 16:23:55
+ * @LastEditTime: 2020-06-09 18:08:02
  * @Description: 巡逻任务
  * @FilePath: \sy_kjxc_web\src\views\screen\components\patroltaskDialog.vue
 -->
@@ -12,17 +12,16 @@
     <el-dialog
       :title="userName + '的巡逻任务'"
       :visible.sync="visible"
-      width="70%"
       @closed="onClosed"
       custom-class="blue"
     >
       <el-table :data="tableDatas && tableDatas.rows" border class="blueTable" style="100%">
         <el-table-column type="index" label="序号" width="50" align="center" />
-        <el-table-column prop="name" label="巡逻点" />
-        <el-table-column prop="equCode" label="考勤机编号" />
-        <el-table-column prop="equName" label="考勤机名称" />
-        <el-table-column prop="address" label="巡逻位置" />
-        <el-table-column prop="date" label="打卡时间" />
+        <el-table-column prop="name" label="巡逻点" min-width="80" />
+        <el-table-column prop="equCode" label="考勤机编号" min-width="70" />
+        <el-table-column prop="equName" label="考勤机名称" min-width="100" />
+        <el-table-column prop="address" label="巡逻位置" min-width="110" />
+        <el-table-column prop="date" label="打卡时间" min-width="60" />
       </el-table>
       <Pagination :tabledatas="tableDatas" :isScreen="true" @comgetData="getPatroltask" />
     </el-dialog>
@@ -74,11 +73,3 @@ export default {
   }
 };
 </script>
-
-<style lang="less" scoped>
-.recordList {
-  /deep/ .blue.el-dialog {
-    height: 640px;
-  }
-}
-</style>
