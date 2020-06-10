@@ -24,7 +24,7 @@
                   classid="clsid:24E9635B-FE64-47A0-B0E0-A76E0E06B3D0"></object>
         </div>
         <div class="video-tool" @dblclick="zoom">
-          <i class="iconfont icon-ai08" @click="stopRealPlay"></i>
+          <!-- <i class="iconfont icon-ai08 cursorp" @click="stopRealPlay"></i> -->
           <i :class="videoInfo.voiceClass" class="cursorp"  @click="voice"></i>
           <span class="error">{{error}}</span>
           <span class="high" @click="switchQuality">{{videoInfo.highText}}</span>
@@ -203,7 +203,6 @@ export default {
     },
     stopRealPlay () {
       let vm = this;
-      alert(vm.playId)
       if (vm.playId !== -1) {
         let result = vm.mcuocx.StopRealPlay(vm.playId, vm.windowIndex);
         if (result === -1) {
@@ -238,11 +237,9 @@ export default {
     },
     voice () {
       let vm = this;
-      alert(vm.videoInfo.voice);
       if (vm.playId !== -1) {
         vm.videoInfo.voice = vm.videoInfo.voice ? 0 : 1;
-        alert(vm.videoInfo.voice);
-        vm.mcuocx.SetWndSoundEnable(vm.windowIndex, 0);
+        vm.mcuocx.SetWndSoundEnable(vm.windowIndex, vm.videoInfo.voice);
       }
     },
     play (channels) {

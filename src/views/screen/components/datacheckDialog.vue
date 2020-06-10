@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-11 09:13:28
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-09 17:55:50
+ * @LastEditTime: 2020-06-10 15:19:38
  * @Description: 数据考核列表弹出框
  * @FilePath: \sy_kjxc_web\src\views\screen\components\datacheckDialog.vue
  -->
@@ -59,7 +59,7 @@ export default {
         startDate: nowDate,
         endDate: nowDate,
         pageSize: 10,
-        pageNumber: 1
+        pageNumber
       }
       this.$api.screen.checkList(params).then(res => {
         this.tableDatas = {

@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 12:44:26
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-09 15:49:39
+ * @LastEditTime: 2020-06-10 15:40:54
  * @Description: 大屏
  * @FilePath: \sy_kjxc_web\src\views\screen\index.vue
  -->
@@ -291,9 +291,6 @@ export default {
       self.videoName = videoTitle;
       self.videoProps = this.viewUrlMap[id];
       self.$refs.Keda.play(this.videoProps);
-      setTimeout(() => {
-        self.centerPointVideo = id;
-      }, 300);
     };
   },
   beforeDestroy () {

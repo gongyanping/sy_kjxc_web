@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 18:20:13
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-09 18:10:38
+ * @LastEditTime: 2020-06-10 15:40:46
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
@@ -455,7 +455,6 @@ const basicScreen = {
     },
     videoClose () {
       this.showView = false;
-      this.centerPointVideo = null;
     },
     websocketonopen () {
       console.log('WebSocket连接成功');
