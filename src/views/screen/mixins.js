@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 18:20:13
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-10 15:40:46
+ * @LastEditTime: 2020-06-11 17:49:19
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
@@ -262,21 +262,21 @@ const basicScreen = {
         if (resourceList.length) {
           // 有点位
           resourceList.map(item => {
-            const { lon, lat, type } = item;
-            if (lon && lat) {
-              // 有经纬度
-              let obj = {
-                ...item,
-                lng: lon,
-                wholeName: parentName + deptName,
-                parentName,
-                name: deptName,
-                leader,
-                icon: require('../../assets/icon/car' + type + '.png')
-              };
-              delete obj.lon;
-              pointArray.push(obj);
-            }
+            const { lon, type } = item;
+            // if (lon && lat) {
+            // 有经纬度
+            let obj = {
+              ...item,
+              lng: lon,
+              wholeName: parentName + deptName,
+              parentName,
+              name: deptName,
+              leader,
+              icon: require('../../assets/icon/car' + type + '.png')
+            };
+            delete obj.lon;
+            pointArray.push(obj);
+            // }
             let obb = {
               ...item,
               lng: lon
@@ -437,11 +437,11 @@ const basicScreen = {
      * @param {Object} row 一行的值
      */
     monitorCar (row) {
-      const { lng, lat, devid, carCode } = row;
-      if (lng && lat) {
-        this.center = { lng, lat };
-        this.zoom = 17;
-      }
+      const { devid, carCode } = row;
+      // if (lng && lat) {
+      //   this.center = { lng, lat };
+      //   this.zoom = 19;
+      // }
       window.tapclick(devid, carCode);
     },
     initWebSocket () {
@@ -488,16 +488,23 @@ const basicScreen = {
           if (len > 30) len = 30;
           for (let i = 0; i < len; i++) {
             let obj = queue.shift();
-            const { deviceId, lon, lat, mileage, speed } = obj;
-            this.showMarkers = this.markers.map(item => {
-              if (item.deviceId === deviceId) {
-                item.lng = lon;
-                item.lat = lat;
-              }
-              item.jsonText.mileage = mileage;
-              item.jsonText.speed = speed;
-              return item;
-            });
+            if (obj) {
+              const { deviceId, lon, lat, mileage, speed } = obj;
+              this.showMarkers = this.markers.map(item => {
+                if (item.devid === deviceId) {
+                  console.log(item);
+                  console.log(obj);
+
+                  item.lng = lon;
+                  item.lat = lat;
+                }
+                item.jsonText = {
+                  mileage,
+                  speed
+                }
+                return item;
+              });
+            }
           }
         }
       }, 1000);

@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 12:44:26
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-10 15:40:54
+ * @LastEditTime: 2020-06-11 17:49:30
  * @Description: 大屏
  * @FilePath: \sy_kjxc_web\src\views\screen\index.vue
  -->
@@ -279,6 +279,7 @@ export default {
     this.getCheckData(); // 获取数据考核总数
   },
   mounted () {
+    this.initWebSocket();
     this.setTimer();
     /**
      * 播放监控视频
