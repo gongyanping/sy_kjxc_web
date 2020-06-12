@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 12:44:26
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-11 17:49:30
+ * @LastEditTime: 2020-06-12 15:44:49
  * @Description: 大屏
  * @FilePath: \sy_kjxc_web\src\views\screen\index.vue
  -->
@@ -275,8 +275,11 @@ export default {
     this.getPoliceCarInit(); // 获取全部信息
     this.findPlatform(); // 获取快警平台信息
     this.findUserByIdentity(); // 获取大队值班领导
+    this.todayAlert(); // 当日警情数
+    this.avgDealAlertTime(); // 平均处警时长
     this.getNopunchData(); // 获取未打卡数据总数
     this.getCheckData(); // 获取数据考核总数
+    this.intime(); // 实行警情
   },
   mounted () {
     this.initWebSocket();

@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-11 09:13:28
  * @LastEditors: gyp
- * @LastEditTime: 2020-05-11 10:01:02
+ * @LastEditTime: 2020-06-12 15:35:34
  * @Description: 实时警情列表
  * @FilePath: \sy_kjxc_web\src\views\screen\components\realtimealertList.vue
  -->
@@ -10,12 +10,12 @@
   <ul class="realtimealertList">
     <li class="realtimeItem" v-for="(item, index) in data" :key="index">
       <div class="top">
-        <div class="palt">{{ item.palt }}</div>
-        <div class="time">{{ item.time }}</div>
+        <div class="palt">{{ item.jjzzjgmc }}</div>
+        <div class="time">{{ item.BJSJ }}</div>
       </div>
       <div class="bot">
-        <div class="level">{{ item.level }}</div>
-        <div class="descri">{{ item.descri }}</div>
+        <div class="level">{{ alarmTypes[item.jqlx] }}</div>
+        <div class="descri">{{ item.bjnr }}</div>
       </div>
     </li>
   </ul>
@@ -24,7 +24,12 @@
 <script>
 export default {
   name: 'realtimealert-list',
-  props: ['data']
+  props: ['data'],
+  data () {
+    return {
+      alarmTypes: ['', '治安', '刑事', '其他']
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

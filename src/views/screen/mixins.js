@@ -2,11 +2,12 @@
  * @Author: gyp
  * @Date: 2020-05-08 18:20:13
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-11 17:49:19
+ * @LastEditTime: 2020-06-12 16:38:28
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
 import customMapConfig from '@/assets/json/custom_map_config.json';
+import { formateTime } from '@/utils/common.js';
 import axios from 'axios';
 import Queue from 'queue';
 import _ from 'lodash';
@@ -17,12 +18,12 @@ const basicScreen = {
       {
         icon: 'component', // 图标
         title: '当日警情数', // 名称
-        value: 48 // 数值
+        value: 0 // 数值
       },
       {
         icon: 'dashboard',
         title: '平均处警时长',
-        value: '2\'56'
+        value: 0
       },
       {
         icon: 'chart',
@@ -57,52 +58,52 @@ const basicScreen = {
       dutyLeaderList: [], // 大队值班领导
       realtimeAlertList: [
         {
-          palt: '北塔汽车北站2号平台',
-          descri: '其朋友在邵阳大饭店被人殴打',
-          time: '08:13:04',
-          level: '其它警情'
+          jjzzjgmc: '北塔汽车北站2号平台',
+          bjnr: '其朋友在邵阳大饭店被人殴打',
+          BJSJ: '08:13:04',
+          jqlx: 1
         },
         {
-          palt: '北塔汽车北站2号平台',
-          descri: '在资源菜市场西头有个小孩迷路了',
-          time: '08:13:03',
-          level: '群众求助'
+          jjzzjgmc: '北塔汽车北站2号平台',
+          bjnr: '在资源菜市场西头有个小孩迷路了',
+          BJSJ: '08:13:03',
+          jqlx: 1
         },
         {
-          palt: '北塔江北广场1号平台',
-          descri: '在西湖春天售楼部，有人闹事。',
-          time: '07:59:16',
-          level: '其它警情'
+          jjzzjgmc: '北塔江北广场1号平台',
+          bjnr: '在西湖春天售楼部，有人闹事。',
+          BJSJ: '07:59:16',
+          jqlx: 2
         },
         {
-          palt: '北塔汽车北站2号平台',
-          descri: '在北站商业小区1栋有邻居打其家人',
-          time: '07:55:12',
-          level: '打架纠纷'
+          jjzzjgmc: '北塔汽车北站2号平台',
+          bjnr: '在北站商业小区1栋有邻居打其家人',
+          BJSJ: '07:55:12',
+          jqlx: 3
         },
         {
-          palt: '大祥城南公园5号平台',
-          descri: '雪峰路平台请求增援',
-          time: '07:42:28',
-          level: '其它警情'
+          jjzzjgmc: '大祥城南公园5号平台',
+          bjnr: '雪峰路平台请求增援',
+          BJSJ: '07:42:28',
+          jqlx: 3
         },
         {
-          palt: '大祥雪峰南路3号平台',
-          descri: '其在3路公交车上被扒了3000元现金及银行卡。',
-          time: '07:12:12',
-          level: '其它警情'
+          jjzzjgmc: '大祥雪峰南路3号平台',
+          bjnr: '其在3路公交车上被扒了3000元现金及银行卡。',
+          BJSJ: '07:12:12',
+          jqlx: 2
         },
         {
-          palt: '大祥火车南站4号平台',
-          descri: '在火车南站公交车站被拔手机一台',
-          time: '07:12:44',
-          level: '其它警情'
+          jjzzjgmc: '大祥火车南站4号平台',
+          bjnr: '在火车南站公交车站被拔手机一台',
+          BJSJ: '07:12:44',
+          jqlx: 2
         },
         {
-          palt: '大祥城南公园5号平台',
-          descri: '报警人称老人在城南公园走失',
-          time: '07:11:12',
-          level: '群众求助'
+          jjzzjgmc: '大祥城南公园5号平台',
+          bjnr: '报警人称老人在城南公园走失',
+          BJSJ: '07:11:12',
+          jqlx: 1
         }
       ], // 实时警情
       patrolcarArray: [], // 全部巡查车辆数据
@@ -492,9 +493,6 @@ const basicScreen = {
               const { deviceId, lon, lat, mileage, speed } = obj;
               this.showMarkers = this.markers.map(item => {
                 if (item.devid === deviceId) {
-                  console.log(item);
-                  console.log(obj);
-
                   item.lng = lon;
                   item.lat = lat;
                 }
@@ -701,6 +699,38 @@ const basicScreen = {
       this.$api.screen.checkList(params).then(res => {
         this.headStaData[3].value = res.data.total;
       });
+    },
+    /**
+     * 实时警情
+     */
+    intime () {
+      this.$api.screen.intime({
+        time: 60
+      }).then(res => {
+        if (res.data.data) {
+          this.realtimeAlertList = res.data.data;
+        }
+      })
+    },
+    /**
+     * 当日警情数
+     */
+    todayAlert () {
+      this.$api.screen.todayAlert().then(res => {
+        if (res.data.data) {
+          this.headStaData[0].value = res.data.alertSum;
+        }
+      })
+    },
+    /**
+     * 平均处警时长
+     */
+    avgDealAlertTime () {
+      this.$api.screen.avgDealAlertTime().then(res => {
+        if (res.data.data) {
+          this.headStaData[1].value = formateTime(res.data.useTime);
+        }
+      })
     }
   }
 };

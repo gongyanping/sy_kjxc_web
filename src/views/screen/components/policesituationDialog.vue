@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-06-04 16:34:45
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-09 17:38:31
+ * @LastEditTime: 2020-06-12 16:12:57
  * @Description: 警情数弹出框
  * @FilePath: \sy_kjxc_web\src\views\screen\components\policesituationDialog.vue
 -->
@@ -32,25 +32,25 @@
           </ul>
           <ul class="classifyWrap">
             <li>
-              48
+              {{ policeDatas.alertSum }}
             </li>
             <li>
-              0
+              {{ policeDatas.alertType2 }}
             </li>
             <li>
-              23
+              {{ policeDatas.alertType1 }}
             </li>
             <li>
-              25
+              {{ policeDatas.alertType3 }}
             </li>
           </ul>
         </div>
         <div class="tableWrap">
-          <el-table :data="tableData" border class="blueTable" style="100%">
-            <el-table-column prop="dname" label="单位" align="center" min-width="100" />
-            <el-table-column prop="scase" label="刑事案件" align="center" min-width="50"/>
-            <el-table-column prop="dcase" label="治安案件" align="center" min-width="50"/>
-            <el-table-column prop="ocase" label="其他案件" align="center" min-width="50"/>
+          <el-table :data="policeDatas && policeDatas.alarmVoList" border class="blueTable" style="100%">
+            <el-table-column prop="platformName" label="单位" align="center" min-width="100" />
+            <el-table-column prop="alertType2Sum" label="刑事案件" align="center" min-width="50"/>
+            <el-table-column prop="alertType1Sum" label="治安案件" align="center" min-width="50"/>
+            <el-table-column prop="alertType3Sum" label="其他案件" align="center" min-width="50"/>
           </el-table>
         </div>
       </div>
@@ -64,55 +64,26 @@ export default {
   data () {
     return {
       visible: true,
-      tableData: [{
-        dname: '北塔分局龙山路1号平台',
-        scase: 0,
-        dcase: 1,
-        ocase: 1
-      }, {
-        dname: '北塔分局汽车北站2号平台',
-        scase: 0,
-        dcase: 3,
-        ocase: 2
-      }, {
-        dname: '大祥分局雪峰南路3号平台',
-        scase: 0,
-        dcase: 5,
-        ocase: 1
-      }, {
-        dname: '大祥分局火车南站4号平台',
-        scase: 0,
-        dcase: 2,
-        ocase: 3
-      }, {
-        dname: '大祥分局城南公园5号平台',
-        scase: 0,
-        dcase: 1,
-        ocase: 3
-      }, {
-        dname: '大祥分局沿江桥6号平台',
-        scase: 0,
-        dcase: 1,
-        ocase: 2
-      }, {
-        dname: '双清分局人民广场7号平台',
-        scase: 0,
-        dcase: 2,
-        ocase: 4
-      }, {
-        dname: '双清分局陶家冲8号平台',
-        scase: 0,
-        dcase: 3,
-        ocase: 3
-      }, {
-        dname: '双清分局塔北路9号平台',
-        scase: 0,
-        dcase: 4,
-        ocase: 6
-      }]
+      policeDatas: {
+        alertSum: 0,
+        alertType1: 0,
+        alertType2: 0,
+        alertType3: 0,
+        alarmVoList: []
+      }
     }
   },
+  created () {
+    this.getTodayalert();
+  },
   methods: {
+    getTodayalert () {
+      this.$api.screen.todayAlert().then(res => {
+        if (res.data.data) {
+          this.policeDatas = res.data.data;
+        }
+      })
+    },
     onClosed () {
       this.$emit('onSituationClose');
     }
