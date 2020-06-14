@@ -46,7 +46,7 @@
           </ul>
         </div>
         <div class="tableWrap">
-          <el-table :data="policeDatas && policeDatas.alarmVoList" border class="blueTable" style="100%">
+          <el-table :data="policeDatas && policeDatas.alarmVoList" border :max-height="maxHeight" class="blueTable" style="100%">
             <el-table-column prop="platformName" label="单位" align="center" min-width="100" />
             <el-table-column prop="alertType2Sum" label="刑事案件" align="center" min-width="50"/>
             <el-table-column prop="alertType1Sum" label="治安案件" align="center" min-width="50"/>
@@ -70,10 +70,13 @@ export default {
         alertType2: 0,
         alertType3: 0,
         alarmVoList: []
-      }
+      },
+      htmlWidth: document.documentElement.clientWidth || document.body.clientWidth,
+      maxHeight: 616
     }
   },
   created () {
+    this.maxHeight = this.htmlWidth <= 1366 ? 396 : 616;
     this.getTodayalert();
   },
   methods: {
@@ -118,8 +121,10 @@ export default {
         height: 100%;
       }
     }
-    /deep/ .blue.el-dialog {
-      height: 600px;
+    @media screen and (max-width: 1366px){
+      /deep/ .blue.el-dialog {
+        height: 500px;
+      }
     }
   }
 </style>

@@ -8,23 +8,16 @@
 -->
 <template>
   <div class="dealSituation">
-    <el-dialog
-      :title="'处警情况'"
-      :visible.sync="visible"
-      @closed="onClosed"
-      custom-class="blue"
-    >
+    <el-dialog :title="'处警情况'" :visible.sync="visible" @closed="onClosed" custom-class="blue">
       <div class="content">
         <div class="statisWrap">
-          <div class="title">
-            处警情况一览
-          </div>
+          <div class="title">处警情况一览</div>
           <el-scrollbar class="scrollerWrap">
             <div
               :class="['platformInfo', {'active': index === curIndex}]"
               v-for="(item, index) in platformVoList"
               :key="index"
-              @click="changeTable(index, item.userVoList)"
+              @click="changeTable(index, item)"
             >
               <div class="basic">
                 <div>{{ item.platformName }}</div>
@@ -34,7 +27,13 @@
           </el-scrollbar>
         </div>
         <div class="tableWrap">
-          <el-table :data="tableDetailList" border class="blueTable" style="100%">
+          <el-table
+            :data="tableDetailList"
+            border
+            :max-height="maxHeight"
+            class="blueTable"
+            style="100%"
+          >
             <el-table-column prop="useTime" label="时长" align="center" />
             <el-table-column prop="JJTime" label="接警时间" align="center" />
             <el-table-column prop="DJTime" label="到警时间" align="center" />
@@ -54,13 +53,204 @@ export default {
     return {
       visible: true,
       curIndex: 0,
-      platformVoList: [],
-      tableDetailList: []
+      platformVoList: [
+        {
+          platformName: 1,
+          useTime: 1,
+          userVoList: [{
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }, {
+            useTime: 1,
+            JJTime: 11,
+            DJTime: 1,
+            userName: 1
+          }]
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        },
+        {
+          platformName: 1,
+          useTime: 1
+        }
+      ],
+      tableDetailList: [],
+      htmlWidth:
+        document.documentElement.clientWidth || document.body.clientWidth,
+      maxHeight: 616
     };
   },
   created () {
-    this.getAvgDealAlertTime();
-    this.tableDetailList = this.platformVoList[0].userVoList;
+    this.maxHeight = this.htmlWidth <= 1366 ? 396 : 616;
+    // this.getAvgDealAlertTime();
+    if (this.platformVoList[0].userVoList) {
+      this.tableDetailList = this.platformVoList[0].userVoList;
+    } else {
+      this.tableDetailList = [];
+    }
   },
   methods: {
     getAvgDealAlertTime () {
@@ -68,19 +258,24 @@ export default {
         if (res.data.data) {
           this.platformVoList = res.data.data.platformVoList.map(item => {
             item.useTime = formateTime(item.useTime);
-            if (item.userVoList) {
+            if (item.userVoList && item.userVoList.length) {
               item.userVoList.map(every => {
                 every.useTime = formateTime(every.useTime);
-              })
+              });
             }
             return item;
           });
         }
-      })
+      });
     },
-    changeTable: function (index, list) {
+    changeTable: function (index, row) {
+      const { userVoList } = row;
       this.curIndex = index;
-      this.tableDetailList = list;
+      if (userVoList) {
+        this.tableDetailList = userVoList;
+      } else {
+        this.tableDetailList = [];
+      }
     },
     onClosed () {
       this.$emit('onDealsituaClose');
@@ -91,9 +286,18 @@ export default {
 
 <style lang="less" scoped>
 .dealSituation {
+  @media screen and (max-width: 1366px) {
+    .content {
+      height: 396px;
+    }
+  }
+  @media screen and (min-width: 1367px) {
+    .content {
+      height: 618px;
+    }
+  }
   .content {
     display: flex;
-    height: 100%;
     .statisWrap {
       width: 280px;
       height: 100%;
@@ -111,7 +315,7 @@ export default {
       }
       .scrollerWrap {
         width: 100%;
-        height: clac(100% - 48px);
+        height: calc(100% - 48px);
         padding: 0 5px;
         .platformInfo {
           border: 1px solid #1e6abc;
@@ -126,7 +330,7 @@ export default {
           }
           .basic {
             display: flex;
-            justify-content:space-between;
+            justify-content: space-between;
             padding: 10px;
             font-size: 16px;
             cursor: pointer;
@@ -140,9 +344,10 @@ export default {
       height: 100%;
     }
   }
-
-  /deep/ .blue.el-dialog {
-    height: 600px;
+  @media screen and (max-width: 1366px){
+    /deep/ .blue.el-dialog {
+      height: 500px;
+    }
   }
 }
 </style>
