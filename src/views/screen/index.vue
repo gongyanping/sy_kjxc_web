@@ -2,7 +2,7 @@
  * @Author: gyp
  * @Date: 2020-05-08 12:44:26
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-12 15:44:49
+ * @LastEditTime: 2020-06-15 15:44:36
  * @Description: 大屏
  * @FilePath: \sy_kjxc_web\src\views\screen\index.vue
  -->
@@ -195,6 +195,10 @@
       v-if="dealsituaVisible"
       @onDealsituaClose="dealsituaVisible = false"
     />
+    <realtimealertnum-dialog
+      v-if="realtimealertnumVisible"
+      @onDealsituaClose="realtimealertnumVisible = false"
+    />
     <nopunch-dialog v-if="nopunchVisible" @onNopunchClose="onNopunchClose" />
     <datacheck-dialog
       v-if="datacheckVisible"
@@ -233,8 +237,9 @@ import dutyleaderDialog from './components/dutyleaderDialog'; // 大队值班领
 import userdetailDialog from './components/userdetailDialog'; // 用户详情--弹出框
 import policesituationDialog from './components/policesituationDialog'; // 当日警情
 import dealsituationDialog from './components/dealsituationDialog'; // 当日警情
+import realtimealertnumDialog from './components/realtimealertnumDialog'; // 实时警情数
 import nopunchDialog from './components/nopunchDialog'; // 今日未打卡列表
-import datacheckDialog from './components/datacheckDialog'; // 今日未打卡列表
+import datacheckDialog from './components/datacheckDialog'; // 数据考核
 import recordlistDialog from './components/recordlistDialog'; // 打卡记录
 import patroltaskDialog from './components/patroltaskDialog'; // 巡逻任务
 import maptrackDialog from './components/maptrackDialog'; // 地图轨迹
@@ -254,6 +259,7 @@ export default {
     userdetailDialog,
     policesituationDialog,
     dealsituationDialog,
+    realtimealertnumDialog,
     nopunchDialog,
     datacheckDialog,
     recordlistDialog,

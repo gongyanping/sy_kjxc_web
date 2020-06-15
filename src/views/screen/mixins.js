@@ -2,13 +2,13 @@
  * @Author: gyp
  * @Date: 2020-05-08 18:20:13
  * @LastEditors: gyp
- * @LastEditTime: 2020-06-12 16:38:28
+ * @LastEditTime: 2020-06-15 18:22:20
  * @Description: 大屏的属性和方法
  * @FilePath: \sy_kjxc_web\src\views\screen\mixins.js
  */
 import customMapConfig from '@/assets/json/custom_map_config.json';
 import { formateTime } from '@/utils/common.js';
-import axios from 'axios';
+// import axios from 'axios';
 import Queue from 'queue';
 import _ from 'lodash';
 const basicScreen = {
@@ -23,6 +23,11 @@ const basicScreen = {
       {
         icon: 'dashboard',
         title: '平均处警时长',
+        value: 0
+      },
+      {
+        icon: 'dashboard',
+        title: '实时警情数',
         value: 0
       },
       {
@@ -115,6 +120,7 @@ const basicScreen = {
       userdetailVisible: false, // 用户详情-弹出框可见性
       situationVisible: false, // 警情-弹出框可见性
       dealsituaVisible: false, // 处警-弹出框可见性
+      realtimealertnumVisible: false, // 实时警情数-弹出框可见性
       nopunchVisible: false, // 未打卡列表-弹出层可见性
       datacheckVisible: false, // 数据考核-弹出框可见性
       recordlistVisible: false, // 打卡记录-弹出框可见性
@@ -185,8 +191,8 @@ const basicScreen = {
      * 老接口-获取全部数据
      */
     getPoliceCarInit () {
-      // this.$api.screen.getPoliceCarInit().then(res => {
-      axios.get('http://218.76.207.66:8181/api/getPoliceCarInit').then(res => {
+      this.$api.screen.getPoliceCarInit().then(res => {
+      // axios.get('http://218.76.207.66:8181/api/getPoliceCarInit').then(res => {
         this.getAllGrid(res.data.deptList);
         this.getAllPoint(res.data.deptList);
       });
@@ -683,7 +689,7 @@ const basicScreen = {
         date: this.todayDate
       };
       this.$api.screen.userAllClockedList(params).then(res => {
-        this.headStaData[2].value = res.data.total;
+        this.headStaData[3].value = res.data.total;
       });
     },
     /**
@@ -697,7 +703,7 @@ const basicScreen = {
         pageNumber: 1
       };
       this.$api.screen.checkList(params).then(res => {
-        this.headStaData[3].value = res.data.total;
+        this.headStaData[4].value = res.data.total;
       });
     },
     /**
