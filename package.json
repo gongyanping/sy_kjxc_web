@@ -16,7 +16,7 @@
     "element-ui": "^2.13.1",
     "html2canvas": "^1.0.0-rc.5",
     "iview": "^3.5.4",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "nprogress": "^0.2.0",
     "postcss-px2rem": "^0.3.0",
     "qs": "^6.9.3",
