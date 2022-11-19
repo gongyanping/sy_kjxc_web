@@ -36,7 +36,7 @@
     "@vue/cli-plugin-router": "^4.0.0",
     "@vue/cli-plugin-unit-mocha": "^4.0.0",
     "@vue/cli-plugin-vuex": "^4.0.0",
-    "@vue/cli-service": "^4.0.0",
+    "@vue/cli-service": "^5.0.8",
     "@vue/eslint-config-standard": "^4.0.0",
     "@vue/test-utils": "1.0.0-beta.29",
     "babel-eslint": "^10.0.3",
@@ -47,7 +47,7 @@
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
     "sass-loader": "^8.0.2",
-    "svg-sprite-loader": "^4.3.0",
+    "svg-sprite-loader": "^6.0.11",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "vue-cli-plugin-element": "^1.0.1",
     "vue-template-compiler": "^2.6.11"
